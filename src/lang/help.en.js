@@ -1,0 +1,16 @@
+IIPMooViewer.lang = {
+	'help': 'click for help',
+	'scale': 'draggable scale',
+	'navigate': 'To navigate within image: drag image within main window or drag zone within the navigation window or click an are a within navigation window',
+	'zoomIn': 'To zoom in: double click with the mouse or use the mouse scroll wheel or simply press the "+" key',
+	'zoomOut': 'To zoom out: shift double click with the mouse or use the mouse wheel or press the "-" key',
+	'rotate': 'To rotate image clockwise: press the "r" key, anti-clockwise: press shift and "r"',
+	'resize': 'To resize to fill page: press the "f" key',
+	'annotations': 'To toggle any annotations: press the "a" key',
+	'navigation': 'To show/hide navigation window: press "h" key',
+	'more': 'For more information visit',
+	'fullscreen': 'Press Esc to exit full page mode.<br/>Press F11 for full screen',
+	'loading': 'loading',
+	'drag': '* Drag to move<br/>* Double Click to show/hide buttons<br/>* Press h to hide',
+	'annotationsDisabled': 'Annotations disabled<br/>Press "a" to re-enable'
+};
