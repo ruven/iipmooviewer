@@ -211,12 +211,6 @@ var IIPMooViewer = new Class({
    */
   requestImages: function() {
 
-    // Re-orient our canvas to 0 degrees rotation
-    if( this.view.rotation != 0 ){
-      this.view.rotation = 0;
-      this.canvas.setStyle(this.CSSprefix+'transform', 'rotate(0deg)');
-    }
-
     // Set our cursor
     this.canvas.setStyle( 'cursor', 'wait' );
 
@@ -226,6 +220,14 @@ var IIPMooViewer = new Class({
       el.eliminate('tip:text');
       el.destroy();
     });
+
+    // Set our rotation origin - calculate differently if canvas is smaller than view port
+    if( !Browser.buggy ){
+      var origin_x = ( this.wid>this.view.w ? Math.round(this.view.x+this.view.w/2) : Math.round(this.wid/2) ) + "px";
+      var origin_y = ( this.hei>this.view.h ? Math.round(this.view.y+this.view.h/2) : Math.round(this.hei/2) ) + "px";
+      var origin = origin_x + " " + origin_y;
+      this.canvas.setStyle( this.CSSprefix+'transform-origin', origin );
+    }
 
     // Load our image mosaic
     this.loadGrid();
@@ -511,16 +513,7 @@ var IIPMooViewer = new Class({
     if( Browser.buggy ) return;
 
     this.view.rotation = r;
-    var pos = this.canvas.getPosition();
-
-    // Set our origin - calculate differently if canvas is smaller than view port
-    var origin_x = ( this.wid>this.view.w ? Math.round(this.view.x+this.view.w/2) : Math.round(this.wid/2) ) + "px";
-    var origin_y = ( this.hei>this.view.h ? Math.round(this.view.y+this.view.h/2) : Math.round(this.hei/2) ) + "px";
-    var origin = origin_x + " " + origin_y;
-
     var angle = 'rotate(' + r + 'deg)';
-
-    this.canvas.setStyle( this.CSSprefix+'transform-origin', origin );
     this.canvas.setStyle( this.CSSprefix+'transform', angle );
   },
 
@@ -634,8 +627,8 @@ var IIPMooViewer = new Class({
     xmove = Math.round(xmove * this.wid / this.navWin.w);
     ymove = Math.round(ymove * this.hei / this.navWin.h);
 
-    // Only morph transition if we have moved a short distance
-    var morphable = Math.abs(xmove-this.view.x)<this.view.w/2 && Math.abs(ymove-this.view.y)<this.view.h/2;
+    // Only morph transition if we have moved a short distance and our rotation is zero
+    var morphable = Math.abs(xmove-this.view.x)<this.view.w/2 && Math.abs(ymove-this.view.y)<this.view.h/2 && this.view.rotation==0;
     if( morphable ){
       this.canvas.morph({
 	left: (this.wid>this.view.w)? -xmove : Math.round((this.view.w-this.wid)/2),
@@ -649,12 +642,9 @@ var IIPMooViewer = new Class({
       });
     }
 
-    // Re-orient our canvas to 0 degrees rotation
-    this.rotate(0);
-
     this.view.x = xmove;
     this.view.y = ymove;
- 
+
     // The morph event automatically calls requestImages
     if( !morphable ){
       this.requestImages();
@@ -674,7 +664,8 @@ var IIPMooViewer = new Class({
    */
   scroll: function(e) {
 
-    var pos = this.canvas.getPosition(this.container);
+    var pos = {};
+    // Use style values directly as getPosition will take into account rotation
     pos.x = this.canvas.getStyle('left').toInt();
     pos.y = this.canvas.getStyle('top').toInt();
     //    pos.y = pos.y + Math.sin( this.view.rotation*Math.PI*2 / 360 ) * this.view.w / 2;
@@ -1759,6 +1750,7 @@ var IIPMooViewer = new Class({
     if( this.viewport && this.viewport.rotation!=null ){
       this.rotate( this.viewport.rotation );
     }
+    else this.rotate(0);
 
   },
 
