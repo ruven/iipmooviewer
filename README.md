@@ -45,12 +45,15 @@ Now modify the path and image names in the example HTML page provided - index.ht
 Distribution
 ------------
 /javascript : the necessary minified iipmooviewer and mootools javascript files
+
 /css : iip.css and ie.css (for Internet Explorer)
+
 /images : icons and image files
+
 /src : uncompressed source javascript files
 
 Minified files are created with the closer compiler (https://developers.google.com/closure/compiler/) with the following command:
-<pre>m
+<pre>
 java -jar /path/to/compiler.jar --js src/protocols/iip.js src/protocols/zoomify.js src/protocols/deepzoom.js src/iipmooviewer-2.0.js src/lang/help.en.js --js_output_file javascript/iipmooviewer-2.0-compressed.js --compilation_level SIMPLE_OPTIMIZATIONS
 </pre>
 
@@ -69,7 +72,7 @@ option is the <b>image</b> variable)
 
 <b>render</b> : the way in which tiles are rendered. Either `random' where the 
         tiles are fetched and rendered randomly or 'spiral' where the 
-        tiles are rendered from the center outwards [default : 'spiral']
+        tiles are rendered from the center outwards [default : "spiral"]
 
 <b>showNavWindow</b> : whether to show the navigation window. [default : true]
 
@@ -82,13 +85,13 @@ option is the <b>image</b> variable)
 
 <b>prefix</b>: path prefix if image subdirectory moved (for example to a different host) [default "images/"]
 
-<b>enableFullscreen</b> : allow full screen mode. If "native" will attempt to use Javascript Fullscreen API. Otherwise it will fill the viewport. "page" allows fullscreen but only in viewport fill mode. False disables. [Default: native]
+<b>enableFullscreen</b> : allow full screen mode. If "native" will attempt to use Javascript Fullscreen API. Otherwise it will fill the viewport. "page" allows fullscreen but only in viewport fill mode. False disables. [default: "native"]
 
 <b>winResize</b> : whether view is reflowed on window resize. [default: true]
 
 <b>viewport</b> : object containing x, y, resolution, rotation and contrast of initial view
 
-<b>protocol</b> : protocol to use with the server: iip, zoomify or deepzoom [default: iip]
+<b>protocol</b> : protocol to use with the server: iip, zoomify or deepzoom [default: "iip"]
 
 <b>annotations</b> : An array of annotations containing struct with parameters x, y, w, h, title, text where x, y, w and h are the position and size of the annotation in relative [0-1] values, title is an optional title for the annotation and text is the HTML body of the annotation.
 

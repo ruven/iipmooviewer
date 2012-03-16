@@ -180,7 +180,7 @@ var IIPMooViewer = new Class({
       w: this.wid,
       h: this.hei,
       res: 0,                 // Current resolution
-      orientation: 0          // Current rotational orientation
+      rotation: 0          // Current rotational orientation
     };
 
     this.navpos = {};         // Location of navigation drag zone
@@ -560,7 +560,7 @@ var IIPMooViewer = new Class({
       });
       this.fullscreen.isFullscreen = !this.fullscreen.isFullscreen;
       // Create a fullscreen message, then delete after a timeout
-      if( this.fullscreen.isFullscreen ) this.showPopUp( IIPMooViewer.lang.fullscreen );
+      if( this.fullscreen.isFullscreen ) this.showPopUp( IIPMooViewer.lang.exitFullscreen );
       else this.container.getElements('div.message').destroy();
       this.reload();
     }
@@ -1002,7 +1002,7 @@ var IIPMooViewer = new Class({
       'events': {
 	click: function(){ this.fade('out'); }
       },
-      'html': '<div><div><h2><a href="http://iipimage.sourceforge.net"><img src="'+this.prefix+'iip.32x32.png"/></a>IIPMooViewer</h2>IIPImage HTML5 Ajax High Resolution Image Viewer - Version '+this.version+'<br/><ul><li>'+IIPMooViewer.lang.navigate+'</li><li>'+IIPMooViewer.lang.zoomIn+'</li><li>'+IIPMooViewer.lang.zoomOut+'</li><li>'+IIPMooViewer.lang.rotate+'</li><li>'+IIPMooViewer.lang.resize+'<li>'+IIPMooViewer.lang.annotations+'</li><li>'+IIPMooViewer.lang.navigation+'</li></ul><br/>'+IIPMooViewer.lang.more+' <a href="http://iipimage.sourceforge.net">http://iipimage.sourceforge.net</a></div></div>'
+      'html': '<div><div><h2><a href="http://iipimage.sourceforge.net"><img src="'+this.prefix+'iip.32x32.png"/></a>IIPMooViewer</h2>IIPImage HTML5 Ajax High Resolution Image Viewer - Version '+this.version+'<br/><ul><li>'+IIPMooViewer.lang.navigate+'</li><li>'+IIPMooViewer.lang.zoomIn+'</li><li>'+IIPMooViewer.lang.zoomOut+'</li><li>'+IIPMooViewer.lang.rotate+'</li><li>'+IIPMooViewer.lang.fullscreen+'<li>'+IIPMooViewer.lang.annotations+'</li><li>'+IIPMooViewer.lang.navigation+'</li></ul><br/>'+IIPMooViewer.lang.more+' <a href="http://iipimage.sourceforge.net">http://iipimage.sourceforge.net</a></div></div>'
     }).inject( this.container );
 
     // Create our main window target div, add our events and inject inside the frame
