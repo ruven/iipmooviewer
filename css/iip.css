@@ -7,6 +7,7 @@
   margin: 0;
   padding: 0;
   border: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0); /* Disable tap highlighting */
 }
 .iipmooviewer:focus, .iipmooviewer:active {
   outline: none;
@@ -382,6 +383,7 @@ a.logo:link, a.logo:visited {
 }
 @media only screen and (min-device-width: 481px) and (max-device-width: 1024px) {
   .iipmooviewer { -webkit-text-size-adjust: 120%; }
+  .loadbar { -webkit-text-size-adjust: 90%; }
   .iipmooviewer .info div div { width: 90%; }
   .iipmooviewer .navcontainer .navbuttons img {
     width: 36px;

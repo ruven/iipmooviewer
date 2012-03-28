@@ -1131,16 +1131,16 @@ var IIPMooViewer = new Class({
 	      _this.zoomIn();
 	    }
 	    else{
-	      var pos = _this.canvas.getPosition();
-	      _this.touchstart = { x: e.touches[0].clientX - pos.x, y: e.touches[0].clientY - pos.y };
+	      var pos = _this.canvas.getPosition(_this.container);
+	      _this.touchstart = { x: e.touches[0].pageX - pos.x, y: e.touches[0].pageY - pos.y };
 	    }
 	  }
         },
 	'touchmove': function(e){
 	  // Only handle single finger events
 	  if(e.touches.length == 1){
-	    _this.view.x = _this.touchstart.x - e.touches[0].clientX;
-	    _this.view.y = _this.touchstart.y - e.touches[0].clientY;
+	    _this.view.x = _this.touchstart.x - e.touches[0].pageX;
+	    _this.view.y = _this.touchstart.y - e.touches[0].pageY;
 	    // Limit the scroll
 	    if( _this.view.x > _this.wid-_this.view.w ) _this.view.x = _this.wid-_this.view.w;
 	    if( _this.view.y > _this.hei-_this.view.h ) _this.view.y = _this.hei-_this.view.h;
@@ -1150,6 +1150,12 @@ var IIPMooViewer = new Class({
 	      left: (_this.wid>_this.view.w) ? -_this.view.x : Math.round((_this.view.w-_this.wid)/2),
 	      top: (_this.hei>_this.view.h) ? -_this.view.y : Math.round((_this.view.h-_this.hei)/2)
 	    });
+	  }
+	  if( e.touches.length == 2 ){
+	    var xx = Math.round( (e.touches[0].pageX+e.touches[1].pageX) / 2 ) + _this.view.x;
+	    var yy = Math.round( (e.touches[0].pageY+e.touches[1].pageY) / 2 ) + _this.view.y;
+	    var origin = xx + 'px,' + yy + 'px';
+	    this.canvas.setStyle( this.CSSprefix+'transform-origin', origin );
 	  }
         },
 	'touchend': function(e){
