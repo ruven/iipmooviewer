@@ -63,8 +63,9 @@ Options
 Options to the IIPMooViewer class constructor: (The only obligatory 
 option is the <b>image</b> variable)
 
-<b>image</b> : The full path to the image. On Windows as on other systems this 
-       should be a UNIX style path such as "/path/to/image.tif"
+<b>image</b> : The full system path to the image. On Windows as on other systems this 
+       should be a UNIX style path such as "/path/to/image.tif". Note that this is an
+       absolute system path and not the path relative to the webserver root
 
 <b>server</b> : The address of the IIPImage server. [default : "/fcgi-bin/iipsrv.fcgi"]
 
