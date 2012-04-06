@@ -748,6 +748,9 @@ var IIPMooViewer = new Class({
     else if( event.shift ) z = -1;
     else z = 1;
 
+    // Bail out if at zoom limits
+    if( (z==1) && (this.view.res >= this.num_resolutions-1) ) return;
+    if( (z==-1) && (this.view.res <= 0) ) return;
 
     var ct = event.target;
     if( ct ){
