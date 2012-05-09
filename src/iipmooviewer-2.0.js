@@ -2,7 +2,7 @@
    IIPMooViewer 2.0
    IIPImage Javascript Viewer <http://iipimage.sourceforge.net>
 
-   Copyright (c) 2007-2011 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2012 Ruven Pillay <ruven@users.sourceforge.net>
 
    ---------------------------------------------------------------------------
 
@@ -95,6 +95,8 @@ var IIPMooViewer = new Class({
     if( typeOf(options.image) == 'array' ){
        for( i=0; i<options.image.length;i++ ){
 	 this.images[i] = { src:options.image[i], sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : 1.0 };
+
+
        }
     }
     else this.images = [{ src:options.image, sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : 1.0 } ];
@@ -140,16 +142,16 @@ var IIPMooViewer = new Class({
     // Set up our protocol handler
     switch( options.protocol ){
       case 'zoomify':
-	this.protocol = new Zoomify();
+	this.protocol = new Protocols.Zoomify();
 	break;
       case 'deepzoom':
-	this.protocol = new DeepZoom();
+	this.protocol = new Protocols.DeepZoom();
 	break;
       case 'djatoka':
-        this.protocol = new Djatoka();
+        this.protocol = new Protocols.Djatoka();
 	break;
       default:
-	this.protocol = new IIP();
+	this.protocol = new Protocols.IIP();
     }
 
 
@@ -165,7 +167,7 @@ var IIPMooViewer = new Class({
 
     // If we want to assign a function for a click within the image
     // - used for multispectral curve visualization, for example
-    this.targetclick = options.targetclick || null;
+    this.click = options.click || null;
 
     this.max_size = {};      // Dimensions of largest resolution
     this.navWin = {w:0,h:0}; // Dimensions of navigation window
@@ -593,7 +595,6 @@ var IIPMooViewer = new Class({
   },
 
 
-
   /* Scroll resulting from a drag of the navigation window
    */
   scrollNavigation: function( e ) {
@@ -609,8 +610,8 @@ var IIPMooViewer = new Class({
     if( e.event ){
       e.stop();
       var pos = this.zone.getParent().getPosition();
-      xmove = e.client.x - pos.x - zone_w/2;
-      ymove = e.client.y - pos.y - zone_h/2;
+      xmove = e.page.x - pos.x - Math.floor(zone_w/2);
+      ymove = e.page.y - pos.y - Math.floor(zone_h/2);
     }
     else{
       // From a drag
@@ -673,6 +674,10 @@ var IIPMooViewer = new Class({
     var xmove =  -pos.x;
     var ymove =  -pos.y;
     this.moveTo( xmove, ymove );
+
+    if( IIPMooViewer.sync ){
+      IIPMooViewer.windows(this).each( function(el){ el.moveTo(xmove,ymove); });
+    }
 
   },
 
@@ -761,17 +766,16 @@ var IIPMooViewer = new Class({
 	pos = this.canvas.getPosition();
 
 	// Center our zooming on the mouse position when over the main target window
-	// - use clientX/Y because pageX/Y does not exist in IE
-	this.view.x = event.client.x - pos.x - (this.view.w/2);
-	this.view.y = event.client.y - pos.y - (this.view.h/2);
+	this.view.x = event.page.x - pos.x - Math.floor(this.view.w/2);
+	this.view.y = event.page.y - pos.y - Math.floor(this.view.h/2);
       }
       else{
 	// For zooms with the mouse over the navigation window
 	pos = this.zone.getParent().getPosition();
 	var n_size = this.zone.getParent().getSize();
 	var z_size = this.zone.getSize();
-	this.view.x = (event.client.x - pos.x - z_size.x/2) * this.wid/n_size.x;
-	this.view.y = (event.client.y - pos.y - z_size.y/2) * this.hei/n_size.y;
+	this.view.x = Math.round( (event.page.x - pos.x - z_size.x/2) * this.wid/n_size.x );
+	this.view.y = Math.round( (event.page.y - pos.y - z_size.y/2) * this.hei/n_size.y );
       }
 
       if( IIPMooViewer.sync ){
@@ -1023,14 +1027,7 @@ var IIPMooViewer = new Class({
     // Create our main view drag object for our canvas.
     // Add synchronization via the Drag start hook
     this.touch = new Drag( this.canvas, {
-      onComplete: this.scroll.bind(this),
-      onStart: function(element,event){
-	if( IIPMooViewer.sync ){
-	  IIPMooViewer.windows(_this).each( function(el){
-	    el.touch.start(event);
-	  });
-	}
-      }
+      onComplete: this.scroll.bind(this)
     });
 
 
@@ -1068,10 +1065,10 @@ var IIPMooViewer = new Class({
 
 
     // Add an external callback if we have been given one
-    if( this.targetclick ){
+    if( this.click ){
 
       // But add it mouseup rather than click to avoid triggering during dragging
-      var fn = this.targetclick.bind(this);
+      var fn = this.click.bind(this);
       this.canvas.addEvent( 'mouseup', fn );
 
       // And additionally disable this during dragging
@@ -1099,7 +1096,7 @@ var IIPMooViewer = new Class({
     // Add touch and gesture support for mobile iOS and Android
     if( Browser.Platform.ios || Browser.Platform.android ){
 
-      this.preload = true;
+      // this.preload = true;
 
       // Prevent dragging on the container div
       this.container.addEvent('touchmove', function(e){ e.preventDefault(); } );
@@ -1357,7 +1354,7 @@ var IIPMooViewer = new Class({
       var navimage = new Element( 'img', {
 	'class': 'navimage',
 	'src': this.server + '?FIF=' + this.images[0].src + '&SDS=' + this.images[0].sds +
-               '&WID=' + this.navWin.w + '&QLT=99&CVT=jpeg',
+               '&WID=' + this.navWin.w + '&QLT=98&CVT=jpeg',
         'events': {
           'click': this.scrollNavigation.bind(this),
           'mousewheel:throttle(75)': this.zoom.bind(this),
@@ -1396,7 +1393,7 @@ var IIPMooViewer = new Class({
       var prefix = this.prefix;
       ['reset','zoomIn','zoomOut'].each( function(k){
 	new Element('img',{
-	  'src': prefix + k + '.svg',
+	  'src': prefix + k + (Browser.buggy?'.png':'.svg'),
 	  'class': k,
  	  'events':{
 	    'error': function(){
@@ -1854,3 +1851,8 @@ IIPMooViewer.windows = function(s){
  */
 if( Browser.ie && Browser.version<9 ) Browser.buggy = true;
 else Browser.buggy = false;
+
+
+/* Setup our list of protocol objects
+ */
+var Protocols = {};

@@ -1,7 +1,7 @@
 /* DeepZoom Protocol Handler
  */
 
-var DeepZoom = new Class({
+Protocols.DeepZoom = new Class({
 
   /* Return metadata URL
    */

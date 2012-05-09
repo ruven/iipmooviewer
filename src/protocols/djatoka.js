@@ -1,7 +1,7 @@
 /* Djatoka Protocol Handler
  */
 
-var Djatoka = new Class({
+Protocols.Djatoka = new Class({
 
   'svc_val_fmt': "info:ofi/fmt:kev:mtx:jpeg2000",
   'svc_id': "info:lanl-repo/svc/getRegion",

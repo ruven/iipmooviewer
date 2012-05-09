@@ -1,7 +1,7 @@
 /* IIP Protocol Handler
  */
 
-var IIP = new Class({
+Protocols.IIP = new Class({
 
   /* Return metadata URL
    */
@@ -45,3 +45,5 @@ var IIP = new Class({
   }
 
 });
+
+

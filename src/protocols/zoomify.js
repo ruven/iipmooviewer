@@ -1,7 +1,7 @@
 /* Zoomify Protocol Handler
  */
 
-var Zoomify = new Class({
+Protocols.Zoomify = new Class({
 
   /* Return metadata URL
    */
