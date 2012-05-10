@@ -18,7 +18,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
    ---------------------------------------------------------------------------
 
@@ -159,10 +159,9 @@ var IIPMooViewer = new Class({
     this.preload = false;
     this.effects = false;
 
-    // Annotations
-    this.annotations = options.annotations || null;
-    this.annotationTip = null;
-    this.annotationsVisible = true;
+    // Set up our annotations if they have been set and our annotation functions implemented
+    this.annotations = ((typeof(this.initAnnotations)=="function")&&options.annotations)? options.annotations : null;
+
 
 
     // If we want to assign a function for a click within the image
@@ -217,11 +216,7 @@ var IIPMooViewer = new Class({
     this.canvas.setStyle( 'cursor', 'wait' );
 
     // Delete our annotations
-    if( this.annotationTip ) this.annotationTip.detach( this.canvas.getChildren('div.annotation') );
-    this.canvas.getChildren('div.annotation').each(function(el){
-      el.eliminate('tip:text');
-      el.destroy();
-    });
+    if( this.annotations ) this.destroyAnnotations();
 
     // Set our rotation origin - calculate differently if canvas is smaller than view port
     if( !Browser.buggy ){
@@ -234,9 +229,11 @@ var IIPMooViewer = new Class({
     // Load our image mosaic
     this.loadGrid();
 
-    // Create new annotations
-    this.createAnnotations();
-    if( this.annotationTip ) this.annotationTip.attach( this.canvas.getChildren('div.annotation') );
+    // Create new annotations and attach the tooltip to them if it already exists
+    if( this.annotations ){
+      this.createAnnotations();
+      if( this.annotationTip ) this.annotationTip.attach( this.canvas.getChildren('div.annotation') );
+    }
   },
 
 
@@ -1039,19 +1036,10 @@ var IIPMooViewer = new Class({
       'mousedown': function(e){ var event = new DOMEvent(e); event.stop(); }
     });
 
-    // Display / hide our annotations if we have any
-    if( this.annotations ){
-      this.canvas.addEvent( 'mouseenter', function(){
-        if( _this.annotationsVisible ){
-	  _this.canvas.getElements('div.annotation').removeClass('hidden');
-	}
-      });
-      this.canvas.addEvent( 'mouseleave', function(){
-	if( _this.annotationsVisible ){
-	  _this.canvas.getElements('div.annotation').addClass('hidden');
-	}
-      });
-    }
+
+    // Initialize canvas events for our annotations
+    if( this.annotations ) this.initAnnotations();
+
 
     // Disable the right click context menu if requested and show our info window instead
     if( this.disableContextMenu ){
@@ -1243,7 +1231,7 @@ var IIPMooViewer = new Class({
     // Calculate some sizes and create the navigation window
     this.calculateSizes();
     this.createNavigationWindow();
-    this.createAnnotations();
+    if( this.annotations ) this.createAnnotations();
 
 
     if( !(Browser.Platform.ios||Browser.Platform.android) ){
@@ -1465,97 +1453,6 @@ var IIPMooViewer = new Class({
 
     navcontainer.makeDraggable( {container:this.container, handle:toolbar} );
 
-  },
-
-
-  // Create annotations if they are contained within our current view
-  createAnnotations: function() {
-
-    // Sort our annotations by size to make sure it's always possible to interact
-    // with annotations within annotations
-    if( !this.annotations ) return;
-    this.annotations.sort( function(a,b){ return (b.w*b.h)-(a.w*a.h); } );
-
-    for( var i=0; i<this.annotations.length; i++ ){
-
-      // Check whether this annotation is within our view
-      if( this.wid*(this.annotations[i].x+this.annotations[i].w) > this.view.x &&
-	  this.wid*this.annotations[i].x < this.view.x+this.view.w &&
-	  this.hei*(this.annotations[i].y+this.annotations[i].h) > this.view.y &&
-	  this.hei*this.annotations[i].y < this.view.y+this.view.h
-	  // Also don't show annotations that entirely fill the screen
-	  //	  (this.hei*this.annotations[i].x < this.view.x && this.hei*this.annotations[i].y < this.view.y &&
-	  //	   this.wid*(this.annotations[i].x+this.annotations[i].w) > this.view.x+this.view.w && 
-      ){
-
-	var annotation = new Element('div', {
-          'class': 'annotation',
-          'styles': {
-            left: Math.round(this.wid * this.annotations[i].x),
-            top: Math.round(this.hei * this.annotations[i].y ),
-	    width: Math.round( this.wid * this.annotations[i].w ),
-	    height: Math.round( this.hei * this.annotations[i].h )
-	  }
-        }).inject( this.canvas );
-
-	if( this.annotationsVisible==false ) annotation.addClass('hidden');
-
-	var text = this.annotations[i].text;
-	if( this.annotations[i].title ) text = '<h1>'+this.annotations[i].title+'</h1>' + text;
-        annotation.store( 'tip:text', text );
-      }
-    }
-
-
-    if( !this.annotationTip ){
-      var _this = this;
-      this.annotationTip = new Tips( 'div.annotation', {
-        className: 'tip', // We need this to force the tip in front of nav window
-	fixed: true,
-	offset: {x:30,y:30},
-	hideDelay: 300,
-	link: 'chain',
-        onShow: function(tip,el){
-	  tip.setStyles({opacity:0,display:'block'}).fade(0.9);
-
-	  // Prevent the tip from fading when we are hovering on the tip itself and not
-	  // just when we leave the annotated zone
-	  tip.addEvents({
-	    'mouseleave':  function(){
-	       this.active = false;
-	       this.fade('out').get('tween').chain( function(){ this.element.setStyle('display','none'); });
-	    },
-	    'mouseenter': function(){ this.active = true; }
-	  })
-        },
-        onHide: function(tip, el){
-	  if( !tip.active ){
-	    tip.fade('out').get('tween').chain( function(){ this.element.setStyle('display','none'); });
-	    tip.removeEvents(['mouseenter','mouseleave']);
-	  }
-        }
-      });
-    }
-
-  },
-
-
-
-  /* Toggle visibility of any annotations
-   */
-  toggleAnnotations: function() {
-    var els;
-    if( els = this.canvas.getElements('div.annotation') ){
-      if( this.annotationsVisible ){
-	els.addClass('hidden');
-	this.annotationsVisible = false;
-	this.showPopUp( IIPMooViewer.lang.annotationsDisabled );
-      }
-      else{
-	els.removeClass('hidden');
-	this.annotationsVisible = true;
-      }
-    }
   },
 
 
