@@ -754,10 +754,9 @@ var IIPMooViewer = new Class({
     if( (z==1) && (this.view.res >= this.num_resolutions-1) ) return;
     if( (z==-1) && (this.view.res <= 0) ) return;
 
-    var ct = event.target;
-    if( ct ){
-      var cc = ct.get('class');
+    if( event.target ){
       var pos, xmove, ymove;
+      var cc = event.target.get('class');
 
       if( cc != "zone" & cc != 'navimage' ){
 	pos = this.canvas.getPosition();
@@ -808,36 +807,11 @@ var IIPMooViewer = new Class({
 
       this.view.res++;
 
-      // Get the image size for this resolution
-      this.wid = this.resolutions[this.view.res].w;
-      this.hei = this.resolutions[this.view.res].h;
-
       var xoffset = (this.resolutions[this.view.res-1].w > this.view.w) ? this.view.w : this.resolutions[this.view.res-1].w;
       this.view.x = Math.round( 2*(this.view.x + xoffset/4) );
-      if( this.view.x > (this.wid-this.view.w) ) this.view.x = this.wid - this.view.w;
-      if( this.view.x < 0 ) this.view.x = 0;
-
       this.view.y = Math.round( 2*(this.view.y + this.view.h/4) );
-      if( this.view.y > (this.hei-this.view.h) ) this.view.y = this.hei - this.view.h;
-      if( this.view.y < 0 ) this.view.y = 0;
 
-      this.canvas.setStyles({
-	 left: (this.wid>this.view.w)? -this.view.x : Math.round((this.view.w-this.wid)/2),
-	 top: (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2),
-	 width: this.wid,
-	 height: this.hei
-      });
-
-      // Center or contstrain our canvas to our containing div
-      if( this.wid < this.view.w || this.hei < this.view.h ) this.recenter();
-      else this.touch.options.limit = { x: Array(this.view.w-this.wid,0), y: Array(this.view.h-this.hei,0) };
-
-      this.canvas.getChildren('img').destroy();
-      this.tiles.empty();
-
-      this.requestImages();
-      this.positionZone();
-      if( this.scale ) this.updateScale();
+      this._zoom();
     }
   },
 
@@ -851,46 +825,50 @@ var IIPMooViewer = new Class({
 
       this.view.res--;
 
-      // Get the image size for this resolution
-      this.wid = this.resolutions[this.view.res].w;
-      this.hei = this.resolutions[this.view.res].h;
+      this.view.x = Math.round( this.view.x/2 - (this.view.w/4) );
+      this.view.y = Math.round( this.view.y/2 - (this.view.h/4) );
 
-      this.view.x = this.view.x/2 - (this.view.w/4);
-      if( this.view.x + this.view.w > this.wid ) this.view.x = this.wid - this.view.w;
-
-      this.view.y = this.view.y/2 - (this.view.h/4);
-      if( this.view.y + this.view.h > this.hei ) this.view.y = this.hei - this.view.h;
-
-      var xoffset = (this.wid > this.view.w ) ? this.view.x : (this.wid-this.view.w)/2;
-      var yoffset = (this.hei > this.view.h ) ? this.view.y : (this.hei-this.view.h)/2;
-
-      if( this.view.x < 0 ) this.view.x = 0;
-      if( this.view.y < 0 ) this.view.y = 0;
-
-      // Make sure we don't have -ve offsets when zooming out
-      if( xoffset < 0 ) xoffset = 0;
-      if( yoffset < 0 ) yoffset = 0;
-
-      this.canvas.setStyles({
-	 left: -xoffset,
-	 top: -yoffset,
-	 width: this.wid,
-	 height: this.hei
-      });
-
-      if( this.wid < this.view.w || this.hei < this.view.h ) this.recenter();
-      else this.touch.options.limit = { x: Array(this.view.w-this.wid,0), y: Array(this.view.h-this.hei,0) };
-
-      // Delete our image tiles
-      this.canvas.getChildren('img').destroy();
-
-      this.tiles.empty();
-
-      this.requestImages();
-      this.positionZone();
-      if( this.scale ) this.updateScale();
+      this._zoom();
     }
   },
+
+
+
+  /* Generic zoom function
+   */
+  _zoom: function(){
+
+    // Get the image size for this resolution
+    this.wid = this.resolutions[this.view.res].w;
+    this.hei = this.resolutions[this.view.res].h;
+
+    if( this.view.x + this.view.w > this.wid ) this.view.x = this.wid - this.view.w;
+    if( this.view.x < 0 ) this.view.x = 0;
+
+    if( this.view.y + this.view.h > this.hei ) this.view.y = this.hei - this.view.h;
+    if( this.view.y < 0 ) this.view.y = 0;
+
+    this.canvas.setStyles({
+      left: (this.wid>this.view.w)? -this.view.x : Math.round((this.view.w-this.wid)/2),
+      top: (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2),
+      width: this.wid,
+      height: this.hei
+    });
+
+    // Contstrain our canvas to our containing div
+    this.constrain();
+
+    // Delete our image tiles
+    this.canvas.getChildren('img').destroy();
+
+    this.tiles.empty();
+
+    this.requestImages();
+    this.positionZone();
+    if( this.scale ) this.updateScale();
+
+  },
+
 
 
   /* Calculate some dimensions
@@ -1574,16 +1552,16 @@ var IIPMooViewer = new Class({
     });
 
     // For panoramic images, use a large navigation window
-    if( this.max_size.w > 2*this.max_size.h ) thumb_width = this.view.w / 2;
+    if( this.max_size.w > 2*this.max_size.h ) thumb_width = Math.round( this.view.w / 2 );
 
     // Make sure the height of our nav window also fits
-    if( thumb_width*this.max_size.w/this.max_size.h > this.view.h-50 ){
-      thumb_width = Math.round((this.view.h-50)*this.max_size.h/this.max_size.w);
+    if( thumb_width*this.max_size.h/this.max_size.w > this.view.h ){
+      thumb_width = Math.round((this.view.h/2)*this.max_size.h/this.max_size.w);
     }
 
 
     this.navWin.w = thumb_width;
-    this.navWin.h = Math.floor( (this.max_size.h/this.max_size.w)*thumb_width );
+    this.navWin.h = Math.round( (this.max_size.h/this.max_size.w)*thumb_width );
 
     // Resize our navigation window
     this.container.getElements('div.navcontainer, div.navcontainer div.loadBarContainer').setStyle('width', this.navWin.w);
