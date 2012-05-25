@@ -51,6 +51,7 @@
 	      enableFullscreen: allow full screen mode. Default true
 	      viewport: object containing x, y, resolution, rotation of initial view
 	      winResize: whether view is reflowed on window resize. Default true
+	      preload: load extra surrounding tiles
 
    Note: Requires mootools version 1.4 or later <http://www.mootools.net>
        : The page MUST have a standard-compliant HTML declaration at the beginning
@@ -156,7 +157,7 @@ var IIPMooViewer = new Class({
 
 
     // Preload tiles surrounding view window?
-    this.preload = false;
+    this.preload = (options.preload == true) ? true : false;
     this.effects = false;
 
     // Set up our annotations if they have been set and our annotation functions implemented
@@ -1062,8 +1063,6 @@ var IIPMooViewer = new Class({
     // Add touch and gesture support for mobile iOS and Android
     if( Browser.Platform.ios || Browser.Platform.android ){
 
-      // this.preload = true;
-
       // Prevent dragging on the container div
       this.container.addEvent('touchmove', function(e){ e.preventDefault(); } );
 
@@ -1077,7 +1076,7 @@ var IIPMooViewer = new Class({
 	     height: '100%'
 	    });
 	    // Need to set a timeout the div is not resized immediately on some versions of iOS
-	    this.reload.delay(500,this);
+	    this.reflow.delay(500,this);
 	  }.bind(this)
       });
 
