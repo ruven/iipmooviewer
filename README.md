@@ -104,11 +104,7 @@ option is the <b>image</b> variable)
 Public Functions
 ----------------
 
-<<<<<<< HEAD
 <b>getRegionURL()</b>: If using the default IIP protocol, this functions returns the IIPImage server URL needed to export the region of the image within the view port as a single image. Thus, to export the current view, call this function and use the result as the source of an image. This example exports, when the user presses the "p" key, the view into a new window which can then be saved as a whole image.
-=======
-<b>getRegionURL()</>: If using the default IIP protocol, this functions returns the IIPImage server URL needed to export the region of the image within the view port as a single image. Thus, to export the current view, call this function and use the result as the source of an image. This example exports, when the user presses the "p" key, the view into a new window which can then be saved as a whole image.
->>>>>>> 19afb62ffff41868bd2111d79789d15cbff1d0d1
 <pre>
     window.addEvent('keypress', function(e){
 	if( e.key == "p" ) window.open(iipmooviewer.getRegionURL());
