@@ -131,11 +131,7 @@ Public Functions
 
 <b>toggleFullScreen()</b>: toggle fullscreen mode
 
-<<<<<<< HEAD
 <b>toggleAnnotations()</b>: toggle display of annotations
-
-=======
->>>>>>> 19afb62ffff41868bd2111d79789d15cbff1d0d1
 
 Annotations
 -----------
