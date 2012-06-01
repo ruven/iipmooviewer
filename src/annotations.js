@@ -27,7 +27,7 @@ IIPMooViewer.implement({
 
   /* Initialize canvas events for our annotations
    */
-  initAnnotations: function() {
+  initAnnotationTips: function() {
 
     this.annotationTip = null;
     this.annotationsVisible = true;
@@ -72,8 +72,10 @@ IIPMooViewer.implement({
 	  //	   this.wid*(this.annotations[i].x+this.annotations[i].w) > this.view.x+this.view.w && 
       ){
 
+	var cl = 'annotation';
+	if( this.annotations[i].category ) cl += ' ' + this.annotations[i].category;
 	var annotation = new Element('div', {
-          'class': 'annotation',
+          'class': cl,
           'styles': {
             left: Math.round(this.wid * this.annotations[i].x),
             top: Math.round(this.hei * this.annotations[i].y ),

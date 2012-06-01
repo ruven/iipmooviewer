@@ -54,8 +54,10 @@ Distribution
 
 Minified files are created with the closer compiler (https://developers.google.com/closure/compiler/) with the following command:
 <pre>
-java -jar /path/to/compiler.jar --js src/protocols/iip.js src/protocols/zoomify.js src/protocols/deepzoom.js src/iipmooviewer-2.0.js src/lang/help.en.js --js_output_file javascript/iipmooviewer-2.0-compressed.js --compilation_level SIMPLE_OPTIMIZATIONS
+java -jar /path/to/compiler.jar --js src/protocols/iip.js src/protocols/zoomify.js src/protocols/deepzoom.js src/iipmooviewer-2.0.js src/annotations.js src/lang/help.en.js --js_output_file javascript/iipmooviewer-2.0-compressed.js --compilation_level SIMPLE_OPTIMIZATIONS
 </pre>
+
+You can thereby customize your build to include only those components you need. For example, if you do not require Zoomify or annotation support, simply remove these from the build.
 
 Options
 -------
@@ -80,7 +82,8 @@ option is the <b>image</b> variable)
 <b>showNavButtons</b> : whether to show the navigation buttons on start up: true 
         or false [default : true]
 
-<b>navWinSize</b> : ratio of navigation window size to the main window. [default: 0.2]
+<b>navWinSize</b> : ratio of navigation window size to the main window.
+	Wide panoramas are scaled to twice this size [default: 0.2]
 
 <b>scale</b> : adds a scale to the image. Specify the number of pixels per mm
 
@@ -94,7 +97,50 @@ option is the <b>image</b> variable)
 
 <b>protocol</b> : protocol to use with the server: iip, zoomify or deepzoom [default: "iip"]
 
-<b>annotations</b> : An array of annotations containing struct with parameters x, y, w, h, title, text where x, y, w and h are the position and size of the annotation in relative [0-1] values, title is an optional title for the annotation and text is the HTML body of the annotation.
+<b>preload</b> : preload an extra layer of tiles surrounding the viewport [default: false]
+
+<b>annotations</b> : An array of annotations containing struct with parameters "x", "y", "w", "h", "title", "text", "category" where x, y, w and h are the position and size of the annotation in relative [0-1] values, title is an optional title for the annotation, category is an optional category for the annotation and text is the HTML body of the annotation, which can contain any valid HTML.
+
+Public Functions
+----------------
+
+<b>getRegionURL()</b>: If using the default IIP protocol, this functions returns the IIPImage server URL needed to export the region of the image within the view port as a single image. Thus, to export the current view, call this function and use the result as the source of an image. This example exports, when the user presses the "p" key, the view into a new window which can then be saved as a whole image.
+<pre>
+    window.addEvent('keypress', function(e){
+	if( e.key == "p" ) window.open(iipmooviewer.getRegionURL());
+    });
+</pre>
+
+<b>rotate(x)</b>: Rotate the view by x degrees
+
+<b>moveTo(x,y)</b>: Move the view to position x,y at the current resolution, where x,y are the coordinates of the top left of the view port.
+
+<b>zoomIn()</b>: Zoom in to the next highest resolution
+
+<b>zoomOut()</b>: Zoom out to the next smallest resolution
+
+<b>setCredit(t)</b>: (Re)set the text in credits to the HTML given by t
+
+<b>recenter()</b>: Center our view
+
+<b>reload()</b>: Reinitialize our view
+
+<b>requestImages()</b>: Load a new set of image tiles
+
+<b>toggleNavigationWindow()</b>: show/hide the navigation window
+
+<b>toggleFullScreen()</b>: toggle fullscreen mode
+
+<b>toggleAnnotations()</b>: toggle display of annotations
+
+
+Annotations
+-----------
+x,y,w and h are obligatory parameters. The text parameter provides the content of the annotation and can contain any valid HTML, which can be styled normally via CSS. All annotations are created as divs of class "annotation".
+The title and category parameters are optional. Categories are ways of creating groups of annotations and the category will be added to the class. Thus for a category of, for example, 'retouches' the annotation divs will be of class 'annotation retouches', allowing you to access these via a class selector. So, for example, to set the colors of these differently to the others, simply use a selector:
+<pre>
+$$('.annotation.retouches').setStyle('borderColor', "blue")
+</pre>
 
 
 ------------------------------------------------------------------------------------

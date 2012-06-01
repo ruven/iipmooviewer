@@ -161,7 +161,7 @@ var IIPMooViewer = new Class({
     this.effects = false;
 
     // Set up our annotations if they have been set and our annotation functions implemented
-    this.annotations = ((typeof(this.initAnnotations)=="function")&&options.annotations)? options.annotations : null;
+    this.annotations = ((typeof(this.initAnnotationTips)=="function")&&options.annotations)? options.annotations : null;
 
 
 
@@ -1017,7 +1017,7 @@ var IIPMooViewer = new Class({
 
 
     // Initialize canvas events for our annotations
-    if( this.annotations ) this.initAnnotations();
+    if( this.annotations ) this.initAnnotationTips();
 
 
     // Disable the right click context menu if requested and show our info window instead
