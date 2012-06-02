@@ -803,17 +803,7 @@ var IIPMooViewer = new Class({
   /* Zoom in by a factor of 2
    */
   zoomIn: function(){
-
-    if( this.view.res < this.num_resolutions-1 ){
-
-      this.view.res++;
-
-      var xoffset = (this.resolutions[this.view.res-1].w > this.view.w) ? this.view.w : this.resolutions[this.view.res-1].w;
-      this.view.x = Math.round( 2*(this.view.x + xoffset/4) );
-      this.view.y = Math.round( 2*(this.view.y + this.view.h/4) );
-
-      this._zoom();
-    }
+    if( this.view.res < this.num_resolutions-1 ) this.zoomTo( this.view.res+1 );
   },
 
 
@@ -821,18 +811,42 @@ var IIPMooViewer = new Class({
   /* Zoom out by a factor of 2
    */
   zoomOut: function(){
+    if( this.view.res > 0 ) this.zoomTo( this.view.res-1 );
+  },
 
-    if( this.view.res > 0 ){
 
-      this.view.res--;
 
-      this.view.x = Math.round( this.view.x/2 - (this.view.w/4) );
-      this.view.y = Math.round( this.view.y/2 - (this.view.h/4) );
+  /* Zoom to a particular resolution
+   */
+  zoomTo: function(r){
+
+    if( r == this.view.res ) return;
+
+    if( (r <= this.num_resolutions-1) && (r >= 0) ){
+
+      var factor = Math.pow( 2, r-this.view.res );
+
+      // Calculate an offset to take into account the view port size
+      // Center if our image width at this resolution is smaller than the view width - only need to do this on zooming in as our
+      // constraining will automatically recenter when zooming out
+      var xoffset, yoffset;
+      if( r > this.view.res ){
+	xoffset = (this.resolutions[this.view.res].w > this.view.w) ? this.view.w*(factor-1)/2 : this.resolutions[r].w/2 - this.view.w/2;
+	yoffset = (this.resolutions[this.view.res].h > this.view.h) ? this.view.h*(factor-1)/2 : this.resolutions[r].h/2 - this.view.h/2;
+      }
+      else{
+	xoffset = -this.view.w*(1-factor)/2;
+	yoffset = -this.view.h*(1-factor)/2;;
+      }
+
+      this.view.x = Math.round( factor*this.view.x + xoffset );
+      this.view.y = Math.round( factor*this.view.y + yoffset );
+
+      this.view.res = r;
 
       this._zoom();
     }
   },
-
 
 
   /* Generic zoom function
@@ -1211,6 +1225,7 @@ var IIPMooViewer = new Class({
     if( this.annotations ) this.createAnnotations();
 
 
+    // Add tips if we are not on a mobile device
     if( !(Browser.Platform.ios||Browser.Platform.android) ){
       var tip_list = 'img.logo, div.toolbar, div.scale';
       if( Browser.ie8||Browser.ie7 ) tip_list = 'img.logo, div.toolbar'; // IE8 bug which triggers window resize
@@ -1318,8 +1333,7 @@ var IIPMooViewer = new Class({
       // Create our navigation image and inject inside the div we just created
       var navimage = new Element( 'img', {
 	'class': 'navimage',
-	'src': this.server + '?FIF=' + this.images[0].src + '&SDS=' + this.images[0].sds +
-               '&WID=' + this.navWin.w + '&QLT=98&CVT=jpeg',
+	'src': this.protocol.getThumbnailURL(this.server,this.images[0].src,this.navWin.w),
         'events': {
           'click': this.scrollNavigation.bind(this),
           'mousewheel:throttle(75)': this.zoom.bind(this),
@@ -1499,6 +1513,42 @@ var IIPMooViewer = new Class({
 
 
 
+  /* Change our image and reload our view
+   */
+  changeImage: function( image ){
+
+    // Replace our image array
+    this.images = [{ src:image, sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : 1.0 } ];
+
+    // Send a new AJAX request for the metadata
+    var metadata = new Request({
+      method: 'get',
+      url: this.server,
+      onComplete: function(transport){
+	var response = transport || alert( "Error: No response from server " + this.server );
+
+	// Parse the result
+	var result = this.protocol.parseMetaData( response );
+	this.max_size = result.max_size;
+	this.tileSize = result.tileSize;
+	this.num_resolutions = result.num_resolutions;
+
+	this.reload();
+
+	// Change our navigation image
+	this.container.getElement('div.navcontainer img.navimage').src =
+	  this.protocol.getThumbnailURL(this.server, image, this.navWin.w );
+
+      }.bind(this),
+	onFailure: function(){ alert('Error: Unable to get image metadata from server!'); }
+    } );
+
+    // Send the metadata request
+    metadata.send( this.protocol.getMetaDataURL(this.images[0].src) );
+  },
+  
+
+
   /* Use an AJAX request to get the image size, tile size and number of resolutions from the server
    */
   load: function(){
@@ -1511,23 +1561,22 @@ var IIPMooViewer = new Class({
       this.createWindows();
     }
     else{
-      var metadata = new Request(
-        {
-	  method: 'get',
-	  url: this.server,
-	  onComplete: function(transport){
-	    var response = transport || alert( "Error: No response from server " + this.server );
+      var metadata = new Request({
+	method: 'get',
+	url: this.server,
+	onComplete: function(transport){
+	  var response = transport || alert( "Error: No response from server " + this.server );
 
-	    // Parse the result
-            var result = this.protocol.parseMetaData( response );
-            this.max_size = result.max_size;
-            this.tileSize = result.tileSize;
-	    this.num_resolutions = result.num_resolutions;
+	  // Parse the result
+	  var result = this.protocol.parseMetaData( response );
+	  this.max_size = result.max_size;
+	  this.tileSize = result.tileSize;
+	  this.num_resolutions = result.num_resolutions;
 
-	    this.createWindows();
-          }.bind(this),
-	  onFailure: function(){ alert('Error: Unable to get image metadata from server!'); }
-	} );
+	  this.createWindows();
+        }.bind(this),
+	onFailure: function(){ alert('Error: Unable to get image metadata from server!'); }
+      });
 
       // Send the metadata request
       metadata.send( this.protocol.getMetaDataURL(this.images[0].src) );

@@ -1,35 +1,41 @@
 IIPMooViewer
 ============
 
+
 About
 -----
 IIPMooViewer is a high performance light-weight HTML5 Ajax-based javascript image streaming and zooming client designed for the IIPImage high resolution imaging system. It is compatible with Firefox, Chrome, Internet Explorer (Versions 6-10), Safari and Opera as well as mobile touch-based browsers for iOS and Android. Although designed for use with the IIP protocol and IIPImage, it has multi-protocol support and is additionally compatible with the Zoomify and Deepzoom protocols.
 
 Version 2.0 of IIPMooViewer is HTML5/CSS3 based and uses the Mootools javascript framework (version 1.4+). 
 
+
 Features
 --------
 * Fast and light-weight
 * Pan and zoom of ultra high resolution imaging
-* Multi-protocol support
+* Multi-protocol support: IIP, Zoomify and Deepzoom protocols
 * Image rotation
-* Mobile device support
+* Mobile device support: iOS and Android
 * HTML5 Fullscreen API support
 * Annotations of regions of images
 * Synchronized viewer capability
+
 
 Installation
 ------------
 The distribution contains all the necessary library files in both compressed and uncompressed formats. Modify the parameters in the index.html template example file provided.
 
+
 Server
 ------
 You first must have a working version of the IIPImage server running if you want to use the IIP protocol and features. See http://iipimage.sourceforge.net for details. IIPMooViewer, however, also supports the Zoomify and Deepzoom protocols if you are unable to install the server or are working in a legacy environment.
+
 
 Images
 ------
 Create a pyramidal tiled TIFF image using VIPS (http://vips.sf.net) or 
 imagemagick. Or JPEG2000 if you have a JPEG2000 enabled IIPImage server.
+
 
 Configuration
 -------------
@@ -58,6 +64,7 @@ java -jar /path/to/compiler.jar --js src/protocols/iip.js src/protocols/zoomify.
 </pre>
 
 You can thereby customize your build to include only those components you need. For example, if you do not require Zoomify or annotation support, simply remove these from the build.
+
 
 Options
 -------
@@ -93,13 +100,15 @@ option is the <b>image</b> variable)
 
 <b>winResize</b> : whether view is reflowed on window resize. [default: true]
 
-<b>viewport</b> : object containing x, y, resolution, rotation and contrast of initial view
+<b>viewport</b> : object containing x, y, resolution, rotation and contrast of initial view. For example, to start at resolution 4 with the top left of the view port at both 90% of the size of the image:
+<pre>{resolution:4, x:0.9, y:0.9, rotation:0}</pre>
 
 <b>protocol</b> : protocol to use with the server: iip, zoomify or deepzoom [default: "iip"]
 
 <b>preload</b> : preload an extra layer of tiles surrounding the viewport [default: false]
 
-<b>annotations</b> : An array of annotations containing struct with parameters "x", "y", "w", "h", "title", "text", "category" where x, y, w and h are the position and size of the annotation in relative [0-1] values, title is an optional title for the annotation, category is an optional category for the annotation and text is the HTML body of the annotation, which can contain any valid HTML.
+<b>annotations</b> : An array of annotations containing struct with parameters "x", "y", "w", "h", "title", "text", "category" where x, y, w and h are the position and size of the annotation in relative [0-1] values, title is an optional title for the annotation, category is an optional category for the annotation and text is the body of the annotation
+
 
 Public Functions
 ----------------
@@ -111,27 +120,30 @@ Public Functions
     });
 </pre>
 
-<b>rotate(x)</b>: Rotate the view by x degrees
+<b>rotate(x)</b>: Rotate the view by <i>x</i> degrees
 
-<b>moveTo(x,y)</b>: Move the view to position x,y at the current resolution, where x,y are the coordinates of the top left of the view port.
+<b>moveTo(x,y)</b>: Move the view to position <i>x</i>,<i>y</i> at the current resolution, where x,y are the coordinates of the top left of the view port.
 
-<b>zoomIn()</b>: Zoom in to the next highest resolution
+<b>zoomIn()</b>: Zoom in by a factor of 2
 
-<b>zoomOut()</b>: Zoom out to the next smallest resolution
+<b>zoomOut()</b>: Zoom out by a factor of 2
 
-<b>setCredit(t)</b>: (Re)set the text in credits to the HTML given by t
+<b>zoomTo(z)</b>: Zoom to a particular resolution, <i>r</i>
+
+<b>setCredit(t)</b>: (Re)set the text in credits to the HTML given by <i>t</i>
 
 <b>recenter()</b>: Center our view
 
-<b>reload()</b>: Reinitialize our view
+<b>reload()</b>: Reinitialize our view, using the initial viewport settings if given during class initialization
 
-<b>requestImages()</b>: Load a new set of image tiles
+<b>changeImage(i)</b>: Load a new image, <i>i</i>, and reinitialize the viewer
 
 <b>toggleNavigationWindow()</b>: show/hide the navigation window
 
 <b>toggleFullScreen()</b>: toggle fullscreen mode
 
 <b>toggleAnnotations()</b>: toggle display of annotations
+
 
 Annotations
 -----------
@@ -140,6 +152,21 @@ The title and category parameters are optional. Categories are ways of creating 
 <pre>
 $$('.annotation.retouches').setStyle('borderColor', "blue")
 </pre>
+
+
+Events
+------
+IIPMooViewer fires the 'load' event when it has fully finished loading. To attach to this event, use the addEvent function:
+<pre>
+	iipmooviewer.addEvent('load', function(){
+		// do something
+	});
+</pre>
+
+
+Localization
+------------
+To create a new localization, create a new or modify an existing localization file in /lang
 
 
 ------------------------------------------------------------------------------------
