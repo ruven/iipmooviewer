@@ -885,33 +885,41 @@ var IIPMooViewer = new Class({
   },
 
 
+  /* Calculate navigation view size
+   */
+  calculateNavSize: function(){
+
+    var thumb_width = this.view.w * this.navWinSize;;
+
+    // For panoramic images, use a large navigation window
+    if( this.max_size.w > 2*this.max_size.h ) thumb_width = this.view.w / 2;
+
+    // Make sure our height is not more than 50% of view height
+    if( (this.max_size.h/this.max_size.w)*thumb_width > this.view.h*0.5 ){
+      thumb_width = Math.round( this.view.h * 0.5 * this.max_size.w/this.max_size.h );
+    }
+
+    this.navWin.w = thumb_width;
+    this.navWin.h = Math.round( (this.max_size.h/this.max_size.w)*thumb_width );
+  },
+
 
   /* Calculate some dimensions
    */
   calculateSizes: function(){
 
-    var tx = this.max_size.w;
-    var ty = this.max_size.h;
-    var thumb_width;
-
     // Set up our default sizes 
     var target_size = this.container.getSize();
     this.view.w = target_size.x;
     this.view.h = target_size.y;
-    thumb_width = this.view.w * this.navWinSize;
 
-    // For panoramic images, use a large navigation window
-    if( tx > 2*ty ) thumb_width = this.view.w / 2;
-
-    //if( (ty/tx)*thumb_width > this.view.h*0.5 ) thumb_width = Math.round( this.view.h * 0.5 * tx/ty );
-
-    this.navWin.w = thumb_width;
-    this.navWin.h = Math.round( (ty/tx)*thumb_width );
+    // Calculate our navigation window size
+    this.calculateNavSize();
 
     // Determine the image size for this image view
     this.view.res = this.num_resolutions;
-    tx = this.max_size.w;
-    ty = this.max_size.h;
+    var tx = this.max_size.w;
+    var ty = this.max_size.h;
 
     // Calculate our list of resolution sizes and the best resolution
     // for our window size
@@ -1591,7 +1599,6 @@ var IIPMooViewer = new Class({
     var target_size = this.container.getSize();
     this.view.w = target_size.x;
     this.view.h = target_size.y;
-    thumb_width = this.view.w * this.navWinSize;
 
     // Constrain our canvas if it is smaller than the view window
     this.canvas.setStyles({
@@ -1599,17 +1606,9 @@ var IIPMooViewer = new Class({
       top: (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2)
     });
 
-    // For panoramic images, use a large navigation window
-    if( this.max_size.w > 2*this.max_size.h ) thumb_width = Math.round( this.view.w / 2 );
-
-    // Make sure the height of our nav window also fits
-    if( thumb_width*this.max_size.h/this.max_size.w > this.view.h ){
-      thumb_width = Math.round((this.view.h/2)*this.max_size.h/this.max_size.w);
-    }
-
-
-    this.navWin.w = thumb_width;
-    this.navWin.h = Math.round( (this.max_size.h/this.max_size.w)*thumb_width );
+ 
+    // Calculate our new navigation window size
+    this.calculateNavSize();
 
     // Resize our navigation window
     this.container.getElements('div.navcontainer, div.navcontainer div.loadBarContainer').setStyle('width', this.navWin.w);

@@ -128,7 +128,7 @@ Public Functions
 
 <b>zoomOut()</b>: Zoom out by a factor of 2
 
-<b>zoomTo(z)</b>: Zoom to a particular resolution, <i>r</i>
+<b>zoomTo(z)</b>: Zoom to a particular resolution, <i>z</i>
 
 <b>setCredit(t)</b>: (Re)set the text in credits to the HTML given by <i>t</i>
 
