@@ -35,6 +35,12 @@ Protocols.DeepZoom = new Class({
    */
   getRegionURL: function(image,x,y,w,h){
     return null;
+  },
+
+  /* Return thumbnail URL
+   */
+  getThumbnailURL: function(server,image,width){
+    return server+'?DeepZoom='+image+'_files/0/0_0.jpg';
   }
 
 });
