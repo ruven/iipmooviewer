@@ -8,8 +8,8 @@ Protocols.Djatoka = new Class({
 
   /* Return metadata URL
    */
-  getMetaDataURL: function(image){
-    return "url_ver=Z39.88-2004&rft_id=" + image + "&svc_id=info:lanl-repo/svc/getMetadata";
+  getMetaDataURL: function(server,image){
+    return server+"url_ver=Z39.88-2004&rft_id=" + image + "&svc_id=info:lanl-repo/svc/getMetadata";
   },
 
   /* Return an individual tile request URL

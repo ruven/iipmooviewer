@@ -5,8 +5,8 @@ Protocols.DeepZoom = new Class({
 
   /* Return metadata URL
    */
-  getMetaDataURL: function(image){
-    return image + ".dzi";
+  getMetaDataURL: function(server,image){
+    return server + image + ".dzi";
   },
 
   /* Return an individual tile request URL

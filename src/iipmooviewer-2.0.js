@@ -1536,7 +1536,7 @@ var IIPMooViewer = new Class({
     // Send a new AJAX request for the metadata
     var metadata = new Request({
       method: 'get',
-      url: this.server,
+      url: this.protocol.getMetaDataURL( this.server, this.images[0].src ),
       onComplete: function(transport){
 	var response = transport || alert( "Error: No response from server " + this.server );
 
@@ -1557,7 +1557,7 @@ var IIPMooViewer = new Class({
     } );
 
     // Send the metadata request
-    metadata.send( this.protocol.getMetaDataURL(this.images[0].src) );
+    metadata.send();
   },
   
 
@@ -1576,7 +1576,7 @@ var IIPMooViewer = new Class({
     else{
       var metadata = new Request({
 	method: 'get',
-	url: this.server,
+	url: this.protocol.getMetaDataURL( this.server, this.images[0].src ),
 	onComplete: function(transport){
 	  var response = transport || alert( "Error: No response from server " + this.server );
 
@@ -1592,7 +1592,7 @@ var IIPMooViewer = new Class({
       });
 
       // Send the metadata request
-      metadata.send( this.protocol.getMetaDataURL(this.images[0].src) );
+      metadata.send();
     }
   },
 

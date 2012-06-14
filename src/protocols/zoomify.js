@@ -5,8 +5,8 @@ Protocols.Zoomify = new Class({
 
   /* Return metadata URL
    */
-  getMetaDataURL: function(image){
-    return image + "/ImageProperties.xml";
+  getMetaDataURL: function(server,image){
+    return server + image + "/ImageProperties.xml";
   },
 
   /* Return an individual tile request URL
