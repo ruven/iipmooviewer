@@ -6,13 +6,13 @@ Protocols.Zoomify = new Class({
   /* Return metadata URL
    */
   getMetaDataURL: function(image){
-    return "Zoomify=" + image + "/ImageProperties.xml";
+    return image + "/ImageProperties.xml";
   },
 
   /* Return an individual tile request URL
    */
   getTileURL: function(server,image,resolution,sds,contrast,k,x,y){
-    return server+"?Zoomify="+image+"/TileGroup0/"+resolution+"-"+x+"-"+y+".jpg";
+    return server+image+"/TileGroup0/"+resolution+"-"+x+"-"+y+".jpg";
   },
 
   /* Parse a Zoomify protocol metadata request
@@ -47,7 +47,7 @@ Protocols.Zoomify = new Class({
   /* Return thumbnail URL
    */
   getThumbnailURL: function(server,image,width){
-    return server+'?Zoomify='+image+'/TileGroup0/0-0-0.jpg';
+    return server+image+'/TileGroup0/0-0-0.jpg';
   }
 
 });

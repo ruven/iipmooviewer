@@ -597,6 +597,10 @@ var IIPMooViewer = new Class({
    */
   scrollNavigation: function( e ) {
 
+    // Cancel any running morphs on the canvas or zone
+    this.zone.get('morph').cancel();
+    this.canvas.get('morph').cancel();
+
     var xmove = 0;
     var ymove = 0;
 
@@ -1445,6 +1449,7 @@ var IIPMooViewer = new Class({
           onStart: function() {
 	    var pos = this.zone.getPosition();
 	    this.navpos = {x: pos.x, y: pos.y-10};
+	    this.zone.get('morph').cancel();
 	  }.bind(this),
 	onComplete: this.scrollNavigation.bind(this)
         });
