@@ -85,7 +85,7 @@ var IIPMooViewer = new Class({
       this.viewport = {
 	resolution: (typeof(options.viewport.resolution)=='undefined') ? null : parseInt(options.viewport.resolution),
 	rotation: (typeof(options.viewport.rotation)=='undefined') ? null : parseInt(options.viewport.rotation),
-	contrast: (typeof(options.viewport.contrast)=='undefined') ? null : parseInt(options.viewport.contrast),
+	contrast: (typeof(options.viewport.contrast)=='undefined') ? null : parseFloat(options.viewport.contrast),
 	x: (typeof(options.viewport.x)=='undefined') ? null : parseFloat(options.viewport.x),
 	y: (typeof(options.viewport.y)=='undefined') ? null : parseFloat(options.viewport.y)
       }
