@@ -102,7 +102,12 @@ IIPMooViewer.implement({
 	hideDelay: 300,
 	link: 'chain',
         onShow: function(tip,el){
-	  tip.setStyles({opacity:0,display:'block'}).fade(0.9);
+
+	  // Fade from our current opacity to 0.9
+	  tip.setStyles({
+	    opacity: tip.getStyle('opacity'),
+	    display: 'block'
+	  }).fade(0.9);
 
 	  // Prevent the tip from fading when we are hovering on the tip itself and not
 	  // just when we leave the annotated zone

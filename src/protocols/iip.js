@@ -5,8 +5,8 @@ Protocols.IIP = new Class({
 
   /* Return metadata URL
    */
-  getMetaDataURL: function(image){
-    return "FIF=" + image + "&obj=IIP,1.0&obj=Max-size&obj=Tile-size&obj=Resolution-number";
+  getMetaDataURL: function(server,image){
+    return server+"?FIF=" + image + "&obj=IIP,1.0&obj=Max-size&obj=Tile-size&obj=Resolution-number";
   },
 
   /* Return an individual tile request URL
