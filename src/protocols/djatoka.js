@@ -3,19 +3,20 @@
 
 Protocols.Djatoka = new Class({
 
-  'svc_val_fmt': "info:ofi/fmt:kev:mtx:jpeg2000",
-  'svc_id': "info:lanl-repo/svc/getRegion",
+  svc_val_fmt: "info:ofi/fmt:kev:mtx:jpeg2000",
+  svc_id:      "info:lanl-repo/svc/getRegion",
+  url_ver:     "?url_ver=Z39.88-2004&rft_id=",
 
   /* Return metadata URL
    */
   getMetaDataURL: function(server,image){
-    return server+"url_ver=Z39.88-2004&rft_id=" + image + "&svc_id=info:lanl-repo/svc/getMetadata";
+    return server + this.url_ver + image + "&svc_id=info:lanl-repo/svc/getMetadata";
   },
 
   /* Return an individual tile request URL
    */
   getTileURL: function(server,image,resolution,sds,contrast,k,x,y){
-    var src = server + "?url_ver=Z39.88-2004&rft_id="
+    var src = server + this.url_ver
       + image + "&svc_id=" + this.svc_id
       + "&svc_val_fmt=" + this.svc_val_fmt
       + "&svc.format=image/jpeg&svc.level="
