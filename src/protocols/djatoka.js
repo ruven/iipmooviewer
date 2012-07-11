@@ -16,8 +16,7 @@ Protocols.Djatoka = new Class({
   /* Return an individual tile request URL
    */
   getTileURL: function(server,image,resolution,sds,contrast,k,x,y){
-    var r = this.num_resolutions - resolution;
-    var f = this.getMultiplier(r, this.tileSize.w);
+    var f = this.getMultiplier(resolution);
     var djatoka_x = x*f; var djatoka_y = y*f;
     var src = server + this.url_ver
       + image + "&svc_id=" + this.svc_id
@@ -34,11 +33,12 @@ Protocols.Djatoka = new Class({
     var p = eval("(" + response + ")");
     var w = parseInt(p.width);
     var h = parseInt(p.height);
-    var num_resolutions = parseInt(p.levels) + 1;
+    this.num_resolutions = parseInt(p.levels) + 1;
+    this.tileSize = { w: 256, h: 256 };
     var result = {
       'max_size': { w: w, h: h },
-      'tileSize': { w: 256, h: 256 },
-      'num_resolutions': num_resolutions
+      'tileSize': this.tileSize,
+      'num_resolutions': this.num_resolutions
     };
     return result;
     },
@@ -62,11 +62,7 @@ Protocols.Djatoka = new Class({
   /* Djatoka wants the region offests in terms of the highest resoltion it has.
    * Here, we multiply up the offsets to that resolution.
    */
-  getMultiplier: function(r, f) {
-    var m = f;
-    for (i = 1; i < r; i++) {
-      m = m*2;
-    }
-    return m;
+  getMultiplier: function(resolution) {
+    return this.tileSize.w * Math.pow(2, this.num_resolutions - resolution - 1);
   }
 });
