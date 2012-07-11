@@ -56,7 +56,7 @@ Protocols.Djatoka = new Class({
       + image + "&svc_id=" + this.svc_id
       + "&svc_val_fmt=" + this.svc_val_fmt
       + "&svc.format=image/jpeg"
-      + "&svc.scale=" + width;
+      + "&svc.scale=" + Math.floor(width);
   },
 
   /* Djatoka wants the region offests in terms of the highest resoltion it has.
