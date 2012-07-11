@@ -52,7 +52,11 @@ Protocols.Djatoka = new Class({
   /* Return thumbnail URL
    */
   getThumbnailURL: function(server,image,width){
-    return null;
+    return server + this.url_ver
+      + image + "&svc_id=" + this.svc_id
+      + "&svc_val_fmt=" + this.svc_val_fmt
+      + "&svc.format=image/jpeg"
+      + "&svc.scale=" + width;
   },
 
   /* Djatoka wants the region offests in terms of the highest resoltion it has.
