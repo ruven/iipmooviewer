@@ -265,6 +265,56 @@
   transition: visibility 0s linear 0.2s, opacity 0.2s linear;
 }
 
+.iipmooviewer .canvas .annotation.edit {
+  border-color: yellow;
+}
+
+.iipmooviewer .canvas .annotation.handle {
+  cursor: se-resize;
+  background: none repeat scroll 0 0 white;
+  border: 1px solid black;
+  bottom: 0;
+  height: 5px;
+  margin: -2px;
+  position: absolute;
+  right: 0;
+  width: 5px;
+}
+
+.iipmooviewer .canvas .annotation.form {
+  background: white;
+  padding: 3px;
+  width: auto;
+  height: auto;
+  margin-top: 2px;
+  border: 1px solid #aaa;
+  line-height: 100%;
+  display: inline-block;
+  background-color: #ccc;
+  font-size: 70%;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  -moz-box-shadow: 5px 5px 8px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+  -o-box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+  box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+}
+
+.iipmooviewer .canvas .annotation.form input {
+  width: auto;
+  border: 1px solid #888;
+  margin: 0 0 0 auto;
+}
+.iipmooviewer .canvas .annotation.form input:focus, .iipmooviewer .canvas .annotation.form textarea:focus {
+  border: 1px solid red;
+}
+.iipmooviewer .canvas .annotation.form textarea {
+  width: 90%;
+  border: 1px solid #888;
+}
+
+
 /* Info Window
  */
 .iipmooviewer img.logo {

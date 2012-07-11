@@ -342,7 +342,7 @@ var IIPMooViewer = new Class({
 
       if( this.tiles.contains(k) ){
 	this.nTilesLoaded += this.images.length;
-        if( this.showNavWindow ) this.refreshLoadBar(); 
+        if( this.showNavWindow ) this.refreshLoadBar();
 	if( this.nTilesLoaded >= this.nTilesToLoad ) this.canvas.setStyle( 'cursor', 'move' );
 	continue;
       }
@@ -683,7 +683,7 @@ var IIPMooViewer = new Class({
 
 
 
-  /* Check our scroll bounds. 
+  /* Check our scroll bounds.
    */
   checkBounds: function( x, y ) {
 
@@ -910,8 +910,10 @@ var IIPMooViewer = new Class({
    */
   calculateSizes: function(){
 
-    // Set up our default sizes 
+    // Set up our default sizes
     var target_size = this.container.getSize();
+    this.view.x = -1; // Intitalize x,y with dummy values
+    this.view.y = -1;
     this.view.w = target_size.x;
     this.view.h = target_size.y;
 
@@ -988,7 +990,7 @@ var IIPMooViewer = new Class({
 
       if( this.fullscreen.enter ){
 	// Monitor Fullscreen change events
-	document.addEvent( this.fullscreen.eventChangeName, function(){ 
+	document.addEvent( this.fullscreen.eventChangeName, function(){
 			     _this.fullscreen.isFullscreen = !_this.fullscreen.isFullscreen;
 			     _this.reload();
 			   });
@@ -1078,7 +1080,7 @@ var IIPMooViewer = new Class({
     // get key presses and prevent default scrolling via mousewheel
     this.container.addEvents({
       'keydown': this.key.bind(this),
-      'mouseover': function(){ _this.container.focus(); },
+      'mouseenter': function(){ _this.container.focus(); },
       'mouseout': function(){ _this.container.blur(); },
       'mousewheel': function(e){ e.preventDefault(); }
     });
@@ -1269,7 +1271,7 @@ var IIPMooViewer = new Class({
       this.moveTo( this.viewport.x*this.wid, this.viewport.y*this.hei );
     }
     else this.recenter();
- 
+
 
     // Set the size of the canvas to that of the full image at the current resolution
     this.canvas.setStyles({
@@ -1313,7 +1315,7 @@ var IIPMooViewer = new Class({
       }
     });
 
-    // For standalone iphone/ipad the logo gets covered by the status bar 
+    // For standalone iphone/ipad the logo gets covered by the status bar
     if( Browser.Platform.ios && window.navigator.standalone ) navcontainer.setStyle( 'top', 20 );
 
     var toolbar = new Element( 'div', {
@@ -1557,7 +1559,7 @@ var IIPMooViewer = new Class({
     // Send the metadata request
     metadata.send();
   },
-  
+
 
 
   /* Use an AJAX request to get the image size, tile size and number of resolutions from the server
@@ -1609,7 +1611,7 @@ var IIPMooViewer = new Class({
       top: (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2)
     });
 
- 
+
     // Calculate our new navigation window size
     this.calculateNavSize();
 

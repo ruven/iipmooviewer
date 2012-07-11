@@ -72,9 +72,12 @@ IIPMooViewer.implement({
 	  //	   this.wid*(this.annotations[i].x+this.annotations[i].w) > this.view.x+this.view.w && 
       ){
 
+	var _this = this;
+	if( !this.annotations[i].id ) this.annotations[i].id = String.uniqueID();
 	var cl = 'annotation';
 	if( this.annotations[i].category ) cl += ' ' + this.annotations[i].category;
 	var annotation = new Element('div', {
+	  'id': this.annotations[i].id,
           'class': cl,
           'styles': {
             left: Math.round(this.wid * this.annotations[i].x),
@@ -86,10 +89,22 @@ IIPMooViewer.implement({
 
 	if( this.annotationsVisible==false ) annotation.addClass('hidden');
 
+	// Add edit events to annotations if we have included the functions
+	if( typeof(this.editAnnotation)=="function" ){
+	  var _this = this;
+	  annotation.addEvent( 'dblclick', function(e){
+				 var event = new DOMEvent(e); 
+				 event.stop();
+				 _this.editAnnotation(this);
+			       });
+	}
+
+
 	var text = this.annotations[i].text;
 	if( this.annotations[i].title ) text = '<h1>'+this.annotations[i].title+'</h1>' + text;
         annotation.store( 'tip:text', text );
       }
+
     }
 
 
