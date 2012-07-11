@@ -369,9 +369,7 @@ var IIPMooViewer = new Class({
 
 	// Add our tile event functions after injection otherwise we get no event
 	tile.addEvents({
-	  'load': function(tiles){
-	     var tile = tiles[0];
-	     var id = tiles[1];
+	  'load': function(tile,id){
 	     if( this.effects ) tile.setStyle('opacity',1);
 	     if(!(tile.width&&tile.height)){
 	       tile.fireEvent('error');
@@ -381,7 +379,7 @@ var IIPMooViewer = new Class({
 	     if( this.showNavWindow ) this.refreshLoadBar();
 	     if( this.nTilesLoaded >= this.nTilesToLoad ) this.canvas.setStyle( 'cursor', 'move' );
 	     this.tiles.push(id); // Add to our list of loaded tiles
-	  }.bind(this,[tile,k]),
+	  }.bind(this,tile,k),
 	  'error': function(){
 	     // Try to reload if we have an error.
 	     // Add a suffix to prevent caching, but remove error event to avoid endless loops
