@@ -1,3 +1,25 @@
+/*
+   IIPMooViewer 2.0 - Annotation Editing Extensions
+   IIPImage Javascript Viewer <http://iipimage.sourceforge.net>
+
+   Copyright (c) 2007-2012 Ruven Pillay <ruven@users.sourceforge.net>
+
+   ---------------------------------------------------------------------------
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   ---------------------------------------------------------------------------
+
+*/
+
 
 /* Extend IIPMooViewer to handle annotations
  */
@@ -89,30 +111,33 @@ IIPMooViewer.implement({
     }).inject( annotation );
 
     // Create our input fields
-    var html = '<p>title<input type="text" name="title" tabindex="1" autofocus';
+    var html = '<table><tr><td>title</td><td><input type="text" name="title" tabindex="1" autofocus';
     if( this.annotations[index].title ) html += ' value="' + this.annotations[index].title + '"';
-    html += '/></p>';
+    html += '/></td></tr>';
 
-    html += '<p>category<input type="text" name="category" tabindex="2"';
+    html += '<tr><td>category</td><td><input type="text" name="category" tabindex="2"';
     if( this.annotations[index].category ) html += this.annotations[index].category + '"';
-    html += '/></p>';
+    html += '/></td></tr>';
 
-    html += '<p><textarea name="text" rows="5" tabindex="3">' + (this.annotations[index].text||'') + '</textarea></p>';
+    html += '<tr><td colspan="2"><textarea name="text" rows="5" tabindex="3">' + (this.annotations[index].text||'') + '</textarea></td></tr></table>';
 
     form.set( 'html', html );
 
     new Element('input', {
       'type': 'submit',
+      'class': 'button',
       'value': 'ok'
     }).inject( form );
 
     new Element('input', {
       'type': 'reset',
+      'class': 'button',
       'value': 'cancel'
     }).inject( form );
 
     var del = new Element( 'input', {
       'type': 'button',
+      'class': 'button',
       'value': 'delete'
     }).inject( form );
 
@@ -126,7 +151,7 @@ IIPMooViewer.implement({
 	_this.annotations[index].title = e.target['title'].value;
 	_this.annotations[index].text = e.target['text'].value;
 	_this.updateAnnotations();
-	_this.fireEvent('annotation', _this.annotations);
+	_this.fireEvent('annotationChange', _this.annotations);
       },
       'reset': function(){ _this.updateAnnotations(); }
     });
@@ -135,7 +160,7 @@ IIPMooViewer.implement({
     del.addEvent('click', function(){
 		   _this.annotations.splice( index, 1 );
 		   _this.updateAnnotations();
-		   _this.fireEvent('annotation', _this.annotations);
+		   _this.fireEvent('annotationChange', _this.annotations);
 		 });
 
 
@@ -168,8 +193,10 @@ IIPMooViewer.implement({
         this.focus();
         this.value = this.value;
        },
-       'mousedown': function(e){ e.stop(); },
-       'mousemove': function(e){ e.stop(); }
+      'dblclick': function(e){ e.stop; },
+      'mousedown': function(e){ e.stop(); },
+      'mousemove': function(e){ e.stop(); },
+      'mouseup': function(e){ e.stop(); }
     });
 
   },
