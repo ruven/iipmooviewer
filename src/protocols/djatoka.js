@@ -45,8 +45,14 @@ Protocols.Djatoka = new Class({
 
   /* Return URL for a full view
    */
-  getRegionURL: function(image,x,y,w,h){
-    return null;
+  getRegionURL: function(server,image,region,width){
+    return server + this.url_ver
+      + image + "&svc_id=" + this.svc_id
+      + "&svc_val_fmt=" + this.svc_val_fmt
+      + "&svc.format=image/jpeg"
+      + "&svc.region=" + region.y + "," + region.x
+      + "," + region.h + "," + region.w
+      + "&svc.scale=" + Math.floor(width);
   },
 
   /* Return thumbnail URL
