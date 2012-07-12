@@ -39,9 +39,9 @@ Protocols.IIP = new Class({
 
   /* Return URL for a full view
    */
-  getRegionURL: function(image,x,y,w,h){
-    var rgn = x + ',' + y + ',' + w + ',' + h;
-    return '?FIF='+image+'&WID='+w+'&RGN='+rgn+'&CVT=jpeg';
+  getRegionURL: function(server,image,region,width){
+    var rgn = region.x + ',' + region.y + ',' + region.w + ',' + region.h;
+    return server+'?FIF='+image+'&WID='+width+'&RGN='+rgn+'&CVT=jpeg';
   },
 
   /* Return thumbnail URL
