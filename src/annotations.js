@@ -55,35 +55,47 @@ IIPMooViewer.implement({
    */
   createAnnotations: function() {
 
-    // Sort our annotations by size to make sure it's always possible to interact
-    // with annotations within annotations
+    // If there are no annotations, simply return
     if( !this.annotations ) return;
-    this.annotations.sort( function(a,b){ return (b.w*b.h)-(a.w*a.h); } );
 
-    for( var i=0; i<this.annotations.length; i++ ){
+    // Convert our annotation object into an array - we'll need this for sorting later
+    var annotation_array = new Array();
+    for( var a in this.annotations ){
+      this.annotations[a].id = a;
+      annotation_array.push( this.annotations[a] );
+    }
+
+    // Make sure we really have some content
+    if( annotation_array.length == 0 ) return;
+
+    // Sort our annotations by size to make sure it's always possible to interact
+    // with annotations within annotations.
+    annotation_array.sort( function(a,b){ return (b.w*b.h)-(a.w*a.h); } );
+
+    // Now go through our sorted list and display those within the view
+    for( var i=0; i<annotation_array.length; i++ ){
 
       // Check whether this annotation is within our view
-      if( this.wid*(this.annotations[i].x+this.annotations[i].w) > this.view.x &&
-	  this.wid*this.annotations[i].x < this.view.x+this.view.w &&
-	  this.hei*(this.annotations[i].y+this.annotations[i].h) > this.view.y &&
-	  this.hei*this.annotations[i].y < this.view.y+this.view.h
+      if( this.wid*(annotation_array[i].x+annotation_array[i].w) > this.view.x &&
+	  this.wid*annotation_array[i].x < this.view.x+this.view.w &&
+	  this.hei*(annotation_array[i].y+annotation_array[i].h) > this.view.y &&
+	  this.hei*annotation_array[i].y < this.view.y+this.view.h
 	  // Also don't show annotations that entirely fill the screen
-	  //	  (this.hei*this.annotations[i].x < this.view.x && this.hei*this.annotations[i].y < this.view.y &&
-	  //	   this.wid*(this.annotations[i].x+this.annotations[i].w) > this.view.x+this.view.w && 
+	  //	  (this.hei*annotation_array[i].x < this.view.x && this.hei*annotation_array[i].y < this.view.y &&
+	  //	   this.wid*(annotation_array[i].x+annotation_array[i].w) > this.view.x+this.view.w && 
       ){
 
 	var _this = this;
-	if( !this.annotations[i].id ) this.annotations[i].id = String.uniqueID();
 	var cl = 'annotation';
-	if( this.annotations[i].category ) cl += ' ' + this.annotations[i].category;
+	if( annotation_array[i].category ) cl += ' ' + annotation_array[i].category;
 	var annotation = new Element('div', {
-	  'id': this.annotations[i].id,
+	  'id': annotation_array[i].id,
           'class': cl,
           'styles': {
-            left: Math.round(this.wid * this.annotations[i].x),
-            top: Math.round(this.hei * this.annotations[i].y ),
-	    width: Math.round( this.wid * this.annotations[i].w ),
-	    height: Math.round( this.hei * this.annotations[i].h )
+            left: Math.round(this.wid * annotation_array[i].x),
+            top: Math.round(this.hei * annotation_array[i].y ),
+	    width: Math.round( this.wid * annotation_array[i].w ),
+	    height: Math.round( this.hei * annotation_array[i].h )
 	  }
         }).inject( this.canvas );
 
@@ -91,17 +103,20 @@ IIPMooViewer.implement({
 
 	// Add edit events to annotations if we have included the functions
 	if( typeof(this.editAnnotation)=="function" ){
-	  var _this = this;
-	  annotation.addEvent( 'dblclick', function(e){
-				 var event = new DOMEvent(e); 
-				 event.stop();
-				 _this.editAnnotation(this);
-			       });
+	  if( annotation_array[i].edit == true ) this.editAnnotation( annotation );
+	  else{
+	    var _this = this;
+	    annotation.addEvent( 'dblclick', function(e){
+				   var event = new DOMEvent(e); 
+				   event.stop();
+				   _this.editAnnotation(this);
+				 });
+	  }
 	}
 
-
-	var text = this.annotations[i].text;
-	if( this.annotations[i].title ) text = '<h1>'+this.annotations[i].title+'</h1>' + text;
+	// Add our annotation text
+	var text = annotation_array[i].text;
+	if( annotation_array[i].title ) text = '<h1>'+annotation_array[i].title+'</h1>' + text;
         annotation.store( 'tip:text', text );
       }
 

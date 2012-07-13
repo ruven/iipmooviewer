@@ -45,8 +45,8 @@ IIPMooViewer.implement({
     };
 
     // Create an array if we don't have one and push a new annotation to it
-    if( !this.annotations ) this.annotations = new Array();
-    this.annotations.push(a);
+    if( !this.annotations ) this.annotations = {};
+    this.annotations[id] = a;
 
     var _this = this;
 
@@ -79,17 +79,21 @@ IIPMooViewer.implement({
       this.annotationTip.detach('div.annotation');
     }
 
+    // Get our annotation ID
     var id = annotation.get('id');
-
-    // Find the reference to this annotation within our array
-    var index = 0;
-    for( var i=0; i<this.annotations.length; i++ ){
-      if( this.annotations[i].id == id ) index = i;
-    }
 
     // Remove the edit class from other annotations divs and assign to this one
     this.canvas.getChildren('div.annotation.edit').removeClass('edit');
+
+    this.canvas.getChildren('div.annotation form').destroy();
+    this.canvas.getChildren('div.annotation div.handle').destroy();
+
     annotation.addClass('edit');
+    for( var a in this.annotations ){
+      if( a == id ) this.annotations[a].edit = true;
+      else delete this.annotations[a].edit;
+    }
+
 
     var _this = this;
 
@@ -112,14 +116,14 @@ IIPMooViewer.implement({
 
     // Create our input fields
     var html = '<table><tr><td>title</td><td><input type="text" name="title" tabindex="1" autofocus';
-    if( this.annotations[index].title ) html += ' value="' + this.annotations[index].title + '"';
+    if( this.annotations[id].title ) html += ' value="' + this.annotations[id].title + '"';
     html += '/></td></tr>';
 
     html += '<tr><td>category</td><td><input type="text" name="category" tabindex="2"';
-    if( this.annotations[index].category ) html += this.annotations[index].category + '"';
+    if( this.annotations[id].category ) html += this.annotations[id].category + '"';
     html += '/></td></tr>';
 
-    html += '<tr><td colspan="2"><textarea name="text" rows="5" tabindex="3">' + (this.annotations[index].text||'') + '</textarea></td></tr></table>';
+    html += '<tr><td colspan="2"><textarea name="text" rows="5" tabindex="3">' + (this.annotations[id].text||'') + '</textarea></td></tr></table>';
 
     form.set( 'html', html );
 
@@ -147,18 +151,22 @@ IIPMooViewer.implement({
       'submit': function(e){
         e.stop();
 	_this.updateShape(this.getParent());
-	_this.annotations[index].category = e.target['category'].value;
-	_this.annotations[index].title = e.target['title'].value;
-	_this.annotations[index].text = e.target['text'].value;
+	_this.annotations[id].category = e.target['category'].value;
+	_this.annotations[id].title = e.target['title'].value;
+	_this.annotations[id].text = e.target['text'].value;
+	delete _this.annotations[id].edit;
 	_this.updateAnnotations();
 	_this.fireEvent('annotationChange', _this.annotations);
       },
-      'reset': function(){ _this.updateAnnotations(); }
+      'reset': function(){
+	delete _this.annotations[id].edit;
+	_this.updateAnnotations();
+      }
     });
 
     // Add a delete event to our annotation
     del.addEvent('click', function(){
-		   _this.annotations.splice( index, 1 );
+		   delete _this.annotations[id];
 		   _this.updateAnnotations();
 		   _this.fireEvent('annotationChange', _this.annotations);
 		 });
@@ -207,17 +215,14 @@ IIPMooViewer.implement({
    */
   updateShape: function(el){
 
-    // Loop through our list of annotations to find the right ID
-    for( var i=0; i<this.annotations.length; i++ ){
-      if( this.annotations[i].id == el.get('id') ) break;
-    }
+    var id = el.get('id');
 
     // Update our list entry
     var parent = el.getParent();
-    this.annotations[i].x = el.getPosition(parent).x / this.wid;
-    this.annotations[i].y = el.getPosition(parent).y / this.hei;
-    this.annotations[i].w = (el.getSize(parent).x-2) / this.wid;
-    this.annotations[i].h = (el.getSize(parent).y-2) / this.hei;
+    this.annotations[id].x = el.getPosition(parent).x / this.wid;
+    this.annotations[id].y = el.getPosition(parent).y / this.hei;
+    this.annotations[id].w = (el.getSize(parent).x-2) / this.wid;
+    this.annotations[id].h = (el.getSize(parent).y-2) / this.hei;
   },
 
 
@@ -226,6 +231,11 @@ IIPMooViewer.implement({
     this.createAnnotations();
     this.container.addEvent( 'keydown', this.key.bind(this) );
     if( this.annotationTip ) this.annotationTip.attach( 'div.annotation' );
+  },
+
+
+  toggleEditFlat: function(id){
+
   }
 
 

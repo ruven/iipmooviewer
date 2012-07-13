@@ -60,10 +60,10 @@ Distribution
 
 Minified files are created with the closer compiler (https://developers.google.com/closure/compiler/) with the following command:
 <pre>
-java -jar /path/to/compiler.jar --js src/iipmooviewer-2.0.js src/protocols/iip.js src/protocols/zoomify.js src/protocols/deepzoom.js src/annotations.js src/lang/help.en.js --js_output_file javascript/iipmooviewer-2.0-compressed.js --compilation_level SIMPLE_OPTIMIZATIONS
+java -jar /path/to/compiler.jar --js src/iipmooviewer-2.0.js src/protocols/iip.js src/annotations.js src/lang/help.en.js --js_output_file javascript/iipmooviewer-2.0-compressed.js --compilation_level SIMPLE_OPTIMIZATIONS
 </pre>
 
-You can thereby customize your build to include only those components you need. For example, if you do not require Zoomify or annotation support, simply remove these from the build. Make sure, however, that the core iipmooviewer js file is included before the other components.
+You can thereby customize your build to include only those components you need. For example, if you require Zoomify or do not require annotation support, simply add or remove these from the build. Make sure, however, that the core iipmooviewer js file is included before the other components. Otherwise, if you prefer not to rebuild, use the default build and add the extra components you want as extra includes.
 
 
 Options
@@ -107,7 +107,7 @@ option is the <b>image</b> variable)
 
 <b>preload</b> : preload an extra layer of tiles surrounding the viewport [default: false]
 
-<b>annotations</b> : An array of annotations containing struct with parameters "x", "y", "w", "h", "title", "text", "category" where x, y, w and h are the position and size of the annotation in relative [0-1] values, title is an optional title for the annotation, category is an optional category for the annotation and text is the body of the annotation
+<b>annotations</b> : An object containing object structures with parameters "x", "y", "w", "h", "title", "text", "category" where x, y, w and h are the position and size of the annotation in relative [0-1] values, title is an optional title for the annotation, category is an optional category for the annotation and text is the body of the annotation
 
 
 Public Functions
@@ -147,10 +147,45 @@ Public Functions
 
 Annotations
 -----------
-x,y,w and h are obligatory parameters. The text parameter provides the content of the annotation and can contain any valid HTML, which can be styled normally via CSS. All annotations are created as divs of class "annotation".
-The title and category parameters are optional. Categories are ways of creating groups of annotations and the category will be added to the class. Thus for a category of, for example, 'retouches' the annotation divs will be of class 'annotation retouches', allowing you to access these via a class selector. So, for example, to set the colors of these differently to the others, simply use a selector:
+You can supply a list of annotations for the image which will be overlaid while navigating the image. These must be supplied in an object containing a list of individual annotation objects, each with parameters describing the position, title, category and text for the annotation. The position is described by the x,y,w and h properties (obligatory) which describe the size independent top left coordinate of the annotation and it's size. The text parameter provides the content of the annotation and can contain any valid HTML, which can be styled normally via CSS. All annotations are created as divs of class "annotation".
+
+For example:
+<pre>
+  var annotations = {
+     1 : { x: 0.7, y: 0.6, w: 0.2, h: 0.18, category: "pigments", text: "prussian blue" },
+     2: { x: 0.1, y: 0.8, w: 0.15, h: 0.1, category: "pigments", text: "azurite" },
+     3: { x: 0.7, y: 0.4, 0.1, h: 0.1, category: "people", text: "Mary" }
+  };
+</pre>
+
+The 1,2,3 are unique ID's which can be either numeric or strings.
+
+Categories are ways of creating groups of annotations and the category will be added to the class. Thus for a category of, for example, 'retouches' the annotation divs will be of class 'annotation retouches', allowing you to access these via a class selector. So, for example, to set the colors of these differently to the others, simply with javascript, use a selector:
 <pre>
 $$('.annotation.retouches').setStyle('borderColor', "blue")
+</pre>
+
+or in CSS:
+<pre>
+.annotation.retouches{
+  border-color: blue;
+}
+</pre>
+
+Annotation editing is possible by including the annotations-edit.js file, which extends the IIPMooViewer class. The function newAnnotation() creates a new blank annotation in the centre of the view. Double click on any existing annotation to move, resize of modify it. When an update occurs, an annotationChange event occurs, which can be captured and used to send the results back to a server via an AJAX call.
+
+For example, to send the updated list of annotations back to annotations.php:
+
+<pre>
+  iipmooviewer.addEvent('annotationChange', function(){
+    var metadata = new Request.JSON({
+	method: 'post',
+	url: 'annotations.php',
+	data:  {
+	   json: JSON.encode(this.annotations)
+        }
+    }).send();
+  });
 </pre>
 
 
@@ -166,7 +201,16 @@ IIPMooViewer fires the 'load' event when it has fully finished loading. To attac
 
 Localization
 ------------
-To create a new localization, create a new or modify an existing localization file in /lang
+To create a new localization, create a new or modify an existing localization file in /lang and include this extra file.
+
+For example for Chinese, create lang/help.zh.js and simply include it after the main iipmooviewer include:
+<pre>
+  <script type="text/javascript" src="javascript/mootools-core-1.4.5-full-nocompat-yc.js"></script>
+  <script type="text/javascript" src="javascript/mootools-more-1.4.0.1-compressed.js"></script>
+  <script type="text/javascript" src="javascript/iipmooviewer-2.0-compressed.js"></script>
+  <script type="text/javascript" src="src/lang/help.zh.js"></script>
+</pre>
+  
 
 
 ------------------------------------------------------------------------------------
