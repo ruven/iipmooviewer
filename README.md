@@ -4,7 +4,7 @@ IIPMooViewer
 
 About
 -----
-IIPMooViewer is a high performance light-weight HTML5 Ajax-based javascript image streaming and zooming client designed for the IIPImage high resolution imaging system. It is compatible with Firefox, Chrome, Internet Explorer (Versions 6-10), Safari and Opera as well as mobile touch-based browsers for iOS and Android. Although designed for use with the IIP protocol and IIPImage, it has multi-protocol support and is additionally compatible with the Zoomify and Deepzoom protocols.
+IIPMooViewer is a high performance light-weight HTML5 Ajax-based javascript image streaming and zooming client designed for the IIPImage high resolution imaging system. It is compatible with Firefox, Chrome, Internet Explorer (Versions 6-10), Safari and Opera as well as mobile touch-based browsers for iOS and Android. Although designed for use with the IIP protocol and IIPImage, it has multi-protocol support and is additionally compatible with the Zoomify, Deepzoom and Djatoka (OpenURL) protocols.
 
 Version 2.0 of IIPMooViewer is HTML5/CSS3 based and uses the Mootools javascript framework (version 1.4+). 
 
@@ -13,7 +13,7 @@ Features
 --------
 * Fast and light-weight
 * Pan and zoom of ultra high resolution imaging
-* Multi-protocol support: IIP, Zoomify and Deepzoom protocols
+* Multi-protocol support: IIP, Zoomify, Deepzoom and Djatoka (OpenURL) protocols
 * Image rotation
 * Mobile device support: iOS and Android
 * HTML5 Fullscreen API support
@@ -205,10 +205,10 @@ To create a new localization, create a new or modify an existing localization fi
 
 For example for Chinese, create lang/help.zh.js and simply include it after the main iipmooviewer include:
 <pre>
-  <script type="text/javascript" src="javascript/mootools-core-1.4.5-full-nocompat-yc.js"></script>
-  <script type="text/javascript" src="javascript/mootools-more-1.4.0.1-compressed.js"></script>
-  <script type="text/javascript" src="javascript/iipmooviewer-2.0-compressed.js"></script>
-  <script type="text/javascript" src="src/lang/help.zh.js"></script>
+  &lt;script type="text/javascript" src="javascript/mootools-core-1.4.5-full-nocompat-yc.js"&gt;&lt;/script&gt;
+  &lt;script type="text/javascript" src="javascript/mootools-more-1.4.0.1-compressed.js"&gt;&lt;/script&gt;
+  &lt;script type="text/javascript" src="javascript/iipmooviewer-2.0-compressed.js"&gt;&lt;/script&gt;
+  &lt;script type="text/javascript" src="src/lang/help.zh.js"&gt;&lt;/script&gt;
 </pre>
   
 
