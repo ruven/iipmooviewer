@@ -154,7 +154,7 @@ For example:
   var annotations = {
      1 : { x: 0.7, y: 0.6, w: 0.2, h: 0.18, category: "pigments", text: "prussian blue" },
      2: { x: 0.1, y: 0.8, w: 0.15, h: 0.1, category: "pigments", text: "azurite" },
-     3: { x: 0.7, y: 0.4, 0.1, h: 0.1, category: "people", text: "Mary" }
+     3: { x: 0.7, y: 0.4, w: 0.1, h: 0.1, category: "people", text: "Mary" }
   };
 </pre>
 
