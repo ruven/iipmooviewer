@@ -1147,7 +1147,7 @@ var IIPMooViewer = new Class({
 	    var xx = Math.round( (e.touches[0].pageX+e.touches[1].pageX) / 2 ) + _this.view.x;
 	    var yy = Math.round( (e.touches[0].pageY+e.touches[1].pageY) / 2 ) + _this.view.y;
 	    var origin = xx + 'px,' + yy + 'px';
-	    this.canvas.setStyle( this.CSSprefix+'transform-origin', origin );
+	    _this.canvas.setStyle( this.CSSprefix+'transform-origin', origin );
 	  }
         },
 	'touchend': function(e){
@@ -1156,8 +1156,8 @@ var IIPMooViewer = new Class({
 	    _this.canvas.eliminate('tapstart');
 	    _this.requestImages();
 	    _this.positionZone();
-	    //	    if(IIPMooViewer.sync){ 
-	    //IIPMooViewer.windows(this).each( function(el){ el.moveTo(_this.view.x,_this.view.); }); 
+	    //	    if(IIPMooViewer.sync){
+	    //IIPMooViewer.windows(this).each( function(el){ el.moveTo(_this.view.x,_this.view.); });
 	    // }
 	  }
         },
