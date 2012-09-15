@@ -1081,8 +1081,8 @@ var IIPMooViewer = new Class({
     // get key presses and prevent default scrolling via mousewheel
     this.container.addEvents({
       'keydown': this.key.bind(this),
-      'mouseenter': function(){ _this.container.focus(); },
-      'mouseout': function(){ _this.container.blur(); },
+      'mouseenter': function(){ this.focus(); },
+      'mouseleave': function(){ this.blur(); },
       'mousewheel': function(e){ e.preventDefault(); }
     });
 
