@@ -1768,7 +1768,7 @@ IIPMooViewer.synchronize = function(viewers){
    synchronized to this one
  */
 IIPMooViewer.windows = function(s){
-  if( !this.sync ) return Array();
+  if( !this.sync || !this.sync.contains(s) ) return Array();
   return this.sync.filter( function(t){
      return (t!=s);
   });
