@@ -199,6 +199,25 @@ IIPMooViewer fires the 'load' event when it has fully finished loading. To attac
 </pre>
 
 
+Protocols
+---------
+IIPMooViewer supports the IIP, Zoomify, Deepzoom and Djatoka protocols. By default it will use IIP, but to use, for example Zoomify, first include the protocol after the other javascript includes as this is not included by default:
+
+<pre>
+  &lt;script type="text/javascript" src="src/protocols/zoomify.js"&gt;&lt;/script&gt;
+</pre>
+
+Protocols such as zoomify don't have a server as such, so set this value to / or to the path prefix for the image. For example, if you have an image with URL /images/zoomify/image1, use:
+
+<pre>
+new IIPMooViewer( "viewer", {
+   server: "/images/zoomify/",
+   image: "image1",
+   protocol: "zoomify"
+});
+</pre>
+
+
 Localization
 ------------
 To create a new localization, create a new or modify an existing localization file in /lang and include this extra file.
