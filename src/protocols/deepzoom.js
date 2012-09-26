@@ -12,13 +12,13 @@ Protocols.DeepZoom = new Class({
   /* Return an individual tile request URL
    */
   getTileURL: function(server,image,resolution,sds,contrast,k,x,y){
-    return server+image+'_files/'+(resolution+1)+'/'+x+'_'+y+'.'+this.suffix;
+    return server+image+'_files/'+(resolution+1)+'/'+x+'_'+y+this.suffix;
   },
 
   /* Parse a Deepzoom protocol metadata request
    */
   parseMetaData: function(response){
-    this.suffix = /Format="(\s+)/.exec(response)[1]; 
+    this.suffix = "." + ( /Format="(\w+)/.exec(response)[1] ); 
     var ts = parseInt( /TileSize="(\d+)/.exec(response)[1] );
     var w = parseInt( /Width="(\d+)/.exec(response)[1] );
     var h = parseInt( /Height="(\d+)/.exec(response)[1] );
@@ -41,7 +41,7 @@ Protocols.DeepZoom = new Class({
   /* Return thumbnail URL
    */
   getThumbnailURL: function(server,image,width){
-    return server+image+'_files/0/0_0.'+this.suffix;
+    return server+image+'_files/0/0_0'+this.suffix;
   }
 
 });
