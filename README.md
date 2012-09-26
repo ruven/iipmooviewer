@@ -217,6 +217,7 @@ new IIPMooViewer( "viewer", {
 });
 </pre>
 
+Note that for Deepzoom, the image name should be name of the .dzi or .xml Deepzoom index file.
 
 Localization
 ------------

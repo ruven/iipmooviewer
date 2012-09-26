@@ -12,7 +12,9 @@ Protocols.DeepZoom = new Class({
   /* Return an individual tile request URL
    */
   getTileURL: function(server,image,resolution,sds,contrast,k,x,y){
-    return server+image+'_files/'+(resolution+1)+'/'+x+'_'+y+this.suffix;
+    // Strip off the .dzi or .xml suffix from the image name
+    var prefix = image.substr(0,image.lastIndexOf("."));
+    return server+prefix+'_files/'+(resolution+1)+'/'+x+'_'+y+this.suffix;
   },
 
   /* Parse a Deepzoom protocol metadata request
@@ -41,7 +43,9 @@ Protocols.DeepZoom = new Class({
   /* Return thumbnail URL
    */
   getThumbnailURL: function(server,image,width){
-    return server+image+'_files/0/0_0'+this.suffix;
+    // Strip off the .dzi or .xml suffix from the image name
+    var prefix = image.substr(0,image.lastIndexOf("."));
+    return server+prefix+'_files/0/0_0'+this.suffix;
   }
 
 });
