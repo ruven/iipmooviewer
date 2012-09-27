@@ -13,7 +13,7 @@
   outline: none;
 }
 
-.iipmooviewer .navcontainer {
+.navcontainer {
   position: absolute;
   z-index: 2;
   text-align: center;
@@ -21,7 +21,7 @@
   top: 10px;
   right: 10px;  
 }
-.iipmooviewer .navcontainer .toolbar {
+.navcontainer .toolbar {
   height: 8px;
   cursor: move;
   width: 100%;
@@ -37,7 +37,7 @@
   background: linear-gradient(top, #a9aba6 0%,#c0c2be 22%,#d5d5d2 33%,#e2e1dd 44%,#ededed 56%,#bebec1 67%,#c3c3c2 78%,#a1a4a0 89%,#878686 100%) repeat-x; /* W3C */
 }
 
-.iipmooviewer .navcontainer .toolbar:hover { opacity: 1.0 }
+.navcontainer .toolbar:hover { opacity: 1.0 }
 
 /* Fullscreen API support */
 .iipmooviewer:-full-screen {
@@ -146,7 +146,7 @@
   box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
 }
 .tip h1 {
-  font-size: 150%;
+  font-size: 120%;
   font-style: italic;
   margin-bottom: 1em;
 }
@@ -158,14 +158,14 @@
 
 /* Progress Bar
  */
-.loadBarContainer {
+.navcontainer .loadBarContainer {
   height: 10px;
   border: 1px solid #fff;
   background: #000;
   opacity: 0.66;
   text-align: left;
 }
-.loadBar {
+.navcontainer .loadBarContainer .loadBar {
   left: 0;
   font-size: 7pt;
   font-family: sans-serif;
@@ -216,7 +216,7 @@
 
 /* Navigation Windows Styles
  */
-.iipmooviewer .navcontainer .navbuttons {
+.navcontainer .navbuttons {
   font-size: 50%;
   line-height: 0;
   background: #222;
@@ -230,7 +230,7 @@
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
 }
-.iipmooviewer .navcontainer .navbuttons img {
+.navcontainer .navbuttons img {
   margin-top: 2px;
   margin-left: 2px;
   cursor: pointer;
@@ -285,13 +285,12 @@
 }
 
 .iipmooviewer .canvas .annotation.form {
-  padding: 3px;
+  padding: 2px;
   width: auto;
   height: auto;
   margin-top: 2px;
   border: 1px solid #aaa;
   line-height: 100%;
-  display: inline-block;
   background: #ccc; /* Old browsers */
   /* IE9 SVG, needs conditional override of 'filter' to 'none' */
   background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2VlZWVlZSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjY2NjY2MiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
@@ -324,12 +323,13 @@
 }
 .iipmooviewer .canvas .annotation.form input.button{
   width: auto;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   text-shadow: 2px 0 1px #bbb;
   border: 1px solid #888;
   font: bold 11px Verdana, sans-serif;
+  padding: 0 2px 0 2px;
   color: #222;
   background: #eeeeee; /* Old browsers */
   /* IE9 SVG, needs conditional override of 'filter' to 'none' */

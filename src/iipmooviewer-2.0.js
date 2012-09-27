@@ -365,7 +365,7 @@ var IIPMooViewer = new Class({
 	tile.inject(this.canvas);
 
 	// Get tile URL from our protocol object
-	var src = this.protocol.getTileURL( this.server, this.images[n].src, this.view.res, this.images[n].sds, this.images[n].cnt, k, i, j );
+	var src = this.protocol.getTileURL( this.server, this.images[n].src, this.view.res, (this.images[n].sds||"0,90"), this.images[n].cnt, k, i, j );
 
 	// Add our tile event functions after injection otherwise we get no event
 	tile.addEvents({
@@ -572,8 +572,8 @@ var IIPMooViewer = new Class({
   toggleNavigationWindow: function(){
     // For removing the navigation window if it exists - must use the get('reveal')
     // otherwise we do not have the Mootools extended object
-    if( this.container.getElement('div.navcontainer') ){
-      this.container.getElement('div.navcontainer').get('reveal').toggle();
+    if( this.navcontainer ){
+      this.navcontainer.get('reveal').toggle();
     }
   },
 
@@ -1308,7 +1308,7 @@ var IIPMooViewer = new Class({
     // If the user does not want a navigation window, do not create one!
     if( (!this.showNavWindow) && (!this.showNavButtons) ) return;
 
-    var navcontainer = new Element( 'div', {
+    this.navcontainer = new Element( 'div', {
       'class': 'navcontainer',
       'styles': {
 	position: 'absolute',
@@ -1317,7 +1317,7 @@ var IIPMooViewer = new Class({
     });
 
     // For standalone iphone/ipad the logo gets covered by the status bar
-    if( Browser.Platform.ios && window.navigator.standalone ) navcontainer.setStyle( 'top', 20 );
+    if( Browser.Platform.ios && window.navigator.standalone ) this.navcontainer.setStyle( 'top', 20 );
 
     var toolbar = new Element( 'div', {
       'class': 'toolbar',
@@ -1328,7 +1328,7 @@ var IIPMooViewer = new Class({
       }
     });
     toolbar.store( 'tip:text', IIPMooViewer.lang.drag );
-    toolbar.inject(navcontainer);
+    toolbar.inject(this.navcontainer);
 
 
     // Create our navigation div and inject it inside our frame if requested
@@ -1340,7 +1340,7 @@ var IIPMooViewer = new Class({
 	  height: this.navWin.h
 	}
       });
-      navwin.inject( navcontainer );
+      navwin.inject( this.navcontainer );
 
 
       // Create our navigation image and inject inside the div we just created
@@ -1396,7 +1396,7 @@ var IIPMooViewer = new Class({
 	}).inject(navbuttons);
       });
 
-      navbuttons.inject(navcontainer);
+      navbuttons.inject(this.navcontainer);
 
       // Need to set this after injection
       navbuttons.set('slide', {duration: 300, transition: Fx.Transitions.Quad.easeInOut, mode:'vertical'});
@@ -1435,17 +1435,17 @@ var IIPMooViewer = new Class({
 	   link: 'cancel'
          }
       });
-      loadBarContainer.inject(navcontainer);
+      loadBarContainer.inject(this.navcontainer);
     }
 
 
     // Inject our navigation container into our holding div
-    navcontainer.inject(this.container);
+    this.navcontainer.inject(this.container);
 
 
     if( this.showNavWindow ){
       this.zone.makeDraggable({
-	container: this.container.getElement('div.navcontainer div.navwin'),
+	container: this.navcontainer.getElement('div.navwin'),
           // Take a note of the starting coords of our drag zone
           onStart: function() {
 	    var pos = this.zone.getPosition();
@@ -1456,7 +1456,7 @@ var IIPMooViewer = new Class({
         });
     }
 
-    navcontainer.makeDraggable( {container:this.container, handle:toolbar} );
+    this.navcontainer.makeDraggable( {container:this.container, handle:toolbar} );
 
   },
 
@@ -1469,7 +1469,7 @@ var IIPMooViewer = new Class({
     // Update the loaded tiles number, grow the loadbar size
     var w = (this.nTilesLoaded / this.nTilesToLoad) * this.navWin.w;
 
-    var loadBarContainer = this.container.getElement('div.navcontainer div.loadBarContainer');
+    var loadBarContainer = this.navcontainer.getElement('div.loadBarContainer');
     var loadBar = loadBarContainer.getElement('div.loadBar');
     loadBar.setStyle( 'width', w );
 
@@ -1500,7 +1500,7 @@ var IIPMooViewer = new Class({
     // Allow a range of units and multiples
     var dims =   ["p", "n", "&#181;", "m", "c", "", "k"];
     var orders = [ 1e-12, 1e-9, 1e-6, 0.001, 0.01, 1, 1000 ];
-    var mults = [1,2,5,10,50];
+    var mults = [1,2,5,10,50,100];
 
     // Determine the number of pixels a unit takes at this scale. x1000 because we want per m
     var pixels = 1000 * this.scale * this.wid / this.max_size.w;
@@ -1550,7 +1550,7 @@ var IIPMooViewer = new Class({
 	this.reload();
 
 	// Change our navigation image
-	this.container.getElement('div.navcontainer img.navimage').src =
+	this.navcontainer.getElement('img.navimage').src =
 	  this.protocol.getThumbnailURL(this.server, image, this.navWin.w );
 
       }.bind(this),
@@ -1621,8 +1621,7 @@ var IIPMooViewer = new Class({
 
     // And reposition the navigation window
     if( this.showNavWindow ){
-      var navcontainer = this.container.getElement('div.navcontainer');
-      if( navcontainer ) navcontainer.setStyles({
+      if( this.navcontainer ) this.navcontainer.setStyles({
 	top: (Browser.Platform.ios&&window.navigator.standalone) ? 20 : 10, // Nudge down window in iOS standalone mode
 	left: this.container.getPosition(this.container).x + this.container.getSize().x - this.navWin.w - 10
       });
