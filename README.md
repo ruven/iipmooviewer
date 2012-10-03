@@ -250,7 +250,23 @@ For example for Chinese, create lang/help.zh.js and simply include it after the 
   &lt;script type="text/javascript" src="javascript/iipmooviewer-2.0-compressed.js"&gt;&lt;/script&gt;
   &lt;script type="text/javascript" src="src/lang/help.zh.js"&gt;&lt;/script&gt;
 </pre>
-  
+
+Image Blending
+--------------
+It's also possible to load several images for comparison and dynamically blend between them to compare. This is useful, for example, for comparing scientific imagery of the same scene or object. Images should be of the same size and registered. The blending component is in src/blending.js, but is built by default into the main compressed iipmooviewer js file in the javascript/ folder. To use, simply load the the viewer as normal with the default image, but use the blend() function to provide a list of all images and text for use in the selection box. For eample:
+
+<pre>
+var iipmooviewer = new IIPMooViewer( "targetframe", {
+  image: 'color.tif',
+  credit: 'Compare scientific images'
+});
+
+iipmooviewer.blend( [ ['color.tif','color'],
+                      ['uv.tif','ultra-violet'],
+                      ['ir.tif','infra-red'],
+                      ['xray.tif','X-ray']
+                    ] );
+</pre>
 
 
 ------------------------------------------------------------------------------------

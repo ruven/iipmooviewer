@@ -69,3 +69,8 @@ html{ overflow: auto; } /* To eliminate unnecessary vertical scrollbars in IE6/7
 
 /* IE7 interpolation fix */
 img { -ms-interpolation-mode: bicubic; }
+
+/* Blending box */
+div.blending{ filter: alpha(opacity=60) }
+div.blending:hover{ filter: alpha(opacity=100) }
+
