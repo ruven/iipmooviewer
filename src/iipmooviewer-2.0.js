@@ -1072,17 +1072,21 @@ var IIPMooViewer = new Class({
       });
     }
 
+
     // We want to add our keyboard events, but only when we are over the viewer div
     // In order to add keyboard events to a div, we need to give it a tabindex and focus it
-    this.container.set( 'tabindex', 0 );
-    this.container.focus();
-
-    // Focus and defocus when we move into and out of the div,
-    // get key presses and prevent default scrolling via mousewheel
+    // Focus and defocus when we move into and out of the div.
+    // Also prevent default scrolling via mousewheel
     this.container.addEvents({
       'keydown': this.key.bind(this),
-      'mouseenter': function(){ this.focus(); },
-      'mouseleave': function(){ this.blur(); },
+      'mouseenter': function(){
+	this.set('tabindex',0);
+	this.focus();
+      },
+      'mouseleave': function(){
+	this.erase('tabindex');
+	this.blur();
+      },
       'mousewheel': function(e){ e.preventDefault(); }
     });
 
