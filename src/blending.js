@@ -25,9 +25,11 @@ IIPMooViewer.implement({
 	o.clone().inject( document.id('overlay') );
       });
 
-      // We have to remove our focus and blur events from the main container
-      this.container.removeEvents('mouseenter');
-      this.container.removeEvents('mouseleave');
+      var _this = this;
+      document.id('baselayer').addEvent('focus', function(){
+								_this.setCredit('clicked');
+								_this.container.removeEvent('mouseenter');
+							      });
 
     });
    },

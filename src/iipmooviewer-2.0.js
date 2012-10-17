@@ -108,6 +108,28 @@ var IIPMooViewer = new Class({
 
     this.scale = options.scale || null;
 
+    // Allow a range of units, multiples and labels. Allow user to also pass own user-defined units
+    // First define default for meters
+    this.units = {
+      dims:   ["pm", "nm", "&#181;m", "mm", "cm", "m", "km"], // Unit suffixes
+      orders: [ 1e-12, 1e-9, 1e-6, 0.001, 0.01, 1, 1000 ],    // Unit orders
+      mults: [1,2,5,10,50,100],                               // Different scalings usable for each unit
+      factor: 1000                                            // Default multiplication factor
+    }
+
+    if( options.units ){
+      if( instanceOf(options.units,String) == false ) this.units = options.units;
+      else if( options.units == "degrees" ){
+	// Degree units for astronomy
+	this.units = {
+	  dims:   ["\'\'", "\'", "&deg"],
+	  orders: [ 1/3600, 1/60, 1 ],
+	  mults: [ 1 , 10 ,15, 30 ],
+	  factor: 3600
+	}
+      }
+    }
+
 
     // Enable fullscreen mode? If false, then disable. Otherwise option can be "native" for HTML5
     // fullscreen API mode or "page" for standard web page fill page mode
@@ -1501,27 +1523,23 @@ var IIPMooViewer = new Class({
    */
   updateScale: function() {
 
-    // Allow a range of units and multiples
-    var dims =   ["p", "n", "&#181;", "m", "c", "", "k"];
-    var orders = [ 1e-12, 1e-9, 1e-6, 0.001, 0.01, 1, 1000 ];
-    var mults = [1,2,5,10,50,100];
 
     // Determine the number of pixels a unit takes at this scale. x1000 because we want per m
-    var pixels = 1000 * this.scale * this.wid / this.max_size.w;
+    var pixels = this.units.factor * this.scale * this.wid / this.max_size.w;
 
     // Loop through until we get a good fit scale. Be careful to break fully from the outer loop
     var i, j;
-    outer: for( i=0;i<orders.length;i++ ){
-      for( j=0; j<mults.length; j++ ){
-	if( orders[i]*mults[j]*pixels > this.view.w/20 ) break outer;
+    outer: for( i=0;i<this.units.orders.length;i++ ){
+      for( j=0; j<this.units.mults.length; j++ ){
+	if( this.units.orders[i]*this.units.mults[j]*pixels > this.view.w/20 ) break outer;
       }
     }
     // Make sure we don't overrun the end of our array if we don't find a match
-    if( i >= orders.length ) i = orders.length-1;
-    if( j >= mults.length ) j = mults.length-1;
+    if( i >= this.units.orders.length ) i = this.units.orders.length-1;
+    if( j >= this.units.mults.length ) j = this.units.mults.length-1;
 
-    var label = mults[j] + dims[i] + 'm';
-    pixels = pixels*orders[i]*mults[j];
+    var label = this.units.mults[j] + this.units.dims[i];
+    pixels = pixels*this.units.orders[i]*this.units.mults[j];
 
     // Use a smooth transition to resize and set the units
     this.container.getElement('div.scale div.ruler').tween( 'width', pixels );

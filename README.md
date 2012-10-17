@@ -92,9 +92,19 @@ option is the <b>image</b> variable)
 <b>navWinSize</b> : ratio of navigation window size to the main window.
 	Wide panoramas are scaled to twice this size [default: 0.2]
 
-<b>scale</b> : adds a scale to the image. Specify the number of pixels per mm
+<b>scale</b> : adds a scale to the image. Specify the number of pixels per unit
 
-<b>prefix</b>: path prefix if image subdirectory moved (for example to a different host) [default "images/"]
+<b>units</b> : define the units used. Can be in degrees or meters [default: meters]. Or define completely new unit system. The default structure is the following:
+<pre>
+{
+  dims:   ["pm", "nm", "&#181;m", "mm", "cm", "m", "km"], // Unit suffixes
+  orders: [ 1e-12, 1e-9, 1e-6, 0.001, 0.01, 1, 1000 ],    // Unit orders
+  mults: [1,2,5,10,50,100],                               // Different scalings usable for each unit
+  factor: 1000                                            // Default multiplication factor
+}
+</pre>
+
+<b>prefix</b>: path prefix if image subdirectory moved (for example to a different host) [default: "images/"]
 
 <b>enableFullscreen</b> : allow full screen mode. If "native" will attempt to use Javascript Fullscreen API. Otherwise it will fill the viewport. "page" allows fullscreen but only in viewport fill mode. False disables. [default: "native"]
 
