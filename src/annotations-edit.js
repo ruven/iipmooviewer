@@ -120,7 +120,7 @@ IIPMooViewer.implement({
     html += '/></td></tr>';
 
     html += '<tr><td>category</td><td><input type="text" name="category" tabindex="2"';
-    if( this.annotations[id].category ) html += this.annotations[id].category + '"';
+    if( this.annotations[id].category ) html += ' value="' + this.annotations[id].category + '"';
     html += '/></td></tr>';
 
     html += '<tr><td colspan="2"><textarea name="text" rows="5" tabindex="3">' + (this.annotations[id].text||'') + '</textarea></td></tr></table>';
