@@ -287,6 +287,7 @@
 .iipmooviewer .canvas .annotation.form {
   padding: 2px;
   width: auto;
+  min-width: 150px;
   height: auto;
   margin-top: 2px;
   border: 1px solid #aaa;

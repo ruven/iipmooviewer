@@ -1147,6 +1147,9 @@ var IIPMooViewer = new Class({
 	    if( t2-t1 < 500 ){
 	      _this.canvas.eliminate('taptime');
 	      _this.zoomIn();
+	      if(IIPMooViewer.sync){
+		IIPMooViewer.windows(_this).each( function(el){ el.zoomIn(); });
+	      }
 	    }
 	    else{
 	      var pos = _this.canvas.getPosition(_this.container);
@@ -1182,9 +1185,9 @@ var IIPMooViewer = new Class({
 	    _this.canvas.eliminate('tapstart');
 	    _this.requestImages();
 	    _this.positionZone();
-	    //	    if(IIPMooViewer.sync){
-	    //IIPMooViewer.windows(this).each( function(el){ el.moveTo(_this.view.x,_this.view.); });
-	    // }
+	    if(IIPMooViewer.sync){
+	      IIPMooViewer.windows(_this).each( function(el){ el.moveTo(_this.view.x,_this.view.y); });
+	    }
 	  }
         },
 	'gesturestart': function(e){
@@ -1199,8 +1202,18 @@ var IIPMooViewer = new Class({
 	    _this.canvas.eliminate('tapstart');
 	    // Handle scale
 	    if( Math.abs(1-e.scale)>0.1 ){
-	      if( e.scale > 1 ) _this.zoomIn();
-	      else _this.zoomOut();
+	      if( e.scale > 1 ){
+		_this.zoomIn();
+		if(IIPMooViewer.sync){
+		  IIPMooViewer.windows(_this).each( function(el){ el.zoomIn(); });
+		}
+	      }
+	      else{
+		_this.zoomOut();
+		if(IIPMooViewer.sync){
+                  IIPMooViewer.windows(_this).each( function(el){ el.zoomOut(); });
+                }
+	      }
 	    }
 	    // And rotation
 	    else if( Math.abs(e.rotation) > 10 ){
@@ -1208,6 +1221,9 @@ var IIPMooViewer = new Class({
 	      if( e.rotation > 0 ) r += 45 % 360;
 	      else r -= 45 % 360;
 	      _this.rotate(r);
+	      if(IIPMooViewer.sync){
+		IIPMooViewer.windows(_this).each( function(el){ el.rotate(r); });
+	      }
 	    }
 	  }
 	}
