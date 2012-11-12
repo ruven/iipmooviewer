@@ -251,12 +251,12 @@ Note that for Deepzoom, the image name should be name of the .dzi or .xml Deepzo
 
 Localization
 ------------
-To create a new localization, create a new or modify an existing localization file in /lang and include this extra file.
+To create a new localization, create a new or modify an existing localization file in the src/lang folder and include this extra 
+file.
 
 For example for Chinese, create lang/help.zh.js and simply include it after the main iipmooviewer include:
 <pre>
   &lt;script type="text/javascript" src="javascript/mootools-core-1.4.5-full-nocompat-yc.js"&gt;&lt;/script&gt;
-  &lt;script type="text/javascript" src="javascript/mootools-more-1.4.0.1-compressed.js"&gt;&lt;/script&gt;
   &lt;script type="text/javascript" src="javascript/iipmooviewer-2.0-compressed.js"&gt;&lt;/script&gt;
   &lt;script type="text/javascript" src="src/lang/help.zh.js"&gt;&lt;/script&gt;
 </pre>

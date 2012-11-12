@@ -124,7 +124,7 @@ var IIPMooViewer = new Class({
 	this.units = {
 	  dims:   ["\'\'", "\'", "&deg"],
 	  orders: [ 1/3600, 1/60, 1 ],
-	  mults: [ 1 , 10 ,15, 30 ],
+	  mults: [1,10,15,30],
 	  factor: 3600
 	}
       }
@@ -692,8 +692,6 @@ var IIPMooViewer = new Class({
     // Use style values directly as getPosition will take into account rotation
     pos.x = this.canvas.getStyle('left').toInt();
     pos.y = this.canvas.getStyle('top').toInt();
-    //    pos.y = pos.y + Math.sin( this.view.rotation*Math.PI*2 / 360 ) * this.view.w / 2;
-    //    pos.x = pos.x + (this.view.w/2) - Math.cos( this.view.rotation*Math.PI*2 / 360 ) * this.view.w / 2;
     var xmove =  -pos.x;
     var ymove =  -pos.y;
     this.moveTo( xmove, ymove );
