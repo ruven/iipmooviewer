@@ -6,7 +6,7 @@
 	'zoomOut': 'Uzaklaştırmak için: üstkrkt+çift tıklayınız veya fare kaydırma tekerleğini kullanınız veya "-" tuşuna basınız',
 	'rotate': 'Resmi saat yönünde döndürmek için: "r" tuşuna basınız, saat yönünün tersine döndürmek için: üstkrkt + "r" tuşuna basınız',
 	'fullscreen': 'Tam ekran modu için: "f" tuşuna basınız',
-	'annotations': 'Notlar arasında geçiş yapmak için: "a" tuşuna basınız',
+	'annotations': 'Notları gizlemek veya göstermek için: "a" tuşuna basınız',
 	'navigation': 'Gezinti bölmesini açmak veya kapatmak için: "h" tuşuna basınız',
 	'more': 'Daha fazla bilgi için',
 	'exitFullscreen': 'Tam ekran modundan çıkmak için "Esc" tuşuna basınız',
