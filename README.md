@@ -92,7 +92,7 @@ option is the <b>image</b> variable)
 <b>navWinSize</b> : ratio of navigation window size to the main window.
 	Wide panoramas are scaled to twice this size [default: 0.2]
 
-<b>scale</b> : adds a scale to the image. Specify the number of pixels per unit
+<b>scale</b> : adds a scale to the image. Specify the number of pixels per unis. Should be given in pixels per mm if the default meter unit is used. Otherwise pixels per degree if degree units are used.
 
 <b>units</b> : define the units used. Can be in degrees or meters [default: meters]. Or define completely new unit system. The default structure is the following:
 <pre>
