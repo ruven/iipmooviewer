@@ -1586,8 +1586,10 @@ var IIPMooViewer = new Class({
 	this.reload();
 
 	// Change our navigation image
-	this.navcontainer.getElement('img.navimage').src =
-	  this.protocol.getThumbnailURL(this.server, image, this.navWin.w );
+	if( this.navcontainer && this.navcontainer.getElement('img.navimage') ){
+	  this.navcontainer.getElement('img.navimage').src =
+	    this.protocol.getThumbnailURL( this.server, image, this.navWin.w );
+	}
 
       }.bind(this),
 	onFailure: function(){ alert('Error: Unable to get image metadata from server!'); }
