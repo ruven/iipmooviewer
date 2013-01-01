@@ -1154,10 +1154,14 @@ var IIPMooViewer = new Class({
 	      _this.touchstart = { x: e.touches[0].pageX - pos.x, y: e.touches[0].pageY - pos.y };
 	    }
 	  }
+	  else if( e.touches.length == 2 ){
+	    _this.canvas.store('gesturestart', 1);
+	    _this.touchstart = [ { x: e.touches[0].pageX, y: e.touches[0].pageY }, { x: e.touches[1].pageX, y: e.touches[1].pageY } ];
+	  }
         },
 	'touchmove': function(e){
 	  // Only handle single finger events
-	  if(e.touches.length == 1){
+	  if( e.touches.length == 1 ){
 	    _this.view.x = _this.touchstart.x - e.touches[0].pageX;
 	    _this.view.y = _this.touchstart.y - e.touches[0].pageY;
 	    // Limit the scroll
@@ -1171,6 +1175,7 @@ var IIPMooViewer = new Class({
 	    });
 	  }
 	  if( e.touches.length == 2 ){
+	    _this.touchend = [ { x: e.touches[0].pageX, y: e.touches[0].pageY }, { x: e.touches[1].pageX, y: e.touches[1].pageY } ];
 	    var xx = Math.round( (e.touches[0].pageX+e.touches[1].pageX) / 2 ) + _this.view.x;
 	    var yy = Math.round( (e.touches[0].pageY+e.touches[1].pageY) / 2 ) + _this.view.y;
 	    var origin = xx + 'px,' + yy + 'px';
@@ -1178,45 +1183,43 @@ var IIPMooViewer = new Class({
 	  }
         },
 	'touchend': function(e){
-	  // Update our tiles and navigation window
-	  if( _this.canvas.retrieve('tapstart') == 1 ){
+
+	  if( _this.canvas.retrieve('gesturestart') == 1 ){
+
 	    _this.canvas.eliminate('tapstart');
-	    _this.requestImages();
-	    _this.positionZone();
-	    if(IIPMooViewer.sync){
-	      IIPMooViewer.windows(_this).each( function(el){ el.moveTo(_this.view.x,_this.view.y); });
-	    }
-	  }
-        },
-	'gesturestart': function(e){
-	  e.preventDefault();
-	  _this.canvas.store('tapstart', 1);
-	},
-	'gesturechange': function(e){
-	  e.preventDefault();
-	},
-	'gestureend': function(e){
-	  if( _this.canvas.retrieve('tapstart') == 1 ){
-	    _this.canvas.eliminate('tapstart');
-	    // Handle scale
-	    if( Math.abs(1-e.scale)>0.1 ){
-	      if( e.scale > 1 ){
+            _this.canvas.eliminate('gesturestart');
+
+	    // Calculate the distances
+	    var d1 = ( (_this.touchend[1].x-_this.touchend[0].x)*(_this.touchend[1].x-_this.touchend[0].x) +
+		       (_this.touchend[1].y-_this.touchend[0].y)*(_this.touchend[1].y-_this.touchend[0].y) );
+
+	    var d2 = ( (_this.touchstart[1].x-_this.touchstart[0].x)*(_this.touchstart[1].x-_this.touchstart[0].x) +
+		       (_this.touchstart[1].y-_this.touchstart[0].y)*(_this.touchstart[1].y-_this.touchstart[0].y) );
+
+	    // Calculate scale
+	    var scale = d1 - d2;
+	    if( Math.abs(scale) > 10000 ){
+	      if( scale > 0 ){
 		_this.zoomIn();
 		if(IIPMooViewer.sync){
 		  IIPMooViewer.windows(_this).each( function(el){ el.zoomIn(); });
 		}
 	      }
-	      else{
+	      else if( scale < 0 ){
 		_this.zoomOut();
 		if(IIPMooViewer.sync){
-                  IIPMooViewer.windows(_this).each( function(el){ el.zoomOut(); });
-                }
+		  IIPMooViewer.windows(_this).each( function(el){ el.zoomOut(); });
+		}
 	      }
 	    }
-	    // And rotation
-	    else if( Math.abs(e.rotation) > 10 ){
+
+	    // Rotation
+	    var r1 = Math.atan2( _this.touchend[1].y - _this.touchend[0].y, _this.touchend[1].x - _this.touchend[0].x ) * 180 / Math.PI;
+	    var r2 = Math.atan2( _this.touchstart[1].y - _this.touchstart[0].y, _this.touchstart[1].x - _this.touchstart[0].x ) * 180 / Math.PI;
+	    var rotation = r1 - r2;
+	    if( Math.abs(rotation) > 15 ){
 	      var r = _this.view.rotation;
-	      if( e.rotation > 0 ) r += 45 % 360;
+	      if( rotation > 0 ) r += 45 % 360;
 	      else r -= 45 % 360;
 	      _this.rotate(r);
 	      if(IIPMooViewer.sync){
@@ -1224,7 +1227,18 @@ var IIPMooViewer = new Class({
 	      }
 	    }
 	  }
-	}
+
+	  // Update our tiles and navigation window
+	  else if( _this.canvas.retrieve('tapstart') == 1 ){
+	    _this.canvas.eliminate('tapstart');
+	    _this.requestImages();
+	    _this.positionZone();
+	    if(IIPMooViewer.sync){
+	      IIPMooViewer.windows(_this).each( function(el){ el.moveTo(_this.view.x,_this.view.y); });
+	    }
+	  }
+
+	},
       });
     }
 
