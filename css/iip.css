@@ -95,6 +95,14 @@
   -o-transition: -o-transform 0.5s ease-in-out;
   -ms-transition: -ms-transform 0.5s ease-in-out;
   transition: transform 0.5s ease-in-out;
+  -webkit-transform: translateZ(0);
+}
+.iipmooviewer .canvas.drag{
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  -ms-transition: none;
+  transition: none;
 }
 .iipmooviewer .canvas img{
   padding: 0;
@@ -105,6 +113,7 @@
   -o-transition: -o-transform 0.5s ease-in-out;
   -ms-transition: -ms-transform 0.5s ease-in-out;
   transition: transform 0.5s ease-in-out;
+  -webkit-transform: translateZ(0);
 }
 
 .iipmooviewer .credit {

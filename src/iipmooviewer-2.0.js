@@ -2,7 +2,7 @@
    IIPMooViewer 2.0
    IIPImage Javascript Viewer <http://iipimage.sourceforge.net>
 
-   Copyright (c) 2007-2012 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2013 Ruven Pillay <ruven@users.sourceforge.net>
 
    ---------------------------------------------------------------------------
 
@@ -500,8 +500,8 @@ var IIPMooViewer = new Class({
     case 82: // r
       if(!e.control){
 	var r = this.view.rotation;
-	if(e.shift) r -= 45 % 360;
-	else r += 45 % 360;
+	if(e.shift) r -= 90 % 360;
+	else r += 90 % 360;
 
 	this.rotate( r );
 	if( IIPMooViewer.sync ){
@@ -1111,137 +1111,6 @@ var IIPMooViewer = new Class({
     });
 
 
-    // Add touch and gesture support for mobile iOS and Android
-    if( Browser.Platform.ios || Browser.Platform.android ){
-
-      // Prevent dragging on the container div
-      this.container.addEvent('touchmove', function(e){ e.preventDefault(); } );
-
-      // Disable elastic scrolling and handle changes in orientation on mobile devices.
-      // These events need to be added to the document body itself
-      document.body.addEvents({
-	'touchmove': function(e){ e.preventDefault(); },
-	'orientationchange': function(){
-	   _this.container.setStyles({
-	     width: '100%',
-	     height: '100%'
-	    });
-	    // Need to set a timeout the div is not resized immediately on some versions of iOS
-	    this.reflow.delay(500,this);
-	  }.bind(this)
-      });
-
-      // Now add our touch canvas events
-      this.canvas.addEvents({
-        'touchstart': function(e){
-	  e.preventDefault();
-	  // Only handle single finger events
-          if(e.touches.length == 1){
-	    // Simulate a double click with a timer
-	    var t1 = _this.canvas.retrieve('taptime') || 0;
-	    var t2 = Date.now();
-	    _this.canvas.store( 'taptime', t2 );
-	    _this.canvas.store( 'tapstart', 1 );
-	    if( t2-t1 < 500 ){
-	      _this.canvas.eliminate('taptime');
-	      _this.zoomIn();
-	      if(IIPMooViewer.sync){
-		IIPMooViewer.windows(_this).each( function(el){ el.zoomIn(); });
-	      }
-	    }
-	    else{
-	      var pos = _this.canvas.getPosition(_this.container);
-	      _this.touchstart = { x: e.touches[0].pageX - pos.x, y: e.touches[0].pageY - pos.y };
-	    }
-	  }
-	  else if( e.touches.length == 2 ){
-	    _this.canvas.store('gesturestart', 1);
-	    _this.touchstart = [ { x: e.touches[0].pageX, y: e.touches[0].pageY }, { x: e.touches[1].pageX, y: e.touches[1].pageY } ];
-	  }
-        },
-	'touchmove': function(e){
-	  // Only handle single finger events
-	  if( e.touches.length == 1 ){
-	    _this.view.x = _this.touchstart.x - e.touches[0].pageX;
-	    _this.view.y = _this.touchstart.y - e.touches[0].pageY;
-	    // Limit the scroll
-	    if( _this.view.x > _this.wid-_this.view.w ) _this.view.x = _this.wid-_this.view.w;
-	    if( _this.view.y > _this.hei-_this.view.h ) _this.view.y = _this.hei-_this.view.h;
-	    if( _this.view.x < 0 ) _this.view.x = 0;
-	    if( _this.view.y < 0 ) _this.view.y = 0;
-	    _this.canvas.setStyles({
-	      left: (_this.wid>_this.view.w) ? -_this.view.x : Math.round((_this.view.w-_this.wid)/2),
-	      top: (_this.hei>_this.view.h) ? -_this.view.y : Math.round((_this.view.h-_this.hei)/2)
-	    });
-	  }
-	  if( e.touches.length == 2 ){
-	    _this.touchend = [ { x: e.touches[0].pageX, y: e.touches[0].pageY }, { x: e.touches[1].pageX, y: e.touches[1].pageY } ];
-	    var xx = Math.round( (e.touches[0].pageX+e.touches[1].pageX) / 2 ) + _this.view.x;
-	    var yy = Math.round( (e.touches[0].pageY+e.touches[1].pageY) / 2 ) + _this.view.y;
-	    var origin = xx + 'px,' + yy + 'px';
-	    _this.canvas.setStyle( this.CSSprefix+'transform-origin', origin );
-	  }
-        },
-	'touchend': function(e){
-
-	  if( _this.canvas.retrieve('gesturestart') == 1 ){
-
-	    _this.canvas.eliminate('tapstart');
-            _this.canvas.eliminate('gesturestart');
-
-	    // Calculate the distances
-	    var d1 = ( (_this.touchend[1].x-_this.touchend[0].x)*(_this.touchend[1].x-_this.touchend[0].x) +
-		       (_this.touchend[1].y-_this.touchend[0].y)*(_this.touchend[1].y-_this.touchend[0].y) );
-
-	    var d2 = ( (_this.touchstart[1].x-_this.touchstart[0].x)*(_this.touchstart[1].x-_this.touchstart[0].x) +
-		       (_this.touchstart[1].y-_this.touchstart[0].y)*(_this.touchstart[1].y-_this.touchstart[0].y) );
-
-	    // Calculate scale
-	    var scale = d1 - d2;
-	    if( Math.abs(scale) > 10000 ){
-	      if( scale > 0 ){
-		_this.zoomIn();
-		if(IIPMooViewer.sync){
-		  IIPMooViewer.windows(_this).each( function(el){ el.zoomIn(); });
-		}
-	      }
-	      else if( scale < 0 ){
-		_this.zoomOut();
-		if(IIPMooViewer.sync){
-		  IIPMooViewer.windows(_this).each( function(el){ el.zoomOut(); });
-		}
-	      }
-	    }
-
-	    // Rotation
-	    var r1 = Math.atan2( _this.touchend[1].y - _this.touchend[0].y, _this.touchend[1].x - _this.touchend[0].x ) * 180 / Math.PI;
-	    var r2 = Math.atan2( _this.touchstart[1].y - _this.touchstart[0].y, _this.touchstart[1].x - _this.touchstart[0].x ) * 180 / Math.PI;
-	    var rotation = r1 - r2;
-	    if( Math.abs(rotation) > 15 ){
-	      var r = _this.view.rotation;
-	      if( rotation > 0 ) r += 45 % 360;
-	      else r -= 45 % 360;
-	      _this.rotate(r);
-	      if(IIPMooViewer.sync){
-		IIPMooViewer.windows(_this).each( function(el){ el.rotate(r); });
-	      }
-	    }
-	  }
-
-	  // Update our tiles and navigation window
-	  else if( _this.canvas.retrieve('tapstart') == 1 ){
-	    _this.canvas.eliminate('tapstart');
-	    _this.requestImages();
-	    _this.positionZone();
-	    if(IIPMooViewer.sync){
-	      IIPMooViewer.windows(_this).each( function(el){ el.moveTo(_this.view.x,_this.view.y); });
-	    }
-	  }
-
-	},
-      });
-    }
-
     // Add our logo and a tooltip explaining how to use the viewer
     var info = new Element( 'img', {
       'src': this.prefix+'iip.32x32.png',
@@ -1254,8 +1123,10 @@ var IIPMooViewer = new Class({
       }
     }).inject(this.container);
 
-    // For standalone iphone/ipad the logo gets covered by the status bar
-    if( Browser.Platform.ios && window.navigator.standalone ) info.setStyle( 'top', 15 );
+
+    // Add our touch events
+    this.addTouchEvents();
+
 
     // Add some information or credit
     if( this.credit ){
@@ -1304,7 +1175,7 @@ var IIPMooViewer = new Class({
 	  onHide: function(tip, hovered){
 	    tip.fade('out').get('tween').chain( function(){ tip.setStyle('display', 'none'); } );
 	  }
-	});
+      });
     }
 
     // Clear invalid this.viewport.resolution values
