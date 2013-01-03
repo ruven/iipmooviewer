@@ -11,8 +11,8 @@ Protocols.Zoomify = new Class({
 
   /* Return an individual tile request URL
    */
-  getTileURL: function(server,image,resolution,sds,contrast,k,x,y){
-    return server+image+"/TileGroup0/"+resolution+"-"+x+"-"+y+".jpg";
+  getTileURL: function(t){
+    return t.server+t.image+"/TileGroup0/"+t.resolution+"-"+t.x+"-"+t.y+".jpg";
   },
 
   /* Parse a Zoomify protocol metadata request

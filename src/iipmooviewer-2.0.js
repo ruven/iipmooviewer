@@ -95,12 +95,12 @@ var IIPMooViewer = new Class({
     options.image || alert( 'Image location not set in class constructor options');
     if( typeOf(options.image) == 'array' ){
        for( i=0; i<options.image.length;i++ ){
-	 this.images[i] = { src:options.image[i], sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : 1.0 };
+	 this.images[i] = { src:options.image[i], sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null };
 
 
        }
     }
-    else this.images = [{ src:options.image, sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : 1.0 } ];
+    else this.images = [{ src:options.image, sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null } ];
 
     this.loadoptions = options.load || null;
 
@@ -387,7 +387,17 @@ var IIPMooViewer = new Class({
 	tile.inject(this.canvas);
 
 	// Get tile URL from our protocol object
-	var src = this.protocol.getTileURL( this.server, this.images[n].src, this.view.res, (this.images[n].sds||"0,90"), this.images[n].cnt, k, i, j );
+	var src = this.protocol.getTileURL({
+	  server: this.server,
+	  image:this.images[n].src,
+	  resolution: this.view.res,
+	  sds: (this.images[n].sds||'0,90'),
+          contrast: this.images[n].cnt,
+	  gamma: (this.images[n].gam||null),
+          tileindex: k,
+          x: i,
+          y: j
+	});
 
 	// Add our tile event functions after injection otherwise we get no event
 	tile.addEvents({
@@ -1453,7 +1463,7 @@ var IIPMooViewer = new Class({
   changeImage: function( image ){
 
     // Replace our image array
-    this.images = [{ src:image, sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : 1.0 } ];
+    this.images = [{ src:image, sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null } ];
 
     // Send a new AJAX request for the metadata
     var metadata = new Request({

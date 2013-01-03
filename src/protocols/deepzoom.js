@@ -11,10 +11,10 @@ Protocols.DeepZoom = new Class({
 
   /* Return an individual tile request URL
    */
-  getTileURL: function(server,image,resolution,sds,contrast,k,x,y){
+  getTileURL: function(t){
     // Strip off the .dzi or .xml suffix from the image name
-    var prefix = image.substr(0,image.lastIndexOf("."));
-    return server+prefix+'_files/'+(resolution+1)+'/'+x+'_'+y+this.suffix;
+    var prefix = t.image.substr(0,t.image.lastIndexOf("."));
+    return t.server+prefix+'_files/'+(t.resolution+1)+'/'+t.x+'_'+t.y+this.suffix;
   },
 
   /* Parse a Deepzoom protocol metadata request

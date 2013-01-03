@@ -11,8 +11,15 @@ Protocols.IIP = new Class({
 
   /* Return an individual tile request URL
    */
-  getTileURL: function(server,image,resolution,sds,contrast,k,x,y){
-    return server+"?FIF="+image+"&CNT="+contrast+"&SDS="+sds+"&JTL="+resolution+"," + k;	
+  getTileURL: function(t){
+    var modifiers = Array( '?FIF=' + t.image );
+    if( t.contrast ) modifiers.push( 'CNT=' + t.contrast );
+    if( t.sds )      modifiers.push( 'SDS=' + t.sds );
+    if( t.rotation ) modifiers.push( 'ROT=' + t.rotation );
+    if( t.gamma )    modifiers.push( 'GAM=' + t.gamma );
+    if( t.shade )    modifiers.push( 'SHD=' + t.shade );
+    modifiers.push( 'JTL=' + t.resolution + ',' + t.tileindex );
+    return t.server+modifiers.join('&');
   },
 
   /* Parse an IIP protocol metadata request
