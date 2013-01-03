@@ -392,7 +392,7 @@ var IIPMooViewer = new Class({
 	  image:this.images[n].src,
 	  resolution: this.view.res,
 	  sds: (this.images[n].sds||'0,90'),
-          contrast: this.images[n].cnt,
+          contrast: (this.images[n].cnt||null),
 	  gamma: (this.images[n].gam||null),
           tileindex: k,
           x: i,
@@ -1058,9 +1058,10 @@ var IIPMooViewer = new Class({
 
 
     // Create our main view drag object for our canvas.
-    // Add synchronization via the Drag start hook
+    // Add synchronization via the Drag complete hook
     this.touch = new Drag( this.canvas, {
-      onComplete: this.scroll.bind(this)
+      onStart: function(){ _this.canvas.addClass('drag'); },
+      onComplete: function(){ _this.scroll(); _this.canvas.removeClass('drag'); }
     });
 
 
@@ -1302,7 +1303,10 @@ var IIPMooViewer = new Class({
 	'events': {
  	  'mousewheel:throttle(75)': this.zoom.bind(this),
  	  'dblclick': this.zoom.bind(this)
-	}
+	},
+	'styles': {
+	  width: 0, height: 0
+        }
       });
       this.zone.inject(navwin);
 
@@ -1679,6 +1683,7 @@ var IIPMooViewer = new Class({
 
     // Move the zone to the new size and position
     this.zone.morph({
+      fps: 30,
       left: pleft,
       top: ptop + 8, // 8 is the height of toolbar
       width: (width-border>0)? width - border : 1, // Watch out for zero sizes!
@@ -1715,4 +1720,4 @@ else Browser.buggy = false;
 
 /* Setup our list of protocol objects
  */
-var Protocols = {};
+if(typeof Protocols === 'undefined') var Protocols = {};

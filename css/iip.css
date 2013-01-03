@@ -87,7 +87,7 @@
   left: 0;
   top:  0;
   z-index: 0;
-  cursor: wait;
+  cursor: crosshair;
   position: absolute;
   background: transparent;
   -webkit-transition: -webkit-transform 0.5s ease-in-out;
@@ -95,7 +95,7 @@
   -o-transition: -o-transform 0.5s ease-in-out;
   -ms-transition: -ms-transform 0.5s ease-in-out;
   transition: transform 0.5s ease-in-out;
-  -webkit-transform: translateZ(0);
+  -webkit-transform: translateZ(0); /* Enables Hardware acceleration on Webkit browsers */
 }
 .iipmooviewer .canvas.drag{
   -webkit-transition: none;
@@ -114,7 +114,9 @@
   -ms-transition: -ms-transform 0.5s ease-in-out;
   transition: transform 0.5s ease-in-out;
   -webkit-transform: translateZ(0);
+  cursor: crosshair;
 }
+.iipmooviewer .canvas.drag img{ cursor: move; }
 
 .iipmooviewer .credit {
   position: absolute;

@@ -284,5 +284,5 @@ Please refer to the project site http://iipimage.sourceforge.net for further det
 
 ------------------------------------------------------------------------------------
 
-<pre>(c) 2007-2012 Ruven Pillay <ruven@users.sourceforge.net></pre>
+<pre>(c) 2007-2013 Ruven Pillay <ruven@users.sourceforge.net></pre>
 
