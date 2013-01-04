@@ -73,7 +73,6 @@ IIPMooViewer.implement({
   editAnnotation: function(annotation){
 
     // Disable key bindings on container
-    this.container.removeEvents('keydown');
     if( this.annotationTip ){
       this.annotationTip.hide();
       this.annotationTip.detach('div.annotation');
@@ -229,7 +228,6 @@ IIPMooViewer.implement({
   updateAnnotations: function(){
     this.destroyAnnotations();
     this.createAnnotations();
-    this.container.addEvent( 'keydown', this.key.bind(this) );
     if( this.annotationTip ) this.annotationTip.attach( 'div.annotation' );
   },
 

@@ -106,29 +106,7 @@ var IIPMooViewer = new Class({
 
     this.credit = options.credit || null;
 
-    this.scale = options.scale || null;
-
-    // Allow a range of units, multiples and labels. Allow user to also pass own user-defined units
-    // First define default for meters
-    this.units = {
-      dims:   ["pm", "nm", "&#181;m", "mm", "cm", "m", "km"], // Unit suffixes
-      orders: [ 1e-12, 1e-9, 1e-6, 0.001, 0.01, 1, 1000 ],    // Unit orders
-      mults: [1,2,5,10,50,100],                               // Different scalings usable for each unit
-      factor: 1000                                            // Default multiplication factor
-    }
-
-    if( options.units ){
-      if( instanceOf(options.units,String) == false ) this.units = options.units;
-      else if( options.units == "degrees" ){
-	// Degree units for astronomy
-	this.units = {
-	  dims:   ["\'\'", "\'", "&deg"],
-	  orders: [ 1/3600, 1/60, 1 ],
-	  mults: [1,10,15,30],
-	  factor: 3600
-	}
-      }
-    }
+    this.scale = options.scale ? new Scale(options.scale,options.units) : null;
 
 
     // Enable fullscreen mode? If false, then disable. Otherwise option can be "native" for HTML5
@@ -546,6 +524,7 @@ var IIPMooViewer = new Class({
     this.view.rotation = r;
     var angle = 'rotate(' + r + 'deg)';
     this.canvas.setStyle( this.CSSprefix+'transform', angle );
+
   },
 
 
@@ -913,7 +892,7 @@ var IIPMooViewer = new Class({
 
     this.requestImages();
     this.positionZone();
-    if( this.scale ) this.updateScale();
+    if( this.scale ) this.scale.update( this.wid/this.max_size.w, this.view.w );
 
   },
 
@@ -1105,18 +1084,16 @@ var IIPMooViewer = new Class({
 
 
     // We want to add our keyboard events, but only when we are over the viewer div
-    // In order to add keyboard events to a div, we need to give it a tabindex and focus it
-    // Focus and defocus when we move into and out of the div.
     // Also prevent default scrolling via mousewheel
+
+    var keybind = this.key.bind(this);
+
     this.container.addEvents({
-      'keydown': this.key.bind(this),
       'mouseenter': function(){
-	this.set('tabindex',0);
-	this.focus();
+	document.addEvent( 'keydown', keybind );
       },
       'mouseleave': function(){
-	this.erase('tabindex');
-	this.blur();
+	document.removeEvent( 'keydown', keybind );
       },
       'mousewheel': function(e){ e.preventDefault(); }
     });
@@ -1154,18 +1131,8 @@ var IIPMooViewer = new Class({
     }
 
 
-    // Add a scale if requested. Make it draggable and add a tween transition on rescaling
-    if( this.scale ){
-      var scale = new Element( 'div', {
-	'class': 'scale',
-	'title': IIPMooViewer.lang.scale,
-	'html': '<div class="ruler"></div><div class="label"></div>'
-      }).inject(this.container);
-      scale.makeDraggable({container: this.container});
-      scale.getElement('div.ruler').set('tween', {
-	transition: Fx.Transitions.Quad.easeInOut
-      });
-    }
+    // Add a scale if requested
+    if( this.scale ) this.scale.create(this.container);
 
 
     // Calculate some sizes and create the navigation window
@@ -1220,7 +1187,7 @@ var IIPMooViewer = new Class({
     // Load our images
     this.requestImages();
     this.positionZone();
-    if( this.scale ) this.updateScale();
+    if( this.scale ) this.scale.update( this.wid/this.max_size.w, this.view.w );
 
     // Set initial rotation
     if( this.viewport && this.viewport.rotation!=null ){
@@ -1431,37 +1398,6 @@ var IIPMooViewer = new Class({
   },
 
 
-
-  /* Update the scale on our image - change the units if necessary
-   */
-  updateScale: function() {
-
-
-    // Determine the number of pixels a unit takes at this scale. x1000 because we want per m
-    var pixels = this.units.factor * this.scale * this.wid / this.max_size.w;
-
-    // Loop through until we get a good fit scale. Be careful to break fully from the outer loop
-    var i, j;
-    outer: for( i=0;i<this.units.orders.length;i++ ){
-      for( j=0; j<this.units.mults.length; j++ ){
-	if( this.units.orders[i]*this.units.mults[j]*pixels > this.view.w/20 ) break outer;
-      }
-    }
-    // Make sure we don't overrun the end of our array if we don't find a match
-    if( i >= this.units.orders.length ) i = this.units.orders.length-1;
-    if( j >= this.units.mults.length ) j = this.units.mults.length-1;
-
-    var label = this.units.mults[j] + this.units.dims[i];
-    pixels = pixels*this.units.orders[i]*this.units.mults[j];
-
-    // Use a smooth transition to resize and set the units
-    this.container.getElement('div.scale div.ruler').tween( 'width', pixels );
-    this.container.getElement('div.scale div.label').set( 'html', label );
-
-  },
-
-
-
   /* Change our image and reload our view
    */
   changeImage: function( image ){
@@ -1569,13 +1505,8 @@ var IIPMooViewer = new Class({
 
     // Reset and reposition our scale
     if( this.scale ){
-      this.updateScale();
-      pos = this.container.getSize().y -
-	this.container.getElement('div.scale').getSize().y - 10;
-      this.container.getElement('div.scale').setStyles({
-	left: 10,
-	top: pos
-      });
+      this.scale.update( this.wid/this.max_size.w, this.view.w );
+      this.scale.reflow(this.container);
     }
 
     this.requestImages();
