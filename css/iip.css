@@ -108,13 +108,11 @@
   padding: 0;
   border: 0;
   position: absolute;
-  -webkit-transition: -webkit-transform 0.5s ease-in-out;
-  -moz-transition: -moz-transform 0.5s ease-in-out;
-  -o-transition: -o-transform 0.5s ease-in-out;
-  -ms-transition: -ms-transform 0.5s ease-in-out;
-  transition: transform 0.5s ease-in-out;
-  -webkit-transform: translateZ(0);
   cursor: crosshair;
+  display: block;
+}
+.iipmooviewer .canvas img.hidden{
+  display: none;
 }
 .iipmooviewer .canvas.drag img{ cursor: move; }
 
@@ -186,6 +184,24 @@
   border: 0;
   background: #fff;
   height: 10px;
+}
+.navcontainer .coords {
+  position: absolute;
+  left: 50%;
+  width: auto;
+  background: transparent;
+}
+.navcontainer .coords div {
+  font-size: 6pt;
+  color: #bbb;
+  position: relative;
+  left: -50%;
+  background: #111;
+  padding: 0 0.3em 0.2em 0.3em;
+  width: auto;
+  -moz-border-radius: 0.3em;
+  -webkit-border-radius: 0.3em;
+  border-radius: 0.3em;
 }
 
 /* Scale Widget Styles
@@ -522,6 +538,7 @@ div.blending option{
   color:#bbb;
   border: 1px solid #bbbbbb;
   width: 100%;
+  cursor: default;
 }
 div.blending:hover{
   opacity: 1;
@@ -550,7 +567,7 @@ div.blending div#area div#knob{
   width: 8px;
   background: #bbb;
   cursor: move;
-  margin: 0px;
+  margin: 0;
   border: 1px solid #888;
   background: #b8bac6; /* Old browsers */
   /* IE9 SVG, needs conditional override of 'filter' to 'none' */

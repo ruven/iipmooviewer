@@ -106,7 +106,7 @@ var IIPMooViewer = new Class({
 
     this.credit = options.credit || null;
 
-    this.scale = options.scale ? new Scale(options.scale,options.units) : null;
+    this.scale = ((typeof(Scale)==="function")&&options.scale) ? new Scale(options.scale,options.units) : null;
 
 
     // Enable fullscreen mode? If false, then disable. Otherwise option can be "native" for HTML5
@@ -129,16 +129,22 @@ var IIPMooViewer = new Class({
     // Disable the right click context menu on image tiles?
     this.disableContextMenu = true;
 
+    this.prefix = options.prefix || 'images/';
+
 
     // Navigation window options
-    this.showNavWindow = (options.showNavWindow == false) ? false : true;
-    this.showNavButtons = (options.showNavButtons == false) ? false : true;
-    this.navWinSize = options.navWinSize || 0.2;
-
+    this.navigation = null;
+    if( (typeof(Navigation)==="function") ){
+      this.navigation = new Navigation({ showNavWindow:options.showNavWindow,
+					 showNavButtons: options.showNavButtons,
+					 navWinSize: options.navWinSize,
+				         showCoords: options.showCoords,
+					 prefix: this.prefix
+				       });
+    }
 
     this.winResize = (options.winResize==false)? false : true;
 
-    this.prefix = options.prefix || 'images/';
 
     // Set up our protocol handler
     switch( options.protocol ){
@@ -170,7 +176,6 @@ var IIPMooViewer = new Class({
     this.click = options.click || null;
 
     this.max_size = {};      // Dimensions of largest resolution
-    this.navWin = {w:0,h:0}; // Dimensions of navigation window
     this.opacity = 0;
     this.wid = 0;             // Width of current resolution
     this.hei = 0;             // Height of current resolution
@@ -185,7 +190,6 @@ var IIPMooViewer = new Class({
       rotation: 0          // Current rotational orientation
     };
 
-    this.navpos = {};         // Location of navigation drag zone
     this.tileSize = {};       // Tile size in pixels {w,h}
 
 
@@ -342,7 +346,7 @@ var IIPMooViewer = new Class({
 
       if( this.tiles.contains(k) ){
 	this.nTilesLoaded += this.images.length;
-        if( this.showNavWindow ) this.refreshLoadBar();
+        if( this.navigation ) this.navigation.refreshLoadBar(this.nTilesLoaded,this.nTilesToLoad);
 	if( this.nTilesLoaded >= this.nTilesToLoad ) this.canvas.setStyle( 'cursor', 'move' );
 	continue;
       }
@@ -352,7 +356,7 @@ var IIPMooViewer = new Class({
       for(n=0;n<this.images.length;n++){
 
         var tile = new Element('img', {
-          'class': 'layer'+n,
+          'class': 'layer'+n+' hidden',
           'styles': {
 	    left: i*this.tileSize.w,
 	    top: j*this.tileSize.h
@@ -381,12 +385,13 @@ var IIPMooViewer = new Class({
 	tile.addEvents({
 	  'load': function(tile,id){
 	     if( this.effects ) tile.setStyle('opacity',1);
+	     tile.removeClass('hidden');
 	     if(!(tile.width&&tile.height)){
 	       tile.fireEvent('error');
 	       return;
 	     }
 	     this.nTilesLoaded++;
-	     if( this.showNavWindow ) this.refreshLoadBar();
+	     if( this.navigation ) this.navigation.refreshLoadBar( this.nTilesLoaded, this.nTilesToLoad );
 	     if( this.nTilesLoaded >= this.nTilesToLoad ) this.canvas.setStyle( 'cursor', 'move' );
 	     this.tiles.push(id); // Add to our list of loaded tiles
 	  }.bind(this,tile,k),
@@ -483,7 +488,7 @@ var IIPMooViewer = new Class({
       if(!e.control) this.zoomOut();
       break;
     case 72: // h
-      this.toggleNavigationWindow();
+      if( this.navigation ) this.navigation.toggleWindow();
       break;
     case 82: // r
       if(!e.control){
@@ -578,17 +583,6 @@ var IIPMooViewer = new Class({
   },
 
 
-  /* Toggle the visibility of our navigation window
-   */
-  toggleNavigationWindow: function(){
-    // For removing the navigation window if it exists - must use the get('reveal')
-    // otherwise we do not have the Mootools extended object
-    if( this.navcontainer ){
-      this.navcontainer.get('reveal').toggle();
-    }
-  },
-
-
   /* Show a message, then delete after a timeout
    */
   showPopUp: function( text ) {
@@ -607,38 +601,11 @@ var IIPMooViewer = new Class({
    */
   scrollNavigation: function( e ) {
 
-    // Cancel any running morphs on the canvas or zone
-    this.zone.get('morph').cancel();
+    // Cancel any running morphs on the canvas
     this.canvas.get('morph').cancel();
 
-    var xmove = 0;
-    var ymove = 0;
-
-    var zone_size = this.zone.getSize();
-    var zone_w = zone_size.x;
-    var zone_h = zone_size.y;
-
-    // From a mouse click
-    if( e.event ){
-      e.stop();
-      var pos = this.zone.getParent().getPosition();
-      xmove = e.page.x - pos.x - Math.floor(zone_w/2);
-      ymove = e.page.y - pos.y - Math.floor(zone_h/2);
-    }
-    else{
-      // From a drag
-      xmove = e.offsetLeft;
-      ymove = e.offsetTop-10;
-      if( (Math.abs(xmove-this.navpos.x) < 3) && (Math.abs(ymove-this.navpos.y) < 3) ) return;
-    }
-
-    if( xmove > (this.navWin.w - zone_w) ) xmove = this.navWin.w - zone_w;
-    if( ymove > (this.navWin.h - zone_h) ) ymove = this.navWin.h - zone_h;
-    if( xmove < 0 ) xmove = 0;
-    if( ymove < 0 ) ymove = 0;
-
-    xmove = Math.round(xmove * this.wid / this.navWin.w);
-    ymove = Math.round(ymove * this.hei / this.navWin.h);
+    var xmove = Math.round(e.x * this.wid);
+    var ymove = Math.round(e.y * this.hei);
 
     // Only morph transition if we have moved a short distance and our rotation is zero
     var morphable = Math.abs(xmove-this.view.x)<this.view.w/2 && Math.abs(ymove-this.view.y)<this.view.h/2 && this.view.rotation==0;
@@ -662,9 +629,6 @@ var IIPMooViewer = new Class({
     if( !morphable ){
       this.requestImages();
     }
-
-    // Position the zone after a click, but not for zone drags
-    if( e.event ) this.positionZone();
 
     if(IIPMooViewer.sync){
       IIPMooViewer.windows(this).each( function(el){ el.moveTo(xmove,ymove); });
@@ -723,7 +687,7 @@ var IIPMooViewer = new Class({
     });
 
     this.requestImages();
-    this.positionZone();
+    if( this.navigation ) this.navigation.update(this.view.x/this.wid,this.view.y/this.hei,this.view.w/this.wid,this.view.h/this.hei);
   },
 
 
@@ -740,7 +704,7 @@ var IIPMooViewer = new Class({
       top: (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2)
     });
 
-    this.positionZone();
+    if( this.navigation ) this.navigation.update(this.view.x/this.wid,this.view.y/this.hei,this.view.w/this.wid,this.view.h/this.hei);
   },
 
 
@@ -780,9 +744,9 @@ var IIPMooViewer = new Class({
       }
       else{
 	// For zooms with the mouse over the navigation window
-	pos = this.zone.getParent().getPosition();
-	var n_size = this.zone.getParent().getSize();
-	var z_size = this.zone.getSize();
+	pos = this.navigation.zone.getParent().getPosition();
+	var n_size = this.navigation.zone.getParent().getSize();
+	var z_size = this.navigation.zone.getSize();
 	this.view.x = Math.round( (event.page.x - pos.x - z_size.x/2) * this.wid/n_size.x );
 	this.view.y = Math.round( (event.page.y - pos.y - z_size.y/2) * this.hei/n_size.y );
       }
@@ -891,7 +855,10 @@ var IIPMooViewer = new Class({
     this.tiles.empty();
 
     this.requestImages();
-    this.positionZone();
+    if( this.navigation ){
+      this.navigation.update(this.view.x/this.wid,this.view.y/this.hei,this.view.w/this.wid,this.view.h/this.hei);
+      this.navigation.setCoords('');
+    }
     if( this.scale ) this.scale.update( this.wid/this.max_size.w, this.view.w );
 
   },
@@ -901,18 +868,18 @@ var IIPMooViewer = new Class({
    */
   calculateNavSize: function(){
 
-    var thumb_width = this.view.w * this.navWinSize;;
+    var thumb_width = Math.round(this.view.w * this.navigation.options.navWinSize);
 
     // For panoramic images, use a large navigation window
-    if( this.max_size.w > 2*this.max_size.h ) thumb_width = this.view.w / 2;
+    if( this.max_size.w > 2*this.max_size.h ) thumb_width = Math.round( this.view.w/2 );
 
     // Make sure our height is not more than 50% of view height
     if( (this.max_size.h/this.max_size.w)*thumb_width > this.view.h*0.5 ){
       thumb_width = Math.round( this.view.h * 0.5 * this.max_size.w/this.max_size.h );
     }
 
-    this.navWin.w = thumb_width;
-    this.navWin.h = Math.round( (this.max_size.h/this.max_size.w)*thumb_width );
+    this.navigation.size.x = thumb_width;
+    this.navigation.size.y = Math.round( (this.max_size.h/this.max_size.w)*thumb_width );
   },
 
 
@@ -928,7 +895,7 @@ var IIPMooViewer = new Class({
     this.view.h = target_size.y;
 
     // Calculate our navigation window size
-    this.calculateNavSize();
+    if( this.navigation ) this.calculateNavSize();
 
     // Determine the image size for this image view
     this.view.res = this.num_resolutions;
@@ -1037,10 +1004,18 @@ var IIPMooViewer = new Class({
 
 
     // Create our main view drag object for our canvas.
-    // Add synchronization via the Drag complete hook
+    // Add synchronization via the Drag complete hook as well as coordinate updating
+    var coordsBind = this.updateCoords.bind(this);
     this.touch = new Drag( this.canvas, {
-      onStart: function(){ _this.canvas.addClass('drag'); },
-      onComplete: function(){ _this.scroll(); _this.canvas.removeClass('drag'); }
+      onStart: function(){
+	_this.canvas.addClass('drag');
+	_this.canvas.removeEvent('mousemove:throttle(100)',coordsBind);
+      },
+      onComplete: function(){
+	_this.scroll();
+	_this.canvas.removeClass('drag');
+	_this.canvas.addEvent('mousemove:throttle(100)',coordsBind);
+      }
     });
 
 
@@ -1049,7 +1024,10 @@ var IIPMooViewer = new Class({
     this.canvas.addEvents({
       'mousewheel:throttle(75)': this.zoom.bind(this),
       'dblclick': this.zoom.bind(this),
-      'mousedown': function(e){ var event = new DOMEvent(e); event.stop(); }
+      'mousedown': function(e){ var event = new DOMEvent(e); event.stop(); },
+      'mousemove:throttle(100)': coordsBind, // Throttle to avoid unnecessary updating
+      'mouseenter': function(){ if( _this.navigation && _this.navigation.coords ) _this.navigation.coords.fade(0.65); },
+      'mouseleave': function(){ if( _this.navigation && _this.navigation.coords ) _this.navigation.coords.fade('out'); }
     });
 
 
@@ -1085,16 +1063,10 @@ var IIPMooViewer = new Class({
 
     // We want to add our keyboard events, but only when we are over the viewer div
     // Also prevent default scrolling via mousewheel
-
     var keybind = this.key.bind(this);
-
     this.container.addEvents({
-      'mouseenter': function(){
-	document.addEvent( 'keydown', keybind );
-      },
-      'mouseleave': function(){
-	document.removeEvent( 'keydown', keybind );
-      },
+      'mouseenter': function(){ document.addEvent( 'keydown', keybind ); },
+      'mouseleave': function(){ document.removeEvent( 'keydown', keybind ); },
       'mousewheel': function(e){ e.preventDefault(); }
     });
 
@@ -1137,7 +1109,17 @@ var IIPMooViewer = new Class({
 
     // Calculate some sizes and create the navigation window
     this.calculateSizes();
-    this.createNavigationWindow();
+    if( this.navigation){
+      this.navigation.create(this.container);
+      this.navigation.setImage(this.protocol.getThumbnailURL(this.server,this.images[0].src,this.navigation.size.x));
+      this.navigation.addEvents({
+	'zoomIn': this.zoomIn.bind(this),
+	'zoomOut': this.zoomOut.bind(this),
+	'reload': this.reload.bind(this),
+	'scroll': this.scrollNavigation.bind(this),
+	'zoom': this.zoom.bind(this)
+     });
+    }
     if( this.annotations ) this.createAnnotations();
 
 
@@ -1186,7 +1168,7 @@ var IIPMooViewer = new Class({
 
     // Load our images
     this.requestImages();
-    this.positionZone();
+    if( this.navigation ) this.navigation.update(this.view.x/this.wid,this.view.y/this.hei,this.view.w/this.wid,this.view.h/this.hei);
     if( this.scale ) this.scale.update( this.wid/this.max_size.w, this.view.w );
 
     // Set initial rotation
@@ -1203,198 +1185,18 @@ var IIPMooViewer = new Class({
   },
 
 
-
-  /* Create our navigation window
+  /* Create function to update coordinates
    */
-  createNavigationWindow: function() {
-
-    // If the user does not want a navigation window, do not create one!
-    if( (!this.showNavWindow) && (!this.showNavButtons) ) return;
-
-    this.navcontainer = new Element( 'div', {
-      'class': 'navcontainer',
-      'styles': {
-	position: 'absolute',
-	width: this.navWin.w
-      }
-    });
-
-    // For standalone iphone/ipad the logo gets covered by the status bar
-    if( Browser.Platform.ios && window.navigator.standalone ) this.navcontainer.setStyle( 'top', 20 );
-
-    var toolbar = new Element( 'div', {
-      'class': 'toolbar',
-      'events': {
-	 dblclick: function(source){
-	   source.getElement('div.navbuttons').get('slide').toggle();
-         }.pass(this.container)
-      }
-    });
-    toolbar.store( 'tip:text', IIPMooViewer.lang.drag );
-    toolbar.inject(this.navcontainer);
-
-
-    // Create our navigation div and inject it inside our frame if requested
-    if( this.showNavWindow ){
-
-      var navwin = new Element( 'div', {
-	'class': 'navwin',
-        'styles': {
-	  height: this.navWin.h
-	}
-      });
-      navwin.inject( this.navcontainer );
-
-
-      // Create our navigation image and inject inside the div we just created
-      var navimage = new Element( 'img', {
-	'class': 'navimage',
-	'src': this.protocol.getThumbnailURL(this.server,this.images[0].src,this.navWin.w),
-        'events': {
-          'click': this.scrollNavigation.bind(this),
-          'mousewheel:throttle(75)': this.zoom.bind(this),
-          // Prevent user from dragging navigation image
-          'mousedown': function(e){ var event = new DOMEvent(e); event.stop(); }
-        }
-      });
-      navimage.inject(navwin);
-
-
-      // Create our navigation zone and inject inside the navigation div
-      this.zone = new Element( 'div', {
-        'class': 'zone',
-        'morph': {
-	  duration: 500,
-	  transition: Fx.Transitions.Quad.easeInOut
-        },
-	'events': {
- 	  'mousewheel:throttle(75)': this.zoom.bind(this),
- 	  'dblclick': this.zoom.bind(this)
-	},
-	'styles': {
-	  width: 0, height: 0
-        }
-      });
-      this.zone.inject(navwin);
-
-    }
-
-
-    // Create our nav buttons if requested
-    if( this.showNavButtons ){
-
-      var navbuttons = new Element('div', {
-	'class': 'navbuttons'
-      });
-
-      // Create our buttons as SVG with fallback to PNG
-      var prefix = this.prefix;
-      ['reset','zoomIn','zoomOut'].each( function(k){
-	new Element('img',{
-	  'src': prefix + k + (Browser.buggy?'.png':'.svg'),
-	  'class': k,
- 	  'events':{
-	    'error': function(){
-	      this.removeEvents('error'); // Prevent infinite reloading
-	      this.src = this.src.replace('.svg','.png'); // PNG fallback
-	    }
-	  }
-	}).inject(navbuttons);
-      });
-
-      navbuttons.inject(this.navcontainer);
-
-      // Need to set this after injection
-      navbuttons.set('slide', {duration: 300, transition: Fx.Transitions.Quad.easeInOut, mode:'vertical'});
-
-      // Add events to our buttons
-      navbuttons.getElement('img.zoomIn').addEvent( 'click', function(){
-	IIPMooViewer.windows(this).each( function(el){ el.zoomIn(); });
-	this.zoomIn();
-      }.bind(this) );
-
-      navbuttons.getElement('img.zoomOut').addEvent( 'click', function(){
-	IIPMooViewer.windows(this).each( function(el){ el.zoomOut(); });
-	this.zoomOut();
-      }.bind(this) );
-
-      navbuttons.getElement('img.reset').addEvent( 'click', function(){
-	IIPMooViewer.windows(this).each( function(el){ el.reload(); });
-	this.reload();
-      }.bind(this) );
-
-    }
-
-    // Add a progress bar only if we have the navigation window visible
-    if( this.showNavWindow ){
-
-      // Create our progress bar
-      var loadBarContainer = new Element('div', {
-	'class': 'loadBarContainer',
-        'html': '<div class="loadBar"></div>',
-        'styles': {
-           width: this.navWin.w - 2
-         },
-         'tween': {
-           duration: 1000,
-           transition: Fx.Transitions.Sine.easeOut,
-	   link: 'cancel'
-         }
-      });
-      loadBarContainer.inject(this.navcontainer);
-    }
-
-
-    // Inject our navigation container into our holding div
-    this.navcontainer.inject(this.container);
-
-
-    if( this.showNavWindow ){
-      this.zone.makeDraggable({
-	container: this.navcontainer.getElement('div.navwin'),
-          // Take a note of the starting coords of our drag zone
-          onStart: function() {
-	    var pos = this.zone.getPosition();
-	    this.navpos = {x: pos.x, y: pos.y-10};
-	    this.zone.get('morph').cancel();
-	  }.bind(this),
-	onComplete: this.scrollNavigation.bind(this)
-        });
-    }
-
-    this.navcontainer.makeDraggable( {container:this.container, handle:toolbar} );
-
-  },
-
-
-
-  /* Update the tile download progress bar
-   */
-  refreshLoadBar: function() {
-
-    // Update the loaded tiles number, grow the loadbar size
-    var w = (this.nTilesLoaded / this.nTilesToLoad) * this.navWin.w;
-
-    var loadBarContainer = this.navcontainer.getElement('div.loadBarContainer');
-    var loadBar = loadBarContainer.getElement('div.loadBar');
-    loadBar.setStyle( 'width', w );
-
-    // Display the % in the progress bar
-    loadBar.set( 'html', IIPMooViewer.lang.loading + '&nbsp;:&nbsp;' + Math.round(this.nTilesLoaded/this.nTilesToLoad*100) + '%' );
-
-    if( loadBarContainer.style.opacity != '0.85' ){
-      loadBarContainer.setStyles({
-	visibility: 'visible',
-	opacity: 0.85
-      });
-    }
-
-    // If we're done with loading, fade out the load bar
-    if( this.nTilesLoaded >= this.nTilesToLoad ){
-      // Fade out our progress bar and loading animation in a chain
-      loadBarContainer.fade('out');
-    }
-
+  updateCoords: function(e){
+    if( !this.navigation || !this.navigation.coords ) return;
+    // Calculate scale factor for this resolution 
+    var f = this.max_size.w / this.wid;
+    // Calculate position taking into account images smaller than our view
+    var x = e.page.x + this.view.x - ((this.wid<this.view.w) ? Math.round((this.view.w-this.wid)/2) : 0);
+    var y = e.page.y + this.view.y - ((this.hei<this.view.h) ? Math.round((this.view.h-this.hei)/2) : 0);
+    x = (x*f / this.scale.pixelscale).toFixed(2);
+    y = (y*f / this.scale.pixelscale).toFixed(2);
+    this.navigation.setCoords( x+'mm, '+y+'mm' );
   },
 
 
@@ -1420,11 +1222,7 @@ var IIPMooViewer = new Class({
 
 	this.reload();
 
-	// Change our navigation image
-	if( this.navcontainer && this.navcontainer.getElement('img.navimage') ){
-	  this.navcontainer.getElement('img.navimage').src =
-	    this.protocol.getThumbnailURL( this.server, image, this.navWin.w );
-	}
+	if( this.navigation ) this.navigation.setImage( this.protocol.getThumbnailURL( this.server, image, this.navigation.size.x ) );
 
       }.bind(this),
 	onFailure: function(){ alert('Error: Unable to get image metadata from server!'); }
@@ -1487,21 +1285,11 @@ var IIPMooViewer = new Class({
 
 
     // Calculate our new navigation window size
-    this.calculateNavSize();
-
-    // Resize our navigation window
-    this.container.getElements('div.navcontainer, div.navcontainer div.loadBarContainer').setStyle('width', this.navWin.w);
-
-    // And reposition the navigation window
-    if( this.showNavWindow ){
-      if( this.navcontainer ) this.navcontainer.setStyles({
-	top: (Browser.Platform.ios&&window.navigator.standalone) ? 20 : 10, // Nudge down window in iOS standalone mode
-	left: this.container.getPosition(this.container).x + this.container.getSize().x - this.navWin.w - 10
-      });
-
-      // Resize our navigation window div
-      if(this.zone) this.zone.getParent().setStyle('height', this.navWin.h );
+    if( this.navigation ){
+      this.calculateNavSize();
+      this.navigation.reflow(this.container);
     }
+
 
     // Reset and reposition our scale
     if( this.scale ){
@@ -1510,7 +1298,7 @@ var IIPMooViewer = new Class({
     }
 
     this.requestImages();
-    this.positionZone();
+    if( this.navigation ) this.navigation.update(this.view.x/this.wid,this.view.y/this.hei,this.view.w/this.wid,this.view.h/this.hei);
     this.constrain();
 
   },
@@ -1587,41 +1375,9 @@ var IIPMooViewer = new Class({
     var ay = this.hei<this.view.h ? Array(Math.round((this.view.h-this.hei)/2), Math.round((this.view.h-this.hei)/2)) : Array(this.view.h-this.hei,0);
 
     this.touch.options.limit = { x: ax, y: ay };
-  },
-
-
-  /* Reposition the navigation rectangle on the overview image
-   */
-  positionZone: function(){
-
-    if( !this.showNavWindow ) return;
-
-    var pleft = (this.view.x/this.wid) * (this.navWin.w);
-    if( pleft > this.navWin.w ) pleft = this.navWin.w;
-    if( pleft < 0 ) pleft = 0;
-
-    var ptop = (this.view.y/this.hei) * (this.navWin.h);
-    if( ptop > this.navWin.h ) ptop = this.navWin.h;
-    if( ptop < 0 ) ptop = 0;
-
-    var width = (this.view.w/this.wid) * (this.navWin.w);
-    if( pleft+width > this.navWin.w ) width = this.navWin.w - pleft;
-
-    var height = (this.view.h/this.hei) * (this.navWin.h);
-    if( height+ptop > this.navWin.h ) height = this.navWin.h - ptop;
-
-    var border = this.zone.offsetHeight - this.zone.clientHeight;
-
-    // Move the zone to the new size and position
-    this.zone.morph({
-      fps: 30,
-      left: pleft,
-      top: ptop + 8, // 8 is the height of toolbar
-      width: (width-border>0)? width - border : 1, // Watch out for zero sizes!
-      height: (height-border>0)? height - border : 1
-    });
-
   }
+
+
 });
 
 
