@@ -1117,9 +1117,24 @@ var IIPMooViewer = new Class({
       this.navigation.create(this.container);
       this.navigation.setImage(this.protocol.getThumbnailURL(this.server,this.images[0].src,this.navigation.size.x));
       this.navigation.addEvents({
-	'zoomIn': this.zoomIn.bind(this),
-	'zoomOut': this.zoomOut.bind(this),
-	'reload': this.reload.bind(this),
+	'zoomIn': function(){
+	  _this.zoomIn();
+	  if( IIPMooViewer.sync ){
+	    IIPMooViewer.windows(_this).each( function(el){ el.zoomIn(); });
+	  }
+	},
+	'zoomOut': function(){
+	  _this.zoomOut();
+	  if( IIPMooViewer.sync ){
+	    IIPMooViewer.windows(_this).each( function(el){ el.zoomOut(); });
+	  }
+	},
+	'reload': function(){
+	  _this.reload();
+	  if( IIPMooViewer.sync ){
+	    IIPMooViewer.windows(_this).each( function(el){ el.reload(); });
+	  }
+	},
 	'scroll': this.scrollNavigation.bind(this),
 	'zoom': this.zoom.bind(this)
      });
