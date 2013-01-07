@@ -254,7 +254,7 @@ var Navigation = new Class({
     if( this.options.showNavWindow ){
       if( this.navcontainer ) this.navcontainer.setStyles({
 	top: (Browser.Platform.ios&&window.navigator.standalone) ? 20 : 10, // Nudge down window in iOS standalone mode
-	left: container.getPosition(this.container).x + container.getSize().x - this.size.x - 10
+	left: container.getPosition(container).x + container.getSize().x - this.size.x - 10
       });
 
       // Resize our navigation window div

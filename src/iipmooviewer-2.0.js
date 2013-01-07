@@ -346,7 +346,7 @@ var IIPMooViewer = new Class({
       if( this.tiles.contains(k) ){
 	this.nTilesLoaded += this.images.length;
         if( this.navigation ) this.navigation.refreshLoadBar(this.nTilesLoaded,this.nTilesToLoad);
-	if( this.nTilesLoaded >= this.nTilesToLoad ) this.canvas.setStyle( 'cursor', 'move' );
+	if( this.nTilesLoaded >= this.nTilesToLoad ) this.canvas.setStyle( 'cursor', null );
 	continue;
       }
 
@@ -391,7 +391,7 @@ var IIPMooViewer = new Class({
 	     }
 	     this.nTilesLoaded++;
 	     if( this.navigation ) this.navigation.refreshLoadBar( this.nTilesLoaded, this.nTilesToLoad );
-	     if( this.nTilesLoaded >= this.nTilesToLoad ) this.canvas.setStyle( 'cursor', 'move' );
+	     if( this.nTilesLoaded >= this.nTilesToLoad ) this.canvas.setStyle( 'cursor', null );
 	     this.tiles.push(id); // Add to our list of loaded tiles
 	  }.bind(this,tile,k),
 	  'error': function(){
@@ -1302,7 +1302,10 @@ var IIPMooViewer = new Class({
     }
 
     this.requestImages();
-    if( this.navigation ) this.navigation.update(this.view.x/this.wid,this.view.y/this.hei,this.view.w/this.wid,this.view.h/this.hei);
+
+    if( this.navigation ){
+      this.navigation.update(this.view.x/this.wid,this.view.y/this.hei,this.view.w/this.wid,this.view.h/this.hei);
+    }
     this.constrain();
 
   },
@@ -1327,7 +1330,7 @@ var IIPMooViewer = new Class({
     }
     // Center our view or move to initial viewport position
     if( this.viewport && this.viewport.x!=null && this.viewport.y!=null ){
-      this.moveTo( this.viewport.x*this.wid, this.viewport.y*this.hei );
+      this.moveTo( this.viewport.x*this.wid-(this.view.w/2), this.viewport.y*this.hei-(this.view.h/2) );
     }
     else this.recenter();
 
@@ -1383,6 +1386,7 @@ var IIPMooViewer = new Class({
 
 
 });
+window['IIPMooViewer'] = IIPMooViewer;
 
 
 /* Static function for synchronizing iipmooviewer instances
