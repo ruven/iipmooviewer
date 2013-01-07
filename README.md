@@ -19,6 +19,8 @@ Features
 * HTML5 Fullscreen API support
 * Annotations of regions of images
 * Synchronized viewer capability
+* Image blending comparison
+* Localization
 
 
 Installation
@@ -76,21 +78,23 @@ option is the <b>image</b> variable)
        should be a UNIX style path such as "/path/to/image.tif". Note that this is an
        absolute system path and not the path relative to the webserver root
 
-<b>server</b> : The address of the IIPImage server. [default : "/fcgi-bin/iipsrv.fcgi"]
+<b>server</b> : The address of the IIPImage server. [default: "/fcgi-bin/iipsrv.fcgi"]
 
 <b>credit</b> : a credit, copyright or information to be shown on the image itself
 
 <b>render</b> : the way in which tiles are rendered. Either `random' where the 
         tiles are fetched and rendered randomly or 'spiral' where the 
-        tiles are rendered from the center outwards [default : "spiral"]
+        tiles are rendered from the center outwards [default: "spiral"]
 
-<b>showNavWindow</b> : whether to show the navigation window. [default : true]
+<b>showNavWindow</b> : whether to show the navigation window. [default: true]
 
 <b>showNavButtons</b> : whether to show the navigation buttons on start up: true 
-        or false [default : true]
+        or false [default: true]
 
 <b>navWinSize</b> : ratio of navigation window size to the main window.
 	Wide panoramas are scaled to twice this size [default: 0.2]
+
+<b>showCoords</b> : whether to show live screen coordinates [default: false]
 
 <b>scale</b> : adds a scale to the image. Specify the number of pixels per unis. Should be given in pixels per mm if the default meter unit is used. Otherwise pixels per degree if degree units are used.
 
@@ -110,7 +114,9 @@ option is the <b>image</b> variable)
 
 <b>winResize</b> : whether view is reflowed on window resize. [default: true]
 
-<b>viewport</b> : object containing x, y, resolution, rotation and contrast of initial view. For example, to start at resolution 4 with the top left of the view port at both 90% of the size of the image:
+<b>viewport</b> : object containing center x, y, resolution, rotation and contrast of initial view. For example, to 
+start 
+at resolution 4 with the center of the view port at both 90% of the size of the image:
 <pre>{resolution:4, x:0.9, y:0.9, rotation:0}</pre>
 
 <b>protocol</b> : protocol to use with the server: iip, zoomify or deepzoom [default: "iip"]

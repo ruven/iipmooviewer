@@ -275,6 +275,8 @@ var Navigation = new Class({
   },
 
 
+  /* Update screen coordinates
+   */
   setCoords: function( text ){
     if( !this.coords ) return;
     this.coords.getElement('div').set( 'html', text );

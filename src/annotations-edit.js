@@ -160,7 +160,8 @@ IIPMooViewer.implement({
       'reset': function(){
 	delete _this.annotations[id].edit;
 	_this.updateAnnotations();
-      }
+	},
+      'keydown': function(e){ e.stopPropagation(); }
     });
 
     // Add a delete event to our annotation
@@ -200,10 +201,10 @@ IIPMooViewer.implement({
         this.focus();
         this.value = this.value;
        },
-      'dblclick': function(e){ e.stop; },
-      'mousedown': function(e){ e.stop(); },
-      'mousemove': function(e){ e.stop(); },
-      'mouseup': function(e){ e.stop(); }
+      'dblclick': function(e){ e.stopPropagation(); },
+      'mousedown': function(e){ e.stopPropagation(); },
+      'mousemove': function(e){ e.stopPropagation(); },
+      'mouseup': function(e){ e.stopPropagation(); }
     });
 
   },

@@ -47,6 +47,7 @@
 	      scale: pixels per mm
 	      showNavWindow: whether to show the navigation window. Default true
 	      showNavButtons: whether to show the navigation buttons. Default true
+	      showCoords: whether to show live screen coordinates. Default false
 	      protocol: iip (default), zoomify or deepzoom
 	      enableFullscreen: allow full screen mode. Default true
 	      viewport: object containing x, y, resolution, rotation of initial view
@@ -96,8 +97,6 @@ var IIPMooViewer = new Class({
     if( typeOf(options.image) == 'array' ){
        for( i=0; i<options.image.length;i++ ){
 	 this.images[i] = { src:options.image[i], sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null };
-
-
        }
     }
     else this.images = [{ src:options.image, sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null } ];
@@ -511,6 +510,11 @@ var IIPMooViewer = new Class({
       break;
     case 70: // f fullscreen, but if we have multiple views
       if(!IIPMooViewer.sync) this.toggleFullScreen();
+      break;
+    case 67: // For control-c, show our current view location
+      if(e.control) prompt( "URL of current view:", window.location.href + '#' + this.view.res + ',' +
+			   (this.view.x+this.view.w/2)/this.wid + ',' +
+			   (this.view.y+this.view.h/2)/this.hei );
       break;
     default:
       break;
@@ -1154,7 +1158,7 @@ var IIPMooViewer = new Class({
 
     // Center our view or move to initial viewport position
     if( this.viewport && this.viewport.x!=null && this.viewport.y!=null ){
-      this.moveTo( this.viewport.x*this.wid, this.viewport.y*this.hei );
+      this.moveTo( this.viewport.x*this.wid-(this.view.w/2), this.viewport.y*this.hei-(this.view.h/2) );
     }
     else this.recenter();
 

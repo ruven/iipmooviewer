@@ -33,6 +33,7 @@
 
   <script type="text/javascript">
 
+    // IIPMooViewer options:
     // The *full* image path on the server. This path does *not* need to be in the web
     // server root directory. On Windows, use Unix style forward slash paths without
     // the "c:" prefix
@@ -41,11 +42,23 @@
     // Copyright or information message
     var credit = '&copy; copyright or information message';
 
-    // Create our viewer object
-    // See documentation for more details of options
+    var viewport = {};
+
+    // Extract target info if this has been given in the url in the form #resolution,x,y
+    // For example http://your.server/iipmooviewer/test.html#5,0.4,0.6
+    if( window.location.hash ){
+      var params = window.location.hash.split('#')[1].split(',');
+      viewport.resolution = params[0];
+      viewport.x = params[1];
+      viewport.y = params[2];
+    }
+
+    // Create our iipmooviewer object
+    // See documentation at http://iipimage.sf.net for more details of options
     new IIPMooViewer( "viewer", {
 	image: image,
-	credit: credit
+	credit: credit,
+	viewport: viewport
     });
 
   </script>
