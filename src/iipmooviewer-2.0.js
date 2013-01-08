@@ -994,12 +994,12 @@ var IIPMooViewer = new Class({
     this.touch = new Drag( this.canvas, {
       onStart: function(){
 	_this.canvas.addClass('drag');
-	_this.canvas.removeEvent('mousemove:throttle(100)',coordsBind);
+	_this.canvas.removeEvent('mousemove:throttle(75)',coordsBind);
       },
       onComplete: function(){
 	_this.scroll();
 	_this.canvas.removeClass('drag');
-	_this.canvas.addEvent('mousemove:throttle(100)',coordsBind);
+	_this.canvas.addEvent('mousemove:throttle(75)',coordsBind);
       }
     });
 
@@ -1010,7 +1010,7 @@ var IIPMooViewer = new Class({
       'mousewheel:throttle(75)': this.zoom.bind(this),
       'dblclick': this.zoom.bind(this),
       'mousedown': function(e){ var event = new DOMEvent(e); event.stop(); },
-      'mousemove:throttle(100)': coordsBind, // Throttle to avoid unnecessary updating
+      'mousemove:throttle(75)': coordsBind, // Throttle to avoid unnecessary updating
       'mouseenter': function(){ if( _this.navigation && _this.navigation.coords ) _this.navigation.coords.fade(0.65); },
       'mouseleave': function(){ if( _this.navigation && _this.navigation.coords ) _this.navigation.coords.fade('out'); }
     });
@@ -1188,9 +1188,15 @@ var IIPMooViewer = new Class({
     // Calculate position taking into account images smaller than our view
     var x = e.page.x + this.view.x - ((this.wid<this.view.w) ? Math.round((this.view.w-this.wid)/2) : 0);
     var y = e.page.y + this.view.y - ((this.hei<this.view.h) ? Math.round((this.view.h-this.hei)/2) : 0);
-    x = (x*f / this.scale.pixelscale).toFixed(2);
-    y = (y*f / this.scale.pixelscale).toFixed(2);
-    this.navigation.setCoords( x+'mm, '+y+'mm' );
+    var text = this.transformCoords( x*f, y*f );
+    this.navigation.setCoords( text );
+  },
+
+
+  /* Transform resolution independent coordinates to coordinate system
+   */
+  transformCoords: function( x, y ){
+    return (x/this.scale.pixelscale).toFixed(2) + 'mm, ' + (y/this.scale.pixelscale).toFixed(2) + 'mm';
   },
 
 

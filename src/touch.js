@@ -53,9 +53,7 @@ IIPMooViewer.implement({
 	      // Double tap
 	      _this.canvas.eliminate('taptime');
 	      _this.zoomIn();
-	      if(IIPMooViewer.sync){
-		IIPMooViewer.windows(_this).each( function(el){ el.zoomIn(); });
-	      }
+	      if(IIPMooViewer.sync) IIPMooViewer.windows(_this).invoke('zoomIn');
 	    }
 	    else{
 	      // Record our start position
@@ -129,15 +127,11 @@ IIPMooViewer.implement({
 	    if( Math.abs(scale) > 20000 ){
 	      if( scale > 0 ){
 		_this.zoomIn();
-		if(IIPMooViewer.sync){
-		  IIPMooViewer.windows(_this).each( function(el){ el.zoomIn(); });
-		}
+		if(IIPMooViewer.sync) IIPMooViewer.windows(_this).invoke('zoomIn');
 	      }
 	      else if( scale < 0 ){
 		_this.zoomOut();
-		if(IIPMooViewer.sync){
-		  IIPMooViewer.windows(_this).each( function(el){ el.zoomOut(); });
-		}
+		if(IIPMooViewer.sync) IIPMooViewer.windows(_this).invoke('zoomOut');
 	      }
 	    }
 
@@ -145,14 +139,12 @@ IIPMooViewer.implement({
 	    var r1 = Math.atan2( _this.touchend[1].y - _this.touchend[0].y, _this.touchend[1].x - _this.touchend[0].x ) * 180 / Math.PI;
 	    var r2 = Math.atan2( _this.touchstart[1].y - _this.touchstart[0].y, _this.touchstart[1].x - _this.touchstart[0].x ) * 180 / Math.PI;
 	    var rotation = r1 - r2;
-	    if( Math.abs(rotation) > 15 ){
+	    if( Math.abs(rotation) > 25 ){
 	      var r = _this.view.rotation;
 	      if( rotation > 0 ) r += 90 % 360;
 	      else r -= 90 % 360;
 	      _this.rotate(r);
-	      if(IIPMooViewer.sync){
-		IIPMooViewer.windows(_this).each( function(el){ el.rotate(r); });
-	      }
+	      if(IIPMooViewer.sync) IIPMooViewer.windows(_this).invoke( 'rotate', r );
 	    }
 
 	    _this.touchend = null;
@@ -183,10 +175,8 @@ IIPMooViewer.implement({
 	    });
 
 	    _this.requestImages();
-	    _this.positionZone();
-	    if(IIPMooViewer.sync){
-	      IIPMooViewer.windows(_this).each( function(el){ el.moveTo(_this.view.x,_this.view.y); });
-	    }
+	    if( _this.navigation ) _this.navigation.update(_this.view.x/_this.wid,_this.view.y/_this.hei,_this.view.w/_this.wid,_this.view.h/_this.hei);
+	    if(IIPMooViewer.sync) IIPMooViewer.windows(_this).invoke( 'moveTo', _this.view.x, _this.view.y );
 
 	    // This activates hardware acceleration
 	    _this.canvas.setStyle( _this.CSSprefix+'transform', 'translateZ(0)' );
