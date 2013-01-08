@@ -440,51 +440,38 @@ var IIPMooViewer = new Class({
     switch( e.code ){
     case 37: // left
       this.nudge(-d,0);
-      if( IIPMooViewer.sync ){
-	IIPMooViewer.windows(this).each( function(el){ el.nudge(-d,0); });
-      }
+      if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'nudge', -d, 0 );
       event.preventDefault(); // Prevent default only for navigational keys
       break;
     case 38: // up
       this.nudge(0,-d);
-      if( IIPMooViewer.sync ){
-	IIPMooViewer.windows(this).each( function(el){ el.nudge(0,-d); });
-      }
+      if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'nudge', 0, -d );
       event.preventDefault();
       break;
     case 39: // right
       this.nudge(d,0);
-      if( IIPMooViewer.sync ){
-	IIPMooViewer.windows(this).each( function(el){ el.nudge(d,0); });
-      }
+      if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'nudge', d, 0 );
       event.preventDefault();
       break;
     case 40: // down
       this.nudge(0,d);
-      if( IIPMooViewer.sync ){
-	IIPMooViewer.windows(this).each( function(el){ el.nudge(0,d); });
-      }
+      if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'nudge', 0, d );
       event.preventDefault();
       break;
     case 107: // plus
       if(!e.control){
 	this.zoomIn();
-	if( IIPMooViewer.sync ){
-	  IIPMooViewer.windows(this).each( function(el){ el.zoomIn(); });
-	}
+	if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke('zoomIn');
 	event.preventDefault();
       }
       break;
     case 109: // minus
+    case 189: // minus
       if(!e.control){
 	this.zoomOut();
-	if( IIPMooViewer.sync ){
-	  IIPMooViewer.windows(this).each( function(el){ el.zoomOut(); });
-	}
+	if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke('zoomOut');
+	event.preventDefault();
       }
-      break;
-    case 189: // minus
-      if(!e.control) this.zoomOut();
       break;
     case 72: // h
       if( this.navigation ) this.navigation.toggleWindow();
@@ -496,9 +483,7 @@ var IIPMooViewer = new Class({
 	else r += 90 % 360;
 
 	this.rotate( r );
-	if( IIPMooViewer.sync ){
-	  IIPMooViewer.windows(this).each( function(el){ el.rotate(r); });
-	}
+	if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'rotate', r );
       }
       break;
     case 65: // a
@@ -634,9 +619,8 @@ var IIPMooViewer = new Class({
       this.requestImages();
     }
 
-    if(IIPMooViewer.sync){
-      IIPMooViewer.windows(this).each( function(el){ el.moveTo(xmove,ymove); });
-    }
+    if(IIPMooViewer.sync) IIPMooViewer.windows(this).invoke( 'moveTo', xmove, ymove );
+
   },
 
 
@@ -653,9 +637,7 @@ var IIPMooViewer = new Class({
     var ymove =  -pos.y;
     this.moveTo( xmove, ymove );
 
-    if( IIPMooViewer.sync ){
-      IIPMooViewer.windows(this).each( function(el){ el.moveTo(xmove,ymove); });
-    }
+    if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'moveTo', xmove, ymove );
 
   },
 
@@ -755,6 +737,7 @@ var IIPMooViewer = new Class({
 	this.view.y = Math.round( (event.page.y - pos.y - z_size.y/2) * this.hei/n_size.y );
       }
 
+      // Set the view in each synchronized window
       if( IIPMooViewer.sync ){
 	var _x = this.view.x;
 	var _y = this.view.y;
@@ -770,10 +753,8 @@ var IIPMooViewer = new Class({
     else this.zoomIn();
 
     if( IIPMooViewer.sync ){
-      IIPMooViewer.windows(this).each( function(el){
-	if( z==-1) el.zoomOut();
-	else el.zoomIn();
-      });
+      if( z==-1 ) IIPMooViewer.windows(this).invoke('zoomOut');
+      else IIPMooViewer.windows(this).invoke('zoomIn');
     }
 
   },
@@ -1119,21 +1100,15 @@ var IIPMooViewer = new Class({
       this.navigation.addEvents({
 	'zoomIn': function(){
 	  _this.zoomIn();
-	  if( IIPMooViewer.sync ){
-	    IIPMooViewer.windows(_this).each( function(el){ el.zoomIn(); });
-	  }
+	  if( IIPMooViewer.sync ) IIPMooViewer.windows(_this).invoke( 'zoomIn' );
 	},
 	'zoomOut': function(){
 	  _this.zoomOut();
-	  if( IIPMooViewer.sync ){
-	    IIPMooViewer.windows(_this).each( function(el){ el.zoomOut(); });
-	  }
+	  if( IIPMooViewer.sync ) IIPMooViewer.windows(_this).invoke( 'zoomOut' );
 	},
 	'reload': function(){
 	  _this.reload();
-	  if( IIPMooViewer.sync ){
-	    IIPMooViewer.windows(_this).each( function(el){ el.reload(); });
-	  }
+	  if( IIPMooViewer.sync ) IIPMooViewer.windows(_this).invoke( 'reload' );
 	},
 	'scroll': this.scrollNavigation.bind(this),
 	'zoom': this.zoom.bind(this)
@@ -1401,7 +1376,7 @@ var IIPMooViewer = new Class({
 
 
 });
-window['IIPMooViewer'] = IIPMooViewer;
+
 
 
 /* Static function for synchronizing iipmooviewer instances
