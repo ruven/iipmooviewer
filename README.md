@@ -140,6 +140,9 @@ Public Functions
 
 <b>moveTo(x,y)</b>: Move the view to position <i>x</i>,<i>y</i> at the current resolution, where x,y are the coordinates of the top left of the view port.
 
+<b>centerTo(x,y)</b>: Center the view at relative position <i>x</i>,<i>y</i> at the current resolution, where x,y are resolution independent 
+coordinate ratios (0.0 -> 1.0 ) of the center of the view port.
+
 <b>zoomIn()</b>: Zoom in by a factor of 2
 
 <b>zoomOut()</b>: Zoom out by a factor of 2
@@ -283,6 +286,30 @@ iipmooviewer.blend( [ ['color.tif','color'],
                       ['xray.tif','X-ray']
                     ] );
 </pre>
+
+
+
+Linking
+-------
+A hash tag in the form x, y, resolution can be appended to the URL to 
+link to a particular area within the image at a particular resolution. 
+x and y should be resolution-independent ratios from 0.0 -> 1.0 and the resolution an integer representing the desired resolution 
+number (where 0 is the smallest resolution).
+For example:
+<pre>http://your.server/iipmooviewer/test.html#0.5,0.5,5</pre> 
+will set the initial view of the image to the x,y coordinate 0.5, 0.5 (the center of the image) at resolution number 5.
+
+The <i>hashchange</i> event is also used if supported by the browser to update the view if the coordinates change. This can be used, for example, to 
+maintain a sequence or history of view changes.
+
+Use control-c in order to obtain the tagged URL of the current view.
+
+
+Styling
+-------
+It is possible to restyle widgets such as the credit information box. Simply create your own CSS rule to override the default rule for:
+<pre>.iipmooviewer .credit</pre>
+to change the font, background or borders etc.
 
 
 ------------------------------------------------------------------------------------

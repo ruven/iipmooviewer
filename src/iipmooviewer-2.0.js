@@ -80,15 +80,25 @@ var IIPMooViewer = new Class({
 
     this.render = options.render || 'spiral';
 
-    // Set the initial zoom resolution and viewport
+    // Set the initial zoom resolution and viewport - if it's not been set manually, check for a hash tag
     this.viewport = null;
     if( options.viewport ){
       this.viewport = {
-	resolution: (typeof(options.viewport.resolution)=='undefined') ? null : parseInt(options.viewport.resolution),
-	rotation: (typeof(options.viewport.rotation)=='undefined') ? null : parseInt(options.viewport.rotation),
-	contrast: (typeof(options.viewport.contrast)=='undefined') ? null : parseFloat(options.viewport.contrast),
-	x: (typeof(options.viewport.x)=='undefined') ? null : parseFloat(options.viewport.x),
-	y: (typeof(options.viewport.y)=='undefined') ? null : parseFloat(options.viewport.y)
+	resolution: ('resolution' in options.viewport) ? parseInt(options.viewport.resolution) : null,
+	rotation: ('rotation' in options.viewport) ? parseInt(options.viewport.rotation) : null,
+	contrast: ('contrast' in options.viewport) ? parseFloat(options.viewport.contrast) : null,
+	x: ('x' in options.viewport) ? parseFloat(options.viewport.x) : null,
+	y: ('y' in options.viewport) ? parseFloat(options.viewport.y) : null
+      }
+    }
+    else if( window.location.hash.length > 0 ){
+      // Accept hash tags of the form ratio x, ratio y, resolution
+      // For example http://your.server/iipmooviewer/test.html#0.4,0.6,5
+      var params = window.location.hash.split('#')[1].split(',');
+      this.viewport = {
+	x: parseFloat(params[0]),
+	y: parseFloat(params[1]),
+	resolution: parseInt(params[2])
       }
     }
 
@@ -223,7 +233,16 @@ var IIPMooViewer = new Class({
     if( this.annotations ) this.destroyAnnotations();
 
     // Set our rotation origin - calculate differently if canvas is smaller than view port
+    
     if( !Browser.buggy ){
+      var view = this.getView();
+      var wid = this.wid;
+      var hei = this.hei;
+      // Adjust width and height if we have a 90 or -90 rotation
+      if( Math.abs(this.view.rotation % 180) == 90 ){
+	wid = this.hei;
+	hei = this.wid;
+      }
       var origin_x = ( this.wid>this.view.w ? Math.round(this.view.x+this.view.w/2) : Math.round(this.wid/2) ) + "px";
       var origin_y = ( this.hei>this.view.h ? Math.round(this.view.y+this.view.h/2) : Math.round(this.hei/2) ) + "px";
       var origin = origin_x + " " + origin_y;
@@ -246,24 +265,25 @@ var IIPMooViewer = new Class({
    */
   loadGrid: function(){
 
-    var border = this.preload ? 1 : 0
+    var border = this.preload ? 1 : 0;
+    var view = this.getView();
 
     // Get the start points for our tiles
-    var startx = Math.floor( this.view.x / this.tileSize.w ) - border;
-    var starty = Math.floor( this.view.y / this.tileSize.h ) - border;
+    var startx = Math.floor( view.x / this.tileSize.w ) - border;
+    var starty = Math.floor( view.y / this.tileSize.h ) - border;
     if( startx<0 ) startx = 0;
     if( starty<0 ) starty = 0;
 
 
     // If our size is smaller than the display window, only get these tiles!
-    var len = this.view.w;
-    if( this.wid < this.view.w ) len = this.wid;
-    var endx =  Math.ceil( ((len + this.view.x)/this.tileSize.w) - 1 ) + border;
+    var len = view.w;
+    if( this.wid < view.w ) len = this.wid;
+    var endx =  Math.ceil( ((len + view.x)/this.tileSize.w) - 1 ) + border;
 
 
-    len = this.view.h;
-    if( this.hei < this.view.h ) len = this.hei;
-    var endy = Math.ceil( ( (len + this.view.y)/this.tileSize.h) - 1 ) + border;
+    len = view.h;
+    if( this.hei < view.h ) len = this.hei;
+    var endy = Math.ceil( ( (len + view.y)/this.tileSize.h) - 1 ) + border;
 
 
     // Number of tiles is dependent on view width and height
@@ -277,11 +297,11 @@ var IIPMooViewer = new Class({
     /* Calculate the offset from the tile top left that we want to display.
        Also Center the image if our viewable image is smaller than the window
     */
-    var xoffset = Math.floor(this.view.x % this.tileSize.w);
-    if( this.wid < this.view.w ) xoffset -=  (this.view.w - this.wid)/2;
+    var xoffset = Math.floor(view.x % this.tileSize.w);
+    if( this.wid < view.w ) xoffset -=  (view.w - this.wid)/2;
 
-    var yoffset = Math.floor(this.view.y % this.tileSize.h);
-    if( this.hei < this.view.h ) yoffset -= (this.view.h - this.hei)/2;
+    var yoffset = Math.floor(view.y % this.tileSize.h);
+    if( this.hei < view.h ) yoffset -= (view.h - this.hei)/2;
 
     var tile;
     var i, j, k, n;
@@ -497,9 +517,10 @@ var IIPMooViewer = new Class({
       if(!IIPMooViewer.sync) this.toggleFullScreen();
       break;
     case 67: // For control-c, show our current view location
-      if(e.control) prompt( "URL of current view:", window.location.href + '#' + this.view.res + ',' +
-			   (this.view.x+this.view.w/2)/this.wid + ',' +
-			   (this.view.y+this.view.h/2)/this.hei );
+      if(e.control) prompt( "URL of current view:", window.location.href.split("#")[0] + '#' +
+			    (this.view.x+this.view.w/2)/this.wid + ',' +
+			    (this.view.y+this.view.h/2)/this.hei + ',' +
+			    this.view.res );
       break;
     default:
       break;
@@ -519,6 +540,12 @@ var IIPMooViewer = new Class({
     var angle = 'rotate(' + r + 'deg)';
     this.canvas.setStyle( this.CSSprefix+'transform', angle );
 
+    this.requestImages();
+
+    if( this.navigation ){
+      var view = this.getView();
+      this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
+    }
   },
 
 
@@ -630,15 +657,58 @@ var IIPMooViewer = new Class({
   scroll: function(e) {
 
     var pos = {};
+
     // Use style values directly as getPosition will take into account rotation
     pos.x = this.canvas.getStyle('left').toInt();
     pos.y = this.canvas.getStyle('top').toInt();
+
     var xmove =  -pos.x;
     var ymove =  -pos.y;
+
+    // Adjust for rotated views. First make sure we have a positive value 0-360
+    var rotation = this.view.rotation % 360;
+    if( rotation < 0 ) rotation += 360;
+
+    if( rotation == 90 ){
+      xmove = this.view.x - (this.view.y + pos.y);
+      ymove = this.view.y + (this.view.x + pos.x);
+    }
+    else if( rotation == 180 ){
+      xmove = this.view.x + (this.view.x + pos.x);
+      ymove = this.view.y + (this.view.y + pos.y);
+    }
+    else if( rotation == 270 ){
+      xmove = this.view.x + (this.view.y + pos.y);
+      ymove = this.view.y - (this.view.x + pos.x);
+    }
+
+    // Need to do the moveTo rather than just requestImages() to avoid problems with rotated views 
     this.moveTo( xmove, ymove );
 
     if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'moveTo', xmove, ymove );
 
+  },
+
+
+
+  /* Get view taking into account rotations
+   */
+  getView: function() {
+
+    var x = this.view.x;
+    var y = this.view.y;
+    var w = this.view.w;
+    var h = this.view.h;
+
+    // Correct for 90,270 ... rotation
+    if( Math.abs(this.view.rotation%180) == 90 ){
+      x = this.view.x + this.view.w/2 - this.view.h/2;
+      y = this.view.y + this.view.h/2 - this.view.w/2;
+      w = this.view.h;
+      h = this.view.w;
+    }
+
+    return { x: x, y: y, w: w, h: h };
   },
 
 
@@ -667,13 +737,25 @@ var IIPMooViewer = new Class({
     if( x==this.view.x && y==this.view.y ) return;
 
     this.checkBounds(x,y);
+
     this.canvas.setStyles({
       left: (this.wid>this.view.w)? -this.view.x : Math.round((this.view.w-this.wid)/2),
       top: (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2)
     });
 
     this.requestImages();
-    if( this.navigation ) this.navigation.update(this.view.x/this.wid,this.view.y/this.hei,this.view.w/this.wid,this.view.h/this.hei);
+    if( this.navigation ){
+      var view = this.getView();
+      this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
+    }
+  },
+
+
+
+  /* Move to and center at a particular point
+   */
+  centerTo: function( x, y ){
+    this.moveTo( Math.round(x*this.wid-(this.view.w/2)), Math.round(y*this.hei-(this.view.h/2)) );
   },
 
 
@@ -682,15 +764,40 @@ var IIPMooViewer = new Class({
    */
   nudge: function( dx, dy ){
 
-    this.checkBounds(this.view.x+dx,this.view.y+dy);
+    var rdx = dx;
+    var rdy = dy;
 
-    // Check whether image size is less than viewport
-    this.canvas.morph({
-      left: (this.wid>this.view.w)? -this.view.x : Math.round((this.view.w-this.wid)/2),
-      top: (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2)
-    });
+    // Adjust for rotated views. First make sure we have a positive value 0-360
+    var rotation = this.view.rotation % 360;
+    if( rotation < 0 ) rotation += 360;
 
-    if( this.navigation ) this.navigation.update(this.view.x/this.wid,this.view.y/this.hei,this.view.w/this.wid,this.view.h/this.hei);
+    if( rotation == 90 ){
+      rdy = -dx;
+      rdx = dy;
+    }
+    else if( rotation == 180 ){
+      rdx = -dx;
+      rdy = -dy;
+    }
+    else if( rotation == 270 ){
+      rdx = -dy;
+      rdy = dx;
+    }
+
+    // Morph is buggy for rotated images, so only use for no rotation
+    if( rotation == 0 ){
+      this.checkBounds(this.view.x+rdx,this.view.y+rdy);
+      this.canvas.morph({
+        left: (this.wid>this.view.w)? -this.view.x : Math.round((this.view.w-this.wid)/2),
+        top: (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2)
+      });
+    }
+    else this.moveTo( this.view.x+rdx, this.view.y+rdy );
+
+    if( this.navigation ){
+      var view = this.getView();
+      this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
+    }
   },
 
 
@@ -722,8 +829,14 @@ var IIPMooViewer = new Class({
       var cc = event.target.get('class');
 
       if( cc != "zone" & cc != 'navimage' ){
-	pos = this.canvas.getPosition();
-
+	// Get position, but we need to use our canvas style values directly as getPosition()
+	// mis-calculates for rotated images
+	var cpos = this.container.getPosition();
+	pos = {
+	  x: this.canvas.style.left.toInt() + cpos.x,
+	  y: this.canvas.style.top.toInt() + cpos.y
+	};
+	
 	// Center our zooming on the mouse position when over the main target window
 	this.view.x = event.page.x - pos.x - Math.floor(this.view.w/2);
 	this.view.y = event.page.y - pos.y - Math.floor(this.view.h/2);
@@ -841,7 +954,8 @@ var IIPMooViewer = new Class({
 
     this.requestImages();
     if( this.navigation ){
-      this.navigation.update(this.view.x/this.wid,this.view.y/this.hei,this.view.w/this.wid,this.view.h/this.hei);
+      var view = this.getView();
+      this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
       this.navigation.setCoords('');
     }
     if( this.scale ) this.scale.update( this.wid/this.max_size.w, this.view.w );
@@ -988,20 +1102,27 @@ var IIPMooViewer = new Class({
     });
 
 
-    // Create our main view drag object for our canvas.
-    // Add synchronization via the Drag complete hook as well as coordinate updating
-    var coordsBind = this.updateCoords.bind(this);
-    this.touch = new Drag( this.canvas, {
-      onStart: function(){
-	_this.canvas.addClass('drag');
-	_this.canvas.removeEvent('mousemove:throttle(75)',coordsBind);
-      },
-      onComplete: function(){
-	_this.scroll();
-	_this.canvas.removeClass('drag');
-	_this.canvas.addEvent('mousemove:throttle(75)',coordsBind);
-      }
-    });
+    // Add touch or drag events to our canvas
+    if( Browser.Platform.ios || Browser.Platform.android ){
+      // Add our touch events
+      this.addTouchEvents();
+    }
+    else{
+      // Create our main view drag object for our canvas.
+      // Add synchronization via the Drag complete hook as well as coordinate updating
+      var coordsBind = this.updateCoords.bind(this);
+      this.touch = new Drag( this.canvas, {
+	onStart: function(){
+	  _this.canvas.addClass('drag');
+	  _this.canvas.removeEvent('mousemove:throttle(75)',coordsBind);
+        },
+        onComplete: function(){
+	  _this.scroll();
+	  _this.canvas.removeClass('drag');
+	  _this.canvas.addEvent('mousemove:throttle(75)',coordsBind);
+        }
+      });
+    }
 
 
     // Inject our canvas into the container, but events need to be added after injection
@@ -1069,10 +1190,6 @@ var IIPMooViewer = new Class({
     }).inject(this.container);
 
 
-    // Add our touch events
-    this.addTouchEvents();
-
-
     // Add some information or credit
     if( this.credit ){
       new Element( 'div', {
@@ -1133,7 +1250,7 @@ var IIPMooViewer = new Class({
     }
 
     // Clear invalid this.viewport.resolution values
-    if( this.viewport && typeof(this.viewport.resolution!='undefined') &&
+    if( this.viewport && ('resolution' in this.viewport) &&
 	typeof(this.resolutions[this.viewport.resolution])=='undefined'){
       this.viewport.resolution=null;
     }
@@ -1148,7 +1265,7 @@ var IIPMooViewer = new Class({
 
     // Center our view or move to initial viewport position
     if( this.viewport && this.viewport.x!=null && this.viewport.y!=null ){
-      this.moveTo( this.viewport.x*this.wid-(this.view.w/2), this.viewport.y*this.hei-(this.view.h/2) );
+      this.centerTo( this.viewport.x, this.viewport.y );
     }
     else this.recenter();
 
@@ -1162,12 +1279,24 @@ var IIPMooViewer = new Class({
 
     // Load our images
     this.requestImages();
-    if( this.navigation ) this.navigation.update(this.view.x/this.wid,this.view.y/this.hei,this.view.w/this.wid,this.view.h/this.hei);
+    if( this.navigation ){
+      var view = this.getView();
+      this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
+    }
     if( this.scale ) this.scale.update( this.wid/this.max_size.w, this.view.w );
 
     // Set initial rotation
     if( this.viewport && this.viewport.rotation!=null ){
       this.rotate( this.viewport.rotation );
+    }
+
+    // Add a hash change event if this is supported by the browser
+    if( 'onhashchange' in window ){
+      window.addEvent( 'hashchange', function(){
+			 var params = window.location.hash.split('#')[1].split(',');
+			 _this.zoomTo( params[2] );
+			 _this.centerTo( params[0], params[1] );
+		       });
     }
 
     // Add our key press and window resize events. Do this at the end to avoid reloading before
@@ -1300,7 +1429,8 @@ var IIPMooViewer = new Class({
     this.requestImages();
 
     if( this.navigation ){
-      this.navigation.update(this.view.x/this.wid,this.view.y/this.hei,this.view.w/this.wid,this.view.h/this.hei);
+      var view = this.getView();
+      this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
     }
     this.constrain();
 
@@ -1326,7 +1456,7 @@ var IIPMooViewer = new Class({
     }
     // Center our view or move to initial viewport position
     if( this.viewport && this.viewport.x!=null && this.viewport.y!=null ){
-      this.moveTo( this.viewport.x*this.wid-(this.view.w/2), this.viewport.y*this.hei-(this.view.h/2) );
+      this.centerTo( this.viewport.x, this.viewport.y );
     }
     else this.recenter();
 
@@ -1407,6 +1537,11 @@ IIPMooViewer.windows = function(s){
  */
 if( Browser.ie && Browser.version<9 ) Browser.buggy = true;
 else Browser.buggy = false;
+
+
+/* Add hash change event to our Mootools native event list
+ */
+Element.NativeEvents.hashchange = 1;
 
 
 /* Setup our list of protocol objects
