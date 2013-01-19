@@ -623,6 +623,9 @@ var IIPMooViewer = new Class({
     var xmove = Math.round(e.x * this.wid);
     var ymove = Math.round(e.y * this.hei);
 
+    this.view.x = xmove;
+    this.view.y = ymove;
+
     // Only morph transition if we have moved a short distance and our rotation is zero
     var morphable = Math.abs(xmove-this.view.x)<this.view.w/2 && Math.abs(ymove-this.view.y)<this.view.h/2 && this.view.rotation==0;
     if( morphable ){
@@ -632,18 +635,9 @@ var IIPMooViewer = new Class({
       });
     }
     else{
-      this.canvas.setStyles({
-	left: (this.wid>this.view.w)? -xmove : Math.round((this.view.w-this.wid)/2),
-	top: (this.hei>this.view.h)? -ymove : Math.round((this.view.h-this.hei)/2)
-      });
-    }
-
-    this.view.x = xmove;
-    this.view.y = ymove;
-
-    // The morph event automatically calls requestImages
-    if( !morphable ){
-      this.requestImages();
+      this.positionCanvas();
+      // The morph event automatically calls requestImages
+      this.requestImages();      
     }
 
     if(IIPMooViewer.sync) IIPMooViewer.windows(this).invoke( 'moveTo', xmove, ymove );
@@ -737,13 +731,9 @@ var IIPMooViewer = new Class({
     if( x==this.view.x && y==this.view.y ) return;
 
     this.checkBounds(x,y);
-
-    this.canvas.setStyles({
-      left: (this.wid>this.view.w)? -this.view.x : Math.round((this.view.w-this.wid)/2),
-      top: (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2)
-    });
-
+    this.positionCanvas();
     this.requestImages();
+
     if( this.navigation ){
       var view = this.getView();
       this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
@@ -937,9 +927,8 @@ var IIPMooViewer = new Class({
     if( this.view.y + this.view.h > this.hei ) this.view.y = this.hei - this.view.h;
     if( this.view.y < 0 ) this.view.y = 0;
 
+    this.positionCanvas();
     this.canvas.setStyles({
-      left: (this.wid>this.view.w)? -this.view.x : Math.round((this.view.w-this.wid)/2),
-      top: (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2),
       width: this.wid,
       height: this.hei
     });
@@ -1120,7 +1109,7 @@ var IIPMooViewer = new Class({
 	  _this.scroll();
 	  _this.canvas.removeClass('drag');
 	  _this.canvas.addEvent('mousemove:throttle(75)',coordsBind);
-        }
+	}
       });
     }
 
@@ -1407,18 +1396,13 @@ var IIPMooViewer = new Class({
     this.view.h = target_size.y;
 
     // Constrain our canvas if it is smaller than the view window
-    this.canvas.setStyles({
-      left: (this.wid>this.view.w)? -this.view.x : Math.round((this.view.w-this.wid)/2),
-      top: (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2)
-    });
-
+    this.positionCanvas();
 
     // Calculate our new navigation window size
     if( this.navigation ){
       this.calculateNavSize();
       this.navigation.reflow(this.container);
     }
-
 
     // Reset and reposition our scale
     if( this.scale ){
@@ -1490,11 +1474,7 @@ var IIPMooViewer = new Class({
     this.view.y = (yoffset<0)? 0 : yoffset;
 
     // Center our canvas, taking into account images smaller than the viewport
-    this.canvas.setStyles({
-      left: (this.wid>this.view.w)? -this.view.x : Math.round((this.view.w-this.wid)/2),
-      top : (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2)
-    });
-
+    this.positionCanvas();
     this.constrain();
 
   },
@@ -1506,10 +1486,18 @@ var IIPMooViewer = new Class({
 
     var ax = this.wid<this.view.w ? Array(Math.round((this.view.w-this.wid)/2), Math.round((this.view.w-this.wid)/2)) : Array(this.view.w-this.wid,0);
     var ay = this.hei<this.view.h ? Array(Math.round((this.view.h-this.hei)/2), Math.round((this.view.h-this.hei)/2)) : Array(this.view.h-this.hei,0);
-
     this.touch.options.limit = { x: ax, y: ay };
-  }
+  },
 
+
+  /* Correctly position the canvas, taking into account images smaller than the viewport
+   */
+  positionCanvas: function(){
+    this.canvas.setStyles({
+      left: (this.wid>this.view.w)? -this.view.x : Math.round((this.view.w-this.wid)/2),
+      top : (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2)
+    });
+  }
 
 });
 
