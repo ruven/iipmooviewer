@@ -9,7 +9,7 @@
   <meta name="DC.description" content="IIPMooViewer is an advanced javascript HTML5 image viewer for streaming high resolution scientific images"/>
   <meta name="DC.rights" content="Copyright &copy; 2003-2012 Ruven Pillay"/>
   <meta name="DC.source" content="http://iipimage.sourceforge.net"/>
-  <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta http-equiv="X-UA-Compatible" content="IE=9" />
@@ -19,7 +19,7 @@
   <link rel="stylesheet" type="text/css" media="all" href="css/ie.compressed.css" />
 <![endif]-->
 
-  <!-- Example style for a 100% view -->
+  <!-- Basic example style for a 100% view -->
   <style type="text/css">
     body{
       height: 100%;
@@ -52,7 +52,10 @@
 
   <script type="text/javascript">
 
-    // IIPMooViewer options:
+    // IIPMooViewer options: See documentation at http://iipimage.sourceforge.net for more details
+    // Server path: set if not using default path
+    var server = '/fcgi-bin/iipsrv.fcgi';
+
     // The *full* image path on the server. This path does *not* need to be in the web
     // server root directory. On Windows, use Unix style forward slash paths without
     // the "c:" prefix
@@ -62,8 +65,8 @@
     var credit = '&copy; copyright or information message';
 
     // Create our iipmooviewer object
-    // See documentation at http://iipimage.sf.net for more details of options
     new IIPMooViewer( "viewer", {
+	server: server,
 	image: image,
 	credit: credit
     });

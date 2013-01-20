@@ -184,7 +184,7 @@ var IIPMooViewer = new Class({
     // - used for multispectral curve visualization, for example
     this.click = options.click || null;
 
-    this.max_size = {};      // Dimensions of largest resolution
+    this.max_size = {};       // Dimensions of largest resolution
     this.opacity = 0;
     this.wid = 0;             // Width of current resolution
     this.hei = 0;             // Height of current resolution
@@ -196,7 +196,7 @@ var IIPMooViewer = new Class({
       w: this.wid,
       h: this.hei,
       res: 0,                 // Current resolution
-      rotation: 0          // Current rotational orientation
+      rotation: 0             // Current rotational orientation
     };
 
     this.tileSize = {};       // Tile size in pixels {w,h}
@@ -267,6 +267,7 @@ var IIPMooViewer = new Class({
 
     var border = this.preload ? 1 : 0;
     var view = this.getView();
+
 
     // Get the start points for our tiles
     var startx = Math.floor( view.x / this.tileSize.w ) - border;
@@ -495,6 +496,7 @@ var IIPMooViewer = new Class({
       break;
     case 72: // h
       if( this.navigation ) this.navigation.toggleWindow();
+      if( this.credit ) this.container.getElement('div.credit').get('reveal').toggle();
       break;
     case 82: // r
       if(!e.control){
@@ -540,12 +542,10 @@ var IIPMooViewer = new Class({
     var angle = 'rotate(' + r + 'deg)';
     this.canvas.setStyle( this.CSSprefix+'transform', angle );
 
+    this.constrain();
     this.requestImages();
+    this.updateNavigation();
 
-    if( this.navigation ){
-      var view = this.getView();
-      this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
-    }
   },
 
 
@@ -696,8 +696,10 @@ var IIPMooViewer = new Class({
 
     // Correct for 90,270 ... rotation
     if( Math.abs(this.view.rotation%180) == 90 ){
-      x = this.view.x + this.view.w/2 - this.view.h/2;
-      y = this.view.y + this.view.h/2 - this.view.w/2;
+      x = Math.round( this.view.x + this.view.w/2 - this.view.h/2 );
+      y = Math.round( this.view.y + this.view.h/2 - this.view.w/2 );
+      if( x<0 ) x = 0;  // Make sure we don't have -ve values
+      if( y<0 ) y = 0;
       w = this.view.h;
       h = this.view.w;
     }
@@ -733,11 +735,7 @@ var IIPMooViewer = new Class({
     this.checkBounds(x,y);
     this.positionCanvas();
     this.requestImages();
-
-    if( this.navigation ){
-      var view = this.getView();
-      this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
-    }
+    this.updateNavigation();
   },
 
 
@@ -784,10 +782,7 @@ var IIPMooViewer = new Class({
     }
     else this.moveTo( this.view.x+rdx, this.view.y+rdy );
 
-    if( this.navigation ){
-      var view = this.getView();
-      this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
-    }
+    this.updateNavigation();
   },
 
 
@@ -821,7 +816,7 @@ var IIPMooViewer = new Class({
       if( cc != "zone" & cc != 'navimage' ){
 	// Get position, but we need to use our canvas style values directly as getPosition()
 	// mis-calculates for rotated images
-	var cpos = this.container.getPosition();
+	var cpos = this.containerPosition;
 	pos = {
 	  x: this.canvas.style.left.toInt() + cpos.x,
 	  y: this.canvas.style.top.toInt() + cpos.y
@@ -942,11 +937,10 @@ var IIPMooViewer = new Class({
     this.tiles.empty();
 
     this.requestImages();
-    if( this.navigation ){
-      var view = this.getView();
-      this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
-      this.navigation.setCoords('');
-    }
+
+    this.updateNavigation();
+    if( this.navigation ) this.navigation.setCoords('');
+
     if( this.scale ) this.scale.update( this.wid/this.max_size.w, this.view.w );
 
   },
@@ -1011,6 +1005,8 @@ var IIPMooViewer = new Class({
     this.resolutions.reverse();
     this.wid = this.resolutions[this.view.res].w;
     this.hei = this.resolutions[this.view.res].h;
+
+    if( this.scale ) this.scale.calculateDefault(this.max_size.w);
 
   },
 
@@ -1183,13 +1179,7 @@ var IIPMooViewer = new Class({
     if( this.credit ){
       new Element( 'div', {
 	'class': 'credit',
-	'html': this.credit,
-	'events': {
-	  // We specify the start value to stop a strange problem where on the first
-	  // mouseover we get a sudden transition to opacity 1.0
-	  mouseover: function(){ this.fade([0.6,0.9]); },
-	  mouseout: function(){ this.fade(0.6); }
-	}
+	'html': this.credit
       }).inject(this.container);
     }
 
@@ -1268,10 +1258,9 @@ var IIPMooViewer = new Class({
 
     // Load our images
     this.requestImages();
-    if( this.navigation ){
-      var view = this.getView();
-      this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
-    }
+    this.updateNavigation();
+
+    // Update our scale
     if( this.scale ) this.scale.update( this.wid/this.max_size.w, this.view.w );
 
     // Set initial rotation
@@ -1292,21 +1281,22 @@ var IIPMooViewer = new Class({
     // we are fully set up
     if(this.winResize) window.addEvent( 'resize', this.reflow.bind(this) );
 
+    // Record our container position
+    this.containerPosition = this.container.getPosition();
+
     this.fireEvent('load');
 
   },
 
 
-  /* Create function to update coordinates
+  /* Generic function to update coordinates
    */
   updateCoords: function(e){
     if( !this.navigation || !this.navigation.coords ) return;
-    // Calculate scale factor for this resolution 
-    var f = this.max_size.w / this.wid;
     // Calculate position taking into account images smaller than our view
-    var x = e.page.x + this.view.x - ((this.wid<this.view.w) ? Math.round((this.view.w-this.wid)/2) : 0);
-    var y = e.page.y + this.view.y - ((this.hei<this.view.h) ? Math.round((this.view.h-this.hei)/2) : 0);
-    var text = this.transformCoords( x*f, y*f );
+    var x = e.page.x - this.containerPosition.x + this.view.x - ((this.wid<this.view.w) ? Math.round((this.view.w-this.wid)/2) : 0);
+    var y = e.page.y - this.containerPosition.y + this.view.y - ((this.hei<this.view.h) ? Math.round((this.view.h-this.hei)/2) : 0);
+    var text = this.transformCoords( x/this.wid, y/this.hei );
     this.navigation.setCoords( text );
   },
 
@@ -1314,7 +1304,16 @@ var IIPMooViewer = new Class({
   /* Transform resolution independent coordinates to coordinate system
    */
   transformCoords: function( x, y ){
-    return (x/this.scale.pixelscale).toFixed(2) + 'mm, ' + (y/this.scale.pixelscale).toFixed(2) + 'mm';
+    // Calculate physical position using scale value
+    if( this.scale ){
+      var text = Math.round(x*this.max_size.w/this.scale.pixelscale) +
+	this.scale.units.dims[this.scale.defaultUnit] + ', ' +
+	Math.round(y*this.max_size.h/this.scale.pixelscale) +
+	this.scale.units.dims[this.scale.defaultUnit];
+      return text;
+    }
+    // Return raw pixel values
+    else return Math.round(x*this.wid) + 'px, ' + Math.round(y*this.hei) + 'px';
   },
 
 
@@ -1390,7 +1389,8 @@ var IIPMooViewer = new Class({
   /* Reflow our viewer after a resize
    */
   reflow: function(){
-
+    
+    this.containerPosition = this.container.getPosition();
     var target_size = this.container.getSize();
     this.view.w = target_size.x;
     this.view.h = target_size.y;
@@ -1410,12 +1410,10 @@ var IIPMooViewer = new Class({
       this.scale.reflow(this.container);
     }
 
+    // Update images
     this.requestImages();
+    this.updateNavigation();
 
-    if( this.navigation ){
-      var view = this.getView();
-      this.navigation.update(view.x/this.wid,view.y/this.hei,view.w/this.wid,view.h/this.hei);
-    }
     this.constrain();
 
   },
@@ -1497,6 +1495,16 @@ var IIPMooViewer = new Class({
       left: (this.wid>this.view.w)? -this.view.x : Math.round((this.view.w-this.wid)/2),
       top : (this.hei>this.view.h)? -this.view.y : Math.round((this.view.h-this.hei)/2)
     });
+  },
+
+
+  /* Update navigation window
+   */
+  updateNavigation: function(){
+    if( this.navigation ){
+      var view = this.getView();
+      this.navigation.update( view.x/this.wid, view.y/this.hei, view.w/this.wid, view.h/this.hei );
+    }
   }
 
 });

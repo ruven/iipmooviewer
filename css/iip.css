@@ -127,7 +127,6 @@
   font-weight: normal;
   padding: 5px;
   font-size: 80%;
-  opacity: 0.6;
   -moz-border-radius: 0.3em;
   -webkit-border-radius: 0.3em;
   border-radius: 0.3em;
@@ -136,7 +135,15 @@
   -webkit-box-shadow: 4px 4px 4px rgba(0,0,0,0.75);
   -o-box-shadow: 4px 4px 4px rgba(0,0,0,0.75);
   text-shadow: 0.5px 0.5px 0 grey;
+  opacity: 0.6;
+  -webkit-transition: opacity 0.5s ease-in-out;
+  -moz-transition: opacity 0.5s ease-in-out;
+  -o-transition: opacity 0.5s ease-in-out;
+  -ms-transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
 }
+.iipmooviewer .credit:hover{ opacity: 0.9; }
+
 .tip {
   color: #ccc;
   background: #222;

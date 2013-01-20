@@ -97,6 +97,16 @@ var Scale = new Class({
   },
 
 
+  /* Calculate best units for image size
+   */
+  calculateDefault: function( image_width ){
+    for( var i=0; i<this.units.orders.length; i++ ){
+      if( image_width / (this.units.orders[i] * this.units.factor * this.pixelscale) < 1000 ) break;
+    }
+    this.defaultUnit = i;
+  },
+
+
   /* Reposition our scale wrt to our container
    */
   reflow: function( container ){
