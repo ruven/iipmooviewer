@@ -62,7 +62,7 @@ Distribution
 
 Minified files are created with the closer compiler (https://developers.google.com/closure/compiler/) with the following command:
 <pre>
-java -jar /path/to/compiler.jar --js src/mootools-more-1.4.0.1.js src/iipmooviewer-2.0.js src/navigation.js src/scale.js src/protocols/iip.js src/annotations.js src/blending.js src/lang/help.en.js --js_output_file javascript/iipmooviewer-2.0-compressed.js --compilation_level SIMPLE_OPTIMIZATIONS
+java -jar /path/to/compiler.jar --js src/mootools-more-1.4.0.1.js src/iipmooviewer-2.0.js src/navigation.js src/scale.js src/touch.js src/protocols/iip.js src/annotations.js src/blending.js src/lang/help.en.js --js_output_file javascript/iipmooviewer-2.0-compressed.js --compilation_level SIMPLE_OPTIMIZATIONS
 </pre>
 
 You can thereby customize your build to include only those components you need. For example, if you require Zoomify or do not require annotation support, simply add or remove these from the build. Make sure, however, that the core iipmooviewer js file is included before the other components. Otherwise, if you prefer not to rebuild, use the default build and add the extra components you want as extra includes.

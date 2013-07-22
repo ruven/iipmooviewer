@@ -133,7 +133,7 @@ var Navigation = new Class({
 
       // Create our buttons as SVG with fallback to PNG
       var prefix = this.prefix;
-      ['reset','zoomIn','zoomOut'].each( function(k){
+      ['reset','zoomIn','zoomOut','rotateLeft','rotateRight'].each( function(k){
 	new Element('img',{
 	  'src': prefix + k + (Browser.buggy?'.png':'.svg'),
 	  'class': k,
@@ -156,6 +156,8 @@ var Navigation = new Class({
       navbuttons.getElement('img.zoomIn').addEvent( 'click', function(){ _this.fireEvent('zoomIn'); });
       navbuttons.getElement('img.zoomOut').addEvent( 'click', function(){ _this.fireEvent('zoomOut'); });
       navbuttons.getElement('img.reset').addEvent( 'click', function(){ _this.fireEvent('reload'); });
+      navbuttons.getElement('img.rotateLeft').addEvent( 'click', function(){ _this.fireEvent('rotate',-90); });
+      navbuttons.getElement('img.rotateRight').addEvent( 'click', function(){ _this.fireEvent('rotate',90); });
 
     }
 

@@ -95,7 +95,7 @@
   -o-transition: -o-transform 0.5s ease-in-out;
   -ms-transition: -ms-transform 0.5s ease-in-out;
   transition: transform 0.5s ease-in-out;
-  -webkit-transform: translateZ(0); /* Enables Hardware acceleration on Webkit browsers */
+/*  -webkit-transform: translateZ(0); */ /* Enables Hardware acceleration on Webkit browsers */
 }
 .iipmooviewer .canvas.drag{
   -webkit-transition: none;
