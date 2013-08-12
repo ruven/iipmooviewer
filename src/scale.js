@@ -88,7 +88,7 @@ var Scale = new Class({
 
     // Create a label and calculate the new physical size of our scale
     var label = this.units.mults[j] + this.units.dims[i];
-    pixels = pixels*this.units.orders[i]*this.units.mults[j];
+    pixels = pixels*this.units.orders[i]*this.units.mults[j] - 4; // Subtract 4px to take into account 2*2px borders
 
     // Use a smooth transition to resize and set the units
     this.scale.getElement('div.ruler').tween( 'width', pixels );
