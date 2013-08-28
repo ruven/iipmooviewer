@@ -41,7 +41,7 @@ imagemagick. Or JPEG2000 if you have a JPEG2000 enabled IIPImage server.
 
 Configuration
 -------------
-Now modify the path and image names in the example HTML page provided - index.html to create a working client :-)
+Now modify the path and image names in the example HTML page provided - index.html - to create a working client :-)
 <pre>
     var iipmooviewer = new IIPMooViewer( "viewer", {
 	  image: "/path/to/image.tif",
@@ -49,6 +49,10 @@ Now modify the path and image names in the example HTML page provided - index.ht
     });
 </pre>
 
+Note that IIPMooViewer works best when it's in its own page, as it expands to
+100% width and height. If you wish to embed it in another page, you may do so
+with an `<iframe>`. To get IIPMooViewer's fullscreen to work when it is in an
+`<iframe>`, add the `allowFullScreen` attribute to the `<iframe>` tag.
 
 Distribution
 ------------
