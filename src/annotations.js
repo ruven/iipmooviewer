@@ -35,8 +35,8 @@ IIPMooViewer.implement({
     // Use closure for mouseenter and mouseleave events
     var _this = this;
 
-    // Display / hide our annotations if we have any
     if( this.annotations ){
+      // Display / hide our annotations if we have any
       this.canvas.addEvent( 'mouseenter', function(){
         if( _this.annotationsVisible ){
 	  _this.canvas.getElements('div.annotation').removeClass('hidden');
@@ -47,9 +47,26 @@ IIPMooViewer.implement({
 	  _this.canvas.getElements('div.annotation').addClass('hidden');
 	}
       });
+
+      this.annotation_array = this.createAnnotationsArray();
     }
   },
 
+  /* Convert our annotation object into an array - we'll need this for sorting
+   */
+  createAnnotationsArray: function() {
+    var annotation_array = [];
+
+    Object.each(iipmooviewer.annotations, function(annotation, id) {
+        annotation.id = id;
+        annotation_array.push( annotation );
+    });
+
+    // Sort our annotations by size to make sure it's always possible to interact
+    // with annotations within annotations.
+    annotation_array.sort( function(a,b){ return (b.w*b.h)-(a.w*a.h); } );
+    return annotation_array;
+  },
 
   /* Create annotations if they are contained within our current view
    */
@@ -57,68 +74,52 @@ IIPMooViewer.implement({
 
     // If there are no annotations, simply return
     if( !this.annotations ) return;
-
-    // Convert our annotation object into an array - we'll need this for sorting later
-    var annotation_array = new Array();
-    for( var a in this.annotations ){
-      this.annotations[a].id = a;
-      annotation_array.push( this.annotations[a] );
-    }
-
-    // Make sure we really have some content
-    if( annotation_array.length == 0 ) return;
-
-    // Sort our annotations by size to make sure it's always possible to interact
-    // with annotations within annotations.
-    annotation_array.sort( function(a,b){ return (b.w*b.h)-(a.w*a.h); } );
+    var annotation_item, annotation, i = 0, l = this.annotation_array.length;
 
     // Now go through our sorted list and display those within the view
-    for( var i=0; i<annotation_array.length; i++ ){
+    for( ; i < l; i++ ){
+      annotation_item = this.annotation_array[i];
+      annotation = $('annotation-' + annotation_item.id);
 
-      // Check whether this annotation is within our view
-      if( this.wid*(annotation_array[i].x+annotation_array[i].w) > this.view.x &&
-	  this.wid*annotation_array[i].x < this.view.x+this.view.w &&
-	  this.hei*(annotation_array[i].y+annotation_array[i].h) > this.view.y &&
-	  this.hei*annotation_array[i].y < this.view.y+this.view.h
-	  // Also don't show annotations that entirely fill the screen
-	  //	  (this.hei*annotation_array[i].x < this.view.x && this.hei*annotation_array[i].y < this.view.y &&
-	  //	   this.wid*(annotation_array[i].x+annotation_array[i].w) > this.view.x+this.view.w && 
-      ){
+      var position = {
+        left: Math.round(this.wid * annotation_item.x),
+        top: Math.round(this.hei * annotation_item.y),
+        width: Math.round(this.wid * annotation_item.w),
+        height: Math.round(this.hei * annotation_item.h)
+      };
 
-	var _this = this;
-	var cl = 'annotation';
-	if( annotation_array[i].category ) cl += ' ' + annotation_array[i].category;
-	var annotation = new Element('div', {
-	  'id': annotation_array[i].id,
-          'class': cl,
-          'styles': {
-            left: Math.round(this.wid * annotation_array[i].x),
-            top: Math.round(this.hei * annotation_array[i].y ),
-	    width: Math.round( this.wid * annotation_array[i].w ),
-	    height: Math.round( this.hei * annotation_array[i].h )
-	  }
-        }).inject( this.canvas );
-
-	if( this.annotationsVisible==false ) annotation.addClass('hidden');
-
-	// Add edit events to annotations if we have included the functions
-	if( typeof(this.editAnnotation)=="function" ){
-	  if( annotation_array[i].edit == true ) this.editAnnotation( annotation );
-	  else{
-	    var _this = this;
-	    annotation.addEvent( 'dblclick', function(e){
-				   var event = new DOMEvent(e); 
-				   event.stop();
-				   _this.editAnnotation(this);
-				 });
-	  }
-	}
-
-	// Add our annotation text
-	var text = annotation_array[i].text;
-	if( annotation_array[i].title ) text = '<h1>'+annotation_array[i].title+'</h1>' + text;
-        annotation.store( 'tip:text', text );
+      var cl = 'annotation';
+      if (annotation_item.category) cl += ' ' + annotation_item.category;
+      if (annotation) {
+        annotation.setStyles(position);
       }
+      else {
+        annotation = new Element('div', {
+          'id': 'annotation-' + annotation_item.id,
+          'class': cl,
+          'styles': position
+        }).inject(this.canvas);
+      }
+
+      if (this.annotationsVisible == false) annotation.addClass('hidden');
+
+       // Add edit events to annotations if we have included the functions
+      if (typeof(this.editAnnotation) == "function") {
+        if (annotation_item.edit == true) this.editAnnotation(annotation);
+        else {
+          var _this = this;
+          annotation.addEvent('dblclick', function(e) {
+            var event = new DOMEvent(e);
+            event.stop();
+            _this.editAnnotation(this);
+          });
+        }
+      }
+
+       // Add our annotation text
+      var text = annotation_item.text;
+      if (annotation_item.title) text = '<h1>' + annotation_item.title + '</h1>' + text;
+      annotation.store('tip:text', text);
 
     }
 
