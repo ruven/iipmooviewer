@@ -229,9 +229,6 @@ var IIPMooViewer = new Class({
     // Set our cursor
     this.canvas.setStyle( 'cursor', 'wait' );
 
-    // Delete our annotations
-    if( this.annotations ) this.destroyAnnotations();
-
     // Set our rotation origin - calculate differently if canvas is smaller than view port
     
     if( !Browser.buggy ){
