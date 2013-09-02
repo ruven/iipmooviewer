@@ -188,7 +188,7 @@ var IIPMooViewer = new Class({
     this.opacity = [1];
     this.wid = 0;             // Width of current resolution
     this.hei = 0;             // Height of current resolution
-    this.resolutions;         // List of available resolutions
+    this.resolutions = [];    // List of available resolutions
     this.num_resolutions = 0; // Number of available resolutions
     this.view = {
       x: 0,                   // Location and dimensions of current visible view
