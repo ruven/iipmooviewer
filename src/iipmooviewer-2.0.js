@@ -185,7 +185,7 @@ var IIPMooViewer = new Class({
     this.click = options.click || null;
 
     this.max_size = {};       // Dimensions of largest resolution
-    this.opacity = 0;
+    this.opacity = [1];
     this.wid = 0;             // Width of current resolution
     this.hei = 0;             // Height of current resolution
     this.resolutions;         // List of available resolutions
@@ -427,13 +427,13 @@ var IIPMooViewer = new Class({
 	// We must set the source at the end so that the 'load' function is properly fired
 	tile.set( 'src', src );
 	tile.store('tile',k);
+
+        if( this.opacity[n] !== 1 ){ // opacity is 1 by default.
+          var selector = 'img.layer'+ n;
+          this.canvas.getChildren(selector).setStyle( 'opacity', this.opacity[n] );
+        }
       }
 
-    }
-
-    if( this.images.length > 1 ){
-      var selector = 'img.layer'+(n-1);
-      this.canvas.getChildren(selector).setStyle( 'opacity', this.opacity );
     }
 
   },
