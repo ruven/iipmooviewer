@@ -71,8 +71,8 @@ IIPMooViewer.implement({
     var slider = new Slider( document.id('area'), document.id('knob'), {
       range: [0,100],
       onChange: function(pos){
-        _this.opacity = pos/100.0;
-        _this.canvas.getChildren('img.layer1').setStyle( 'opacity', _this.opacity );
+        _this.opacity[1] = pos/100.0;
+        _this.canvas.getChildren('img.layer1').setStyle( 'opacity', _this.opacity[1] );
       }
     });
     // Make sure the slider takes into account window resize events
