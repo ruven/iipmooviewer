@@ -215,6 +215,20 @@ var IIPMooViewer = new Class({
     else if( Browser.opera ) this.CSSprefix = '-o-';
     else if( Browser.ie ) this.CSSprefix = 'ms-';  // Note that there should be no leading "-" !!
 
+    // Override the `show` method of the Tips class so that
+    // tips are children of the image-viewer container.
+    // This is needed so when the image-viewer container is
+    // "fullscreened", tips still show.
+    var _this = this;
+    Tips = new Class({
+      Extends: Tips,
+      show: function(element) {
+        if (!this.tip) document.id(this);
+        if (!this.tip.getParent()) this.tip.inject(document.id(_this.source));
+        this.fireEvent('show', [this.tip, element]);
+      }
+    });
+
 
     // Load us up when the DOM is fully loaded!
     window.addEvent( 'domready', this.load.bind(this) );
