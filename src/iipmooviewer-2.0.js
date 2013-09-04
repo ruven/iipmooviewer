@@ -577,7 +577,7 @@ var IIPMooViewer = new Class({
       h = '100%';
       p = 'absolute'; // Must make our container absolute for fullscreen
 
-      if( this.fullscreen.enter && !this.fullscreen.isFullscreen ) this.fullscreen.enter.call(this.container);
+      if( this.fullscreen.enter ) this.fullscreen.enter.call(this.container);
     }
     else{
       l = this.fullscreen.targetsize.pos.x;
@@ -586,7 +586,7 @@ var IIPMooViewer = new Class({
       h = this.fullscreen.targetsize.size.y;
       p = this.fullscreen.targetsize.position;
 
-      if( this.fullscreen.exit && this.fullscreen.isFullscreen ) this.fullscreen.exit.call(document);
+      if( this.fullscreen.exit ) this.fullscreen.exit.call(document);
     }
 
     if( !this.fullscreen.enter ){
@@ -1043,25 +1043,24 @@ var IIPMooViewer = new Class({
 
       if( document.documentElement.requestFullscreen ){
         this.fullscreen.eventChangeName = 'fullscreenchange';
-        this.enter =  this.container.requestFullscreen;
-        this.exit = document.documentElement.cancelFullScreen;
+        this.fullscreen.enter = this.container.requestFullscreen;
+        this.fullscreen.exit = document.cancelFullScreen;
       }
       else if( document.mozCancelFullScreen ){
         this.fullscreen.eventChangeName = 'mozfullscreenchange';
         this.fullscreen.enter = this.container.mozRequestFullScreen;
-        this.fullscreen.exit = document.documentElement.mozCancelFullScreen;
+        this.fullscreen.exit = document.mozCancelFullScreen;
       }
       else if( document.webkitCancelFullScreen ){
         this.fullscreen.eventChangeName = 'webkitfullscreenchange';
         this.fullscreen.enter = this.container.webkitRequestFullScreen;
-        this.fullscreen.exit = document.documentElement.webkitCancelFullScreen;
+        this.fullscreen.exit = document.webkitCancelFullScreen;
       }
 
       if( this.fullscreen.enter ){
 	// Monitor Fullscreen change events
-	document.addEvent( this.fullscreen.eventChangeName, function(){
+        document.addEventListener( this.fullscreen.eventChangeName, function(){
 			     _this.fullscreen.isFullscreen = !_this.fullscreen.isFullscreen;
-			     _this.reload();
 			   });
       }
       else{
