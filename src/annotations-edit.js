@@ -79,7 +79,7 @@ IIPMooViewer.implement({
     }
 
     // Get our annotation ID
-    var id = annotation.get('id');
+    var id = annotation.get('id').substr('annotation-'.length);
 
     // Remove the edit class from other annotations divs and assign to this one
     this.canvas.getChildren('div.annotation.edit').removeClass('edit');
@@ -215,7 +215,7 @@ IIPMooViewer.implement({
    */
   updateShape: function(el){
 
-    var id = el.get('id');
+    var id = el.get('id').substr('annotation-'.length);
 
     // Update our list entry
     var parent = el.getParent();

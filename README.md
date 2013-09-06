@@ -64,7 +64,7 @@ Distribution
 
 /src : uncompressed source javascript files
 
-Minified files are created with the closer compiler (https://developers.google.com/closure/compiler/) with the following command:
+Minified files are created with the [closure compiler](https://developers.google.com/closure/compiler/) with the following command:
 <pre>
 java -jar /path/to/compiler.jar --js src/mootools-more-1.4.0.1.js src/iipmooviewer-2.0.js src/navigation.js src/scale.js src/touch.js src/protocols/iip.js src/annotations.js src/blending.js src/lang/help.en.js --js_output_file javascript/iipmooviewer-2.0-compressed.js --compilation_level SIMPLE_OPTIMIZATIONS
 </pre>
@@ -161,7 +161,7 @@ coordinate ratios (0.0 -> 1.0 ) of the center of the view port.
 
 <b>changeImage(i)</b>: Load a new image, <i>i</i>, and reinitialize the viewer
 
-<b>toggleNavigationWindow()</b>: show/hide the navigation window
+<b>toggleNavigationWindow()</b>: toggle the navigation window
 
 <b>toggleFullScreen()</b>: toggle fullscreen mode
 
@@ -170,18 +170,27 @@ coordinate ratios (0.0 -> 1.0 ) of the center of the view port.
 
 Annotations
 -----------
-You can supply a list of annotations for the image which will be overlaid while navigating the image. These must be supplied in an object containing a list of individual annotation objects, each with parameters describing the position, title, category and text for the annotation. The position is described by the x,y,w and h properties (obligatory) which describe the size independent top left coordinate of the annotation and it's size. The text parameter provides the content of the annotation and can contain any valid HTML, which can be styled normally via CSS. All annotations are created as divs of class "annotation".
+You can supply a list of annotations for the image which will be overlaid while
+navigating the image. These must be supplied in an object containing a list of
+individual annotation objects, each with parameters describing the size,
+position, title, category and text. The size is set by the w,h properties, and
+the position is described by the x,y properties (top-left offset). The size and
+position (obligatory) parameters are ratios (i.e go from `0.0` to `1.0`) of the
+image's dimensions. The `text` parameter provides the content of the annotation
+and can contain any valid HTML, which can be styled normally via CSS. All
+annotations are created as divs of class `annotation`.
 
 For example:
 <pre>
   var annotations = {
-     1 : { x: 0.7, y: 0.6, w: 0.2, h: 0.18, category: "pigments", text: "prussian blue" },
+     1: { x: 0.7, y: 0.6, w: 0.2, h: 0.18, category: "pigments", text: "prussian blue" },
      2: { x: 0.1, y: 0.8, w: 0.15, h: 0.1, category: "pigments", text: "azurite" },
      3: { x: 0.7, y: 0.4, w: 0.1, h: 0.1, category: "people", text: "Mary" }
   };
 </pre>
 
-The 1,2,3 are unique ID's which can be either numeric or strings.
+The 1,2,3 are unique IDs which can be either numbers or strings.
+The created element's ID is the annotation's ID with `annotation-` prepended.
 
 Categories are ways of creating groups of annotations and the category will be added to the class. Thus for a category of, for example, 'retouches' the annotation divs will be of class 'annotation retouches', allowing you to access these via a class selector. So, for example, to set the colors of these differently to the others, simply with javascript, use a selector:
 <pre>
@@ -195,18 +204,18 @@ or in CSS:
 }
 </pre>
 
-Annotation editing is possible by including the annotations-edit.js file, which extends the IIPMooViewer class. The function newAnnotation() creates a new blank annotation in the centre of the view. Double click on any existing annotation to move, resize of modify it. When an update occurs, an annotationChange event occurs, which can be captured and used to send the results back to a server via an AJAX call.
+Annotation editing is possible by including the `annotations-edit.js` file, which extends the `IIPMooViewer` class. The function `newAnnotation()` creates a new blank annotation in the centre of the view. Double click on any existing annotation to move, resize of modify it. When an update occurs, an `annotationChange` event occurs, which can be captured and used to send the results back to a server via an AJAX call.
 
-For example, to send the updated list of annotations back to annotations.php:
+For example, to send the updated list of annotations back to `annotations.php`:
 
 <pre>
-  iipmooviewer.addEvent('annotationChange', function(){
+  iipmooviewer.addEvent('annotationChange', function() {
     var metadata = new Request.JSON({
-	method: 'post',
-	url: 'annotations.php',
-	data:  {
-	   json: JSON.encode(this.annotations)
-        }
+      method: 'post',
+      url: 'annotations.php',
+      data: {
+        json: JSON.encode(this.annotations)
+      }
     }).send();
   });
 </pre>
