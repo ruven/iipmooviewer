@@ -209,13 +209,17 @@ Annotation editing is possible by including the `annotations-edit.js` file, whic
 For example, to send the updated list of annotations back to `annotations.php`:
 
 <pre>
-  iipmooviewer.addEvent('annotationChange', function() {
+  iipmooviewer.addEvent('annotationChange', function(action, annotation_id) {
+    var data = {id: annotation_id, action: action};
+    // `action` is either `updated` or `deleted`
+    if (action == 'updated') {
+      // If the annotation has been updated, send the updated data.
+      data.annotation = JSON.encode(this.annotations[annotation_id]);
+    }
     var metadata = new Request.JSON({
       method: 'post',
       url: 'annotations.php',
-      data: {
-        json: JSON.encode(this.annotations)
-      }
+      data: data
     }).send();
   });
 </pre>

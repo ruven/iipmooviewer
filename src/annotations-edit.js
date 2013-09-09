@@ -57,8 +57,8 @@ IIPMooViewer.implement({
       'styles': {
         left: Math.round( a.x * this.wid ),
         top: Math.round( a.y * this.hei ),
-	width: Math.round( a.w * this.wid ),
-	height: Math.round( a.h * this.hei )
+        width: Math.round(a.w * this.wid),
+        height: Math.round(a.h * this.hei)
       }
     }).inject( this.canvas );
 
@@ -79,7 +79,8 @@ IIPMooViewer.implement({
     }
 
     // Get our annotation ID
-    var id = annotation.get('id').substr('annotation-'.length);
+    var id = annotation.get('id').substr('annotation-'.length),
+        annotation_item = this.annotations[id];
 
     // Remove the edit class from other annotations divs and assign to this one
     this.canvas.getChildren('div.annotation.edit').removeClass('edit');
@@ -89,19 +90,12 @@ IIPMooViewer.implement({
 
     annotation.addClass('edit');
     for( var a in this.annotations ){
-      if( a == id ) this.annotations[a].edit = true;
-      else delete this.annotations[a].edit;
+      delete this.annotations[a].edit;
     }
-
-
-    var _this = this;
-
-    // Check whether this annotation is already in edit mode. If so return
-    if( annotation.getElement('div.handle') != null ) return;
+    annotation_item.edit = true;
 
     // Create our edit infrastructure
     var handle = new Element('div', {
-      'id': 'annotation handle',
       'class': 'annotation handle',
       'title': 'resize annotation'
     }).inject( annotation );
@@ -114,17 +108,21 @@ IIPMooViewer.implement({
     }).inject( annotation );
 
     // Create our input fields
-    var html = '<table><tr><td>title</td><td><input type="text" name="title" tabindex="1" autofocus';
-    if( this.annotations[id].title ) html += ' value="' + this.annotations[id].title + '"';
-    html += '/></td></tr>';
+    var html = '<table><tr><td>title</td><td>' +
+        '<input type="text" name="title" tabindex="1" autofocus value="{title}">'+
+        '</td></tr>' +
+        '<tr><td>category</td><td>' +
+        '<input type="text" name="category" tabindex="2" value="{category}">' +
+        '</td></tr>' +
+        '<tr><td colspan="2">' +
+        '<textarea name="text" rows="5" tabindex="3">{text}</textarea>' +
+        '</td></tr></table>';
 
-    html += '<tr><td>category</td><td><input type="text" name="category" tabindex="2"';
-    if( this.annotations[id].category ) html += ' value="' + this.annotations[id].category + '"';
-    html += '/></td></tr>';
-
-    html += '<tr><td colspan="2"><textarea name="text" rows="5" tabindex="3">' + (this.annotations[id].text||'') + '</textarea></td></tr></table>';
-
-    form.set( 'html', html );
+    form.set('html', html.substitute({
+        title: annotation_item.title || '',
+        category: annotation_item.category || '',
+        text: annotation_item.text || ''
+    }));
 
     new Element('input', {
       'type': 'submit',
@@ -146,30 +144,31 @@ IIPMooViewer.implement({
 
 
     // Add update event for our list of annotations
+    var _this = this;
     form.addEvents({
       'submit': function(e){
         e.stop();
 	_this.updateShape(this.getParent());
-	_this.annotations[id].category = e.target['category'].value;
-	_this.annotations[id].title = e.target['title'].value;
-	_this.annotations[id].text = e.target['text'].value;
-	delete _this.annotations[id].edit;
+	annotation_item.category = e.target['category'].value;
+	annotation_item.title = e.target['title'].value;
+	annotation_item.text = e.target['text'].value;
+	delete annotation_item.edit;
 	_this.updateAnnotations();
-	_this.fireEvent('annotationChange', _this.annotations);
+	_this.fireEvent('annotationChange', ['updated', id]);
       },
       'reset': function(){
-	delete _this.annotations[id].edit;
+	delete annotation_item.edit;
 	_this.updateAnnotations();
 	},
       'keydown': function(e){ e.stopPropagation(); }
     });
 
     // Add a delete event to our annotation
-    del.addEvent('click', function(){
-		   delete _this.annotations[id];
-		   _this.updateAnnotations();
-		   _this.fireEvent('annotationChange', _this.annotations);
-		 });
+    del.addEvent('click', function() {
+      delete _this.annotations[id];
+      _this.updateAnnotations();
+      _this.fireEvent('annotationChange', ['deleted', id]);
+    });
 
 
     // Make it draggable and resizable, but prevent this interfering with our canvas drag
@@ -190,10 +189,10 @@ IIPMooViewer.implement({
 
 
     // Set default focus on textarea
-    annotation.addEvent( 'mouseenter', function(){
-			   form.getElement('textarea').focus();
-			   form.getElement('textarea').value = form.getElement('textarea').value;
-			 });
+    annotation.addEvent('mouseenter', function() {
+      form.getElement('textarea').focus();
+      form.getElement('textarea').value = form.getElement('textarea').value;
+    });
 
     // Add focus events and reset values to deactivate text selection
     form.getElements('input,textarea').addEvents({
@@ -228,7 +227,8 @@ IIPMooViewer.implement({
 
   updateAnnotations: function(){
     this.destroyAnnotations();
-    this.createAnnotations();
+    this.createAnnotationsArray();
+    this.drawAnnotations();
     if( this.annotationTip ) this.annotationTip.attach( 'div.annotation' );
   },
 

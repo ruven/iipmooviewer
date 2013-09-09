@@ -262,7 +262,7 @@ var IIPMooViewer = new Class({
 
     // Create new annotations and attach the tooltip to them if it already exists
     if( this.annotations ){
-      this.createAnnotations();
+      this.drawAnnotations();
       if( this.annotationTip ) this.annotationTip.attach( this.canvas.getChildren('div.annotation') );
     }
   },
@@ -1221,7 +1221,6 @@ var IIPMooViewer = new Class({
 	'zoom': this.zoom.bind(this)
      });
     }
-    if( this.annotations ) this.createAnnotations();
 
 
     // Add tips if we are not on a mobile device
@@ -1542,8 +1541,7 @@ IIPMooViewer.windows = function(s){
 
 /* Add a little convenience variable to detect buggy IE versions
  */
-if( Browser.ie && Browser.version<9 ) Browser.buggy = true;
-else Browser.buggy = false;
+Browser.buggy = Browser.ie && Browser.version < 9;
 
 
 /* Add hash change event to our Mootools native event list
