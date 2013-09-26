@@ -106,7 +106,7 @@ var IIPMooViewer = new Class({
     options.image || alert( 'Image location not set in class constructor options');
     if( typeOf(options.image) == 'array' ){
        for( i=0; i<options.image.length;i++ ){
-	 this.images[i] = { src:options.image[i], sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null };
+	 this.images[i] = { src:options.image[i], sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null, opacity:(i==0)?1:0 };
        }
     }
     else this.images = [{ src:options.image, sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null } ];
@@ -185,7 +185,6 @@ var IIPMooViewer = new Class({
     this.click = options.click || null;
 
     this.max_size = {};       // Dimensions of largest resolution
-    this.opacity = [1];
     this.wid = 0;             // Width of current resolution
     this.hei = 0;             // Height of current resolution
     this.resolutions = [];    // List of available resolutions
@@ -436,9 +435,9 @@ var IIPMooViewer = new Class({
 	tile.set( 'src', src );
 	tile.store('tile',k);
 
-        if( this.opacity[n] !== 1 ){ // opacity is 1 by default.
+        if( this.images[n].opacity !== 1 ){ // opacity is 1 by default.
           var selector = 'img.layer'+ n;
-          this.canvas.getChildren(selector).setStyle( 'opacity', this.opacity[n] );
+          this.canvas.getChildren(selector).setStyle( 'opacity', this.images[n].opacity );
         }
       }
 

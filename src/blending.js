@@ -71,8 +71,10 @@ IIPMooViewer.implement({
     var slider = new Slider( document.id('area'), document.id('knob'), {
       range: [0,100],
       onChange: function(pos){
-        _this.opacity[1] = pos/100.0;
-        _this.canvas.getChildren('img.layer1').setStyle( 'opacity', _this.opacity[1] );
+	if( _this.images[1] ){
+	  _this.images[1].opacity = pos/100.0;
+	  _this.canvas.getChildren('img.layer1').setStyle( 'opacity', _this.images[1].opacity );
+	}
       }
     });
     // Make sure the slider takes into account window resize events
@@ -86,7 +88,9 @@ IIPMooViewer.implement({
       _this.requestImages();
     });
     document.id('overlay').addEvent('change', function(){
-      _this.images[1] = {src: document.id('overlay').value};
+      var opacity = 0;
+      if( _this.images[1] ) opacity = _this.images[1].opacity;
+      _this.images[1] = {src: document.id('overlay').value, opacity: opacity};
       _this.canvas.getChildren('img.layer1').destroy();
       _this.tiles.empty();
       _this.requestImages();
