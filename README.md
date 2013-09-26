@@ -277,10 +277,10 @@ Note that for Deepzoom, the image name should be name of the .dzi or .xml Deepzo
 
 Localization
 ------------
-To create a new localization, create a new or modify an existing localization file in the src/lang folder and include this extra 
-file.
+A number of localizations exist in the src/lang folder. To use, simply include the desired language file as an extra javascript include. To create a new localization, create a new or modify an existing localization file and include this extra javascript file.
 
-For example for Chinese, create lang/help.zh.js and simply include it after the main iipmooviewer include:
+For example to create a new Chinese localization, create the file lang/help.zh.js and include it after the main iipmooviewer includes:
+
 <pre>
   &lt;script type="text/javascript" src="javascript/mootools-core-1.4.5-full-nocompat-yc.js"&gt;&lt;/script&gt;
   &lt;script type="text/javascript" src="javascript/iipmooviewer-2.0-compressed.js"&gt;&lt;/script&gt;
@@ -306,8 +306,8 @@ iipmooviewer.blend( [ ['color.tif','color'],
 
 
 
-Linking
--------
+Linking to a Specific View
+--------------------------
 A hash tag in the form x, y, resolution can be appended to the URL to 
 link to a particular area within the image at a particular resolution. 
 x and y should be resolution-independent ratios from 0.0 -> 1.0 and the resolution an integer representing the desired resolution 
