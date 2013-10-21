@@ -111,7 +111,7 @@ var Navigation = new Class({
           'html': '<div></div>',
           'styles': {
 	    top: this.size.y - 6,
-	    opacity: 0.65
+	    opacity: 0.8
            },
            'tween': {
              duration: 1000,

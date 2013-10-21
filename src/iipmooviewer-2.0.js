@@ -630,11 +630,12 @@ var IIPMooViewer = new Class({
     var xmove = Math.round(e.x * this.wid);
     var ymove = Math.round(e.y * this.hei);
 
+    // Only morph transition if we have moved a short distance and our rotation is zero
+    var morphable = Math.abs(xmove-this.view.x)<this.view.w/2 && Math.abs(ymove-this.view.y)<this.view.h/2 && this.view.rotation==0;
+
     this.view.x = xmove;
     this.view.y = ymove;
 
-    // Only morph transition if we have moved a short distance and our rotation is zero
-    var morphable = Math.abs(xmove-this.view.x)<this.view.w/2 && Math.abs(ymove-this.view.y)<this.view.h/2 && this.view.rotation==0;
     if( morphable ){
       this.canvas.morph({
 	left: (this.wid>this.view.w)? -xmove : Math.round((this.view.w-this.wid)/2),
@@ -1196,7 +1197,7 @@ var IIPMooViewer = new Class({
 
     // Calculate some sizes and create the navigation window
     this.calculateSizes();
-    if( this.navigation){
+    if( this.navigation ){
       this.navigation.create(this.container);
       this.navigation.setImage(this.protocol.getThumbnailURL(this.server,this.images[0].src,this.navigation.size.x));
       this.navigation.addEvents({

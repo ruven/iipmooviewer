@@ -13,7 +13,7 @@ Features
 --------
 * Fast and light-weight
 * Pan and zoom of ultra high resolution imaging
-* Multi-protocol support: IIP, Zoomify, Deepzoom and Djatoka (OpenURL) protocols
+* Multi-protocol support: IIP, Zoomify, Deepzoom, Djatoka (OpenURL) and IIIF protocols
 * Image rotation
 * Mobile device support: iOS and Android
 * HTML5 Fullscreen API support
@@ -257,7 +257,7 @@ IIPMooViewer fires the 'load' event when it has fully finished loading. To attac
 
 Protocols
 ---------
-IIPMooViewer supports the IIP, Zoomify, Deepzoom and Djatoka protocols. By default it will use IIP, but to use, for example Zoomify, first include the protocol after the other javascript includes as this is not included by default:
+IIPMooViewer supports the IIP, Zoomify, Deepzoom, Djatoka and IIIF protocols. By default it will use IIP, but to use, for example Zoomify, first include the protocol after the other javascript includes as this is not included by default:
 
 <pre>
   &lt;script type="text/javascript" src="src/protocols/zoomify.js"&gt;&lt;/script&gt;
