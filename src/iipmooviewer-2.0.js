@@ -1515,6 +1515,14 @@ var IIPMooViewer = new Class({
       var view = this.getView();
       this.navigation.update( view.x/this.wid, view.y/this.hei, view.w/this.wid, view.h/this.hei );
     }
+  },
+  
+  /* Toggle navigation window
+   */
+  toggleNavigationWindow: function() {
+    if( this.navigation ) {
+      this.navigation.toggleWindow();
+    }
   }
 
 });
