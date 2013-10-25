@@ -512,12 +512,12 @@ var IIPMooViewer = new Class({
       }
       break;
     case 72: // h
-      if( this.navOptions.id ) break;
+      if( this.navOptions&&this.navOptions.id ) break;
       if( this.navigation ) this.navigation.toggleWindow();
       if( this.credit ) this.container.getElement('div.credit').get('reveal').toggle();
       break;
     case 82: // r
-      if( this.navOptions.buttons &&
+      if( this.navOptions&&this.navOptions.buttons &&
     	  ( !this.navOptions.buttons.contains('rotateLeft') &&
     	    !this.navOptions.buttons.contains('rotateRight') ) ) break;
       if(!e.control){
@@ -986,7 +986,7 @@ var IIPMooViewer = new Class({
     this.navigation.size.y = Math.round( (this.max_size.h/this.max_size.w)*thumb_width );
     
     // If the nav is stand-alone, fit it to the container
-    if(this.navOptions.id) {
+    if(this.navOptions&&this.navOptions.id) {
       var navContainer = document.id(this.navOptions.id);
       // Ifthe container width < 30, throw an error
       var navContainerSize = navContainer.getSize();
@@ -1223,7 +1223,7 @@ var IIPMooViewer = new Class({
     this.calculateSizes();
     if( this.navigation){
 
-      if( this.navOptions.id ) this.navigation.create( document.id(this.navOptions.id) );
+      if( this.navOptions&&this.navOptions.id ) this.navigation.create( document.id(this.navOptions.id) );
       else this.navigation.create( this.container );
 
       this.navigation.setImage(this.protocol.getThumbnailURL(this.server,this.images[0].src,this.navigation.size.x));
