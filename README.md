@@ -4,7 +4,7 @@ IIPMooViewer
 
 About
 -----
-IIPMooViewer is a high performance light-weight HTML5 Ajax-based javascript image streaming and zooming client designed for the IIPImage high resolution imaging system. It is compatible with Firefox, Chrome, Internet Explorer (Versions 6-10), Safari and Opera as well as mobile touch-based browsers for iOS and Android. Although designed for use with the IIP protocol and IIPImage, it has multi-protocol support and is additionally compatible with the Zoomify, Deepzoom and Djatoka (OpenURL) protocols.
+IIPMooViewer is a high performance light-weight HTML5 Ajax-based javascript image streaming and zooming client designed for the IIPImage high resolution imaging system. It is compatible with Firefox, Chrome, Internet Explorer (Versions 6-10), Safari and Opera as well as mobile touch-based browsers for iOS and Android. Although designed for use with the IIP protocol and IIPImage, it has multi-protocol support and is additionally compatible with the Zoomify, Deepzoom, Djatoka (OpenURL) and IIIF protocols.
 
 Version 2.0 of IIPMooViewer is HTML5/CSS3 based and uses the Mootools javascript framework (version 1.4+). 
 
@@ -97,6 +97,11 @@ option is the <b>image</b> variable)
 
 <b>navWinSize</b> : ratio of navigation window size to the main window.
 	Wide panoramas are scaled to twice this size [default: 0.2]
+
+<b>navigation</b> : a hash containing options for the navigation box:
+   (a) id: the id of the element where the navigation box will be embedded. Defaults to the main container.
+   (b) draggable: a boolean, indicating whether the navigation box is draggable. Defaults to true, however, if a navigation id is specified, defaults to false.
+   (c) buttons: an array of the available buttons: reset, zoomIn, zoomOut, rotateLeft, rotateRight. Defaults to: ['reset','zoomIn','zoomOut']
 
 <b>showCoords</b> : whether to show live screen coordinates [default: false]
 
