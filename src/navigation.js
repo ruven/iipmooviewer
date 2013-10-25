@@ -34,6 +34,8 @@ var Navigation = new Class({
     this.options.navWinSize = options.navWinSize || 0.2;
     this.options.showCoords = (options.showCoords == true) ? true : false;
     this.prefix = options.prefix;
+    this.standalone = options.navigation.id ? true : false;
+    this.options.navButtons = options.navigation.buttons || ['reset','zoomIn','zoomOut'];
   },
 
 
@@ -46,22 +48,26 @@ var Navigation = new Class({
 
     this.navcontainer = new Element( 'div',{
       'class': 'navcontainer',
-      'styles': { width: this.size.x }
+      'styles': {
+	width: this.size.x,
+	position: (this.standalone) ? 'static' : 'absolute' }
     });
 
     // For standalone iphone/ipad the logo gets covered by the status bar
     if( Browser.Platform.ios && window.navigator.standalone ) this.navcontainer.setStyle( 'top', 20 );
 
-    var toolbar = new Element( 'div', {
-      'class': 'toolbar',
-      'events': {
-	 dblclick: function(source){
-	   source.getElement('div.navbuttons').get('slide').toggle();
-         }.pass(container)
-      }
-    });
-    toolbar.store( 'tip:text', IIPMooViewer.lang.drag );
-    toolbar.inject(this.navcontainer);
+    if(!this.standalone) {
+      var toolbar = new Element( 'div', {
+        'class': 'toolbar',
+        'events': {
+	   dblclick: function(source){
+	     source.getElement('div.navbuttons').get('slide').toggle();
+           }.pass(container)
+        }
+      });
+      toolbar.store( 'tip:text', IIPMooViewer.lang.drag );
+      toolbar.inject(this.navcontainer);
+    }  
 
 
     // Create our navigation div and inject it inside our frame if requested
@@ -133,7 +139,7 @@ var Navigation = new Class({
 
       // Create our buttons as SVG with fallback to PNG
       var prefix = this.prefix;
-      ['reset','zoomIn','zoomOut','rotateLeft','rotateRight'].each( function(k){
+      this.options.navButtons.each( function(k){
 	new Element('img',{
 	  'src': prefix + k + (Browser.buggy?'.png':'.svg'),
 	  'class': k,
@@ -153,11 +159,11 @@ var Navigation = new Class({
 
       // Add events to our buttons
       var _this = this;
-      navbuttons.getElement('img.zoomIn').addEvent( 'click', function(){ _this.fireEvent('zoomIn'); });
-      navbuttons.getElement('img.zoomOut').addEvent( 'click', function(){ _this.fireEvent('zoomOut'); });
-      navbuttons.getElement('img.reset').addEvent( 'click', function(){ _this.fireEvent('reload'); });
-      navbuttons.getElement('img.rotateLeft').addEvent( 'click', function(){ _this.fireEvent('rotate',-90); });
-      navbuttons.getElement('img.rotateRight').addEvent( 'click', function(){ _this.fireEvent('rotate',90); });
+      if(this.options.navButtons.contains('reset')) navbuttons.getElement('img.reset').addEvent( 'click', function(){ _this.fireEvent('reload'); });
+      if(this.options.navButtons.contains('zoomIn')) navbuttons.getElement('img.zoomIn').addEvent( 'click', function(){ _this.fireEvent('zoomIn'); });
+      if(this.options.navButtons.contains('zoomOut')) navbuttons.getElement('img.zoomOut').addEvent( 'click', function(){ _this.fireEvent('zoomOut'); }); 
+      if(this.options.navButtons.contains('rotateLeft')) navbuttons.getElement('img.rotateLeft').addEvent( 'click', function(){ _this.fireEvent('rotate',-90); });
+      if(this.options.navButtons.contains('rotateRight')) navbuttons.getElement('img.rotateRight').addEvent( 'click', function(){ _this.fireEvent('rotate',90); });
 
     }
 
@@ -197,7 +203,8 @@ var Navigation = new Class({
         });
     }
 
-    this.navcontainer.makeDraggable( {container:container, handle:toolbar} );
+    if(!this.standalone)
+      this.navcontainer.makeDraggable( {container:container, handle:toolbar} );
 
   },
 
@@ -356,7 +363,7 @@ var Navigation = new Class({
     this.zone.morph({
       fps: 30,
       left: pleft,
-      top: ptop + 8, // 8 is the height of toolbar
+      top: (this.standalone) ? ptop : ptop + 8, // 8 is the height of toolbar
       width: (width-border>0)? width - border : 1, // Watch out for zero sizes!
       height: (height-border>0)? height - border : 1
     });

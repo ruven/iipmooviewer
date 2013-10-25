@@ -53,6 +53,14 @@
 	      viewport: object containing x, y, resolution, rotation of initial view
 	      winResize: whether view is reflowed on window resize. Default true
 	      preload: load extra surrounding tiles
+	      navigation: a hash containing options for the navigation box:
+	         (a) id: the id of the element where the navigation box will be embedded. 
+	                 Defaults to the main container.
+	         (b) draggable: a boolean, indicating whether the navigation box is draggable.
+	                 Defaults to true, however, if a navigation id is specified, defaults 
+	                 to false.
+	         (c) buttons: an array of the available buttons: reset, zoomIn, zoomOut, rotateLeft, rotateRight
+	                      Defaults to: ['reset','zoomIn','zoomOut'] 
 
    Note: Requires mootools version 1.4 or later <http://www.mootools.net>
        : The page MUST have a standard-compliant HTML declaration at the beginning
@@ -143,12 +151,14 @@ var IIPMooViewer = new Class({
 
     // Navigation window options
     this.navigation = null;
+    this.navOptions = options.navigation || null;
     if( (typeof(Navigation)==="function") ){
       this.navigation = new Navigation({ showNavWindow:options.showNavWindow,
 					 showNavButtons: options.showNavButtons,
 					 navWinSize: options.navWinSize,
 				         showCoords: options.showCoords,
-					 prefix: this.prefix
+					 prefix: this.prefix,
+					 navigation: options.navigation
 				       });
     }
 
@@ -502,10 +512,14 @@ var IIPMooViewer = new Class({
       }
       break;
     case 72: // h
+      if( this.navOptions.id ) break;
       if( this.navigation ) this.navigation.toggleWindow();
       if( this.credit ) this.container.getElement('div.credit').get('reveal').toggle();
       break;
     case 82: // r
+      if( this.navOptions.buttons &&
+    	  ( !this.navOptions.buttons.contains('rotateLeft') &&
+    	    !this.navOptions.buttons.contains('rotateRight') ) ) break;
       if(!e.control){
 	var r = this.view.rotation;
 	if(e.shift) r -= 90 % 360;
@@ -970,6 +984,16 @@ var IIPMooViewer = new Class({
 
     this.navigation.size.x = thumb_width;
     this.navigation.size.y = Math.round( (this.max_size.h/this.max_size.w)*thumb_width );
+    
+    // If the nav is stand-alone, fit it to the container
+    if(this.navOptions.id) {
+      var navContainer = document.id(this.navOptions.id);
+      // Ifthe container width < 30, throw an error
+      var navContainerSize = navContainer.getSize();
+      if(navContainerSize.x < 30) throw "Error: Navigation container is too small!";
+      this.navigation.size.x = navContainerSize.x;
+      this.navigation.size.y = Math.round( (this.max_size.h/this.max_size.w)*navContainerSize.x );
+    }
   },
 
 
@@ -1197,8 +1221,11 @@ var IIPMooViewer = new Class({
 
     // Calculate some sizes and create the navigation window
     this.calculateSizes();
-    if( this.navigation ){
-      this.navigation.create(this.container);
+    if( this.navigation){
+
+      if( this.navOptions.id ) this.navigation.create( document.id(this.navOptions.id) );
+      else this.navigation.create( this.container );
+
       this.navigation.setImage(this.protocol.getThumbnailURL(this.server,this.images[0].src,this.navigation.size.x));
       this.navigation.addEvents({
        'rotate': function(r){
