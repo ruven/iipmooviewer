@@ -176,6 +176,9 @@ var IIPMooViewer = new Class({
       case 'djatoka':
         this.protocol = new Protocols.Djatoka();
 	break;
+      case 'IIIF':
+        this.protocol = new Protocols.IIIF();
+        break;
       default:
 	this.protocol = new Protocols.IIP();
     }
