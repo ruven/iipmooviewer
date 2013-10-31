@@ -28,7 +28,6 @@ IIPMooViewer.implement({
   /* Initialize canvas events for our annotations
    */
   initAnnotationTips: function() {
-
     this.annotationTip = null;
     this.annotationsVisible = true;
 
@@ -55,7 +54,7 @@ IIPMooViewer.implement({
   createAnnotationsArray: function() {
     var annotation_array = [];
 
-    Object.each(iipmooviewer.annotations, function(annotation, id) {
+    Object.each(this.annotations, function(annotation, id){
         annotation.id = id;
         annotation_array.push( annotation );
     });
