@@ -52,7 +52,7 @@ IIPMooViewer.implement({
 
     // Now draw the annotation
     var annotation = new Element('div', {
-      'id': id,
+      'id': 'annotation-' + id,
       'class': 'annotation edit',
       'styles': {
         left: Math.round( a.x * this.wid ),
