@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+ <head>
+  <meta charset="utf-8" />
+  <meta name="DC.creator" content="Ruven Pillay &lt;ruven@users.sourceforge.netm&gt;"/>
+  <meta name="DC.title" content="IIPMooViewer 2.0: HTML5 High Resolution Image Viewer"/>
+  <meta name="DC.subject" content="IIPMooViewer; IIPImage; Visualization; HTML5; Ajax; High Resolution; Internet Imaging Protocol; IIP"/>
+  <meta name="DC.description" content="IIPMooViewer is an advanced javascript HTML5 image viewer for streaming high resolution scientific images"/>
+  <meta name="DC.rights" content="Copyright &copy; 2003-2012 Ruven Pillay"/>
+  <meta name="DC.source" content="http://iipimage.sourceforge.net"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta http-equiv="X-UA-Compatible" content="IE=9" />
+
+  <link rel="stylesheet" type="text/css" media="all" href="css/iip.min.css" />
+<!--[if lt IE 10]>
+  <link rel="stylesheet" type="text/css" media="all" href="css/ie.min.css" />
+<![endif]-->
+
+  <!-- Basic example style for a 100% view -->
+  <style type="text/css">
+    body{
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+	/*
+    div#viewer{
+      height: 100%;
+      min-height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 0;
+      padding: 0;
+    }
+	*/
+	div#viewer{
+	height: auto;
+	width: auto;
+	position: absolute;
+	left: 0;
+	right:0;
+	top:0;
+	bottom:0px;
+	margin: 0;
+	padding: 0;
+    }
+	
+	.toolButton {
+	width:24px;
+	height:24px;
+	}
+	.extendedToolbar{
+		position: absolute;
+		background: grey;
+		z-index: 1;
+	}
+	.innerVerticalToolbar{
+		left: 10px;
+		top : 40px;
+		width  : 25px;
+		z-index : 1;
+		height : auto;
+	}
+	.outerVerticalToolbar{
+		height : 100%;
+		width  : 25px;
+		// left of 'IIPMooViewer' is computed dynamically
+	}
+	.innerHorizontalToolbar{
+		left: 45px;
+		top : 10px;
+		height : 25px;
+		width : auto;
+	}
+	.outerHorizontalToolbar{
+		left: 0px;
+		height : 25px;
+		width  : 100%;
+		// top of 'IIPMooViewer' is computed dynamically
+	}
+  </style>
+
+  <link rel="shortcut icon" href="images/iip-favicon.png" />
+  <link rel="apple-touch-icon" href="images/iip.png" />
+
+  <title>IIPMooViewer 2.0 :: HTML5 High Resolution Image Viewer</title>
+
+  <!-- <script src="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js"></script> -->
+  <!-- <script type="text/javascript" src="javascript/iipmooviewer-2.0-compressed.js"></script> -->
+
+  <script type="text/javascript" src="src/mootools-core-1.4.5-full-nocompat.js"></script>
+  <script type="text/javascript" src="src/mootools-more-1.4.0.1.js"></script>
+  
+  <script type="text/javascript" src="src/iipmooviewer-2.0.js"></script>
+  <script type="text/javascript" src="src/navigation.js"></script>
+  <script type="text/javascript" src="src/protocols/iip.js"></script>
+  <script type="text/javascript" src="src/lang/help.en.js"></script>
+  <script type="text/javascript" src="src/annotations.js"></script>
+  <script type="text/javascript" src="src/annotations-edit.js"></script>
+  <script type="text/javascript" src="src/extended-toolbar.js"></script>
+
+<!--[if lt IE 7]>
+  <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE7.js">IE7_PNG_SUFFIX = ".png";</script>
+<![endif]-->
+  <script type="text/javascript">
+	debug_level = 2;
+	//Source : http://stackoverflow.com/questions/831030/how-to-get-get-request-parameters-in-javascript
+	function get(name){
+	   if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+		  return decodeURIComponent(name[1]);
+	}
+	
+
+
+
+
+
+
+
+
+    // IIPMooViewer options: See documentation at http://iipimage.sourceforge.net for more details
+    // Server path: set if not using default path
+    var server = '/fcgi-bin/iipsrv.fcgi';
+	
+    // The *full* image path on the server. This path does *not* need to be in the web
+    // server root directory. On Windows, use Unix style forward slash paths without
+    // the "c:" prefix
+    var image = '/path/to/image.tif';
+
+    // Copyright or information message
+    var credit = '&copy; copyright or information message';
+
+    // Create our iipmooviewer object
+    var iipmooviewer = new IIPMooViewer( "viewer", {
+	server: server,
+	image: image,
+	credit: credit
+    });
+
+
+	function sendEntireAnnotationsObject(){
+		var jsonFile = iipmooviewer.images[0].src.replace(/^.*[\\\/]/, '');
+		jsonFile = jsonFile.substr(0, jsonFile.lastIndexOf(".")) + ".json";
+
+		var metadata = new Request.JSON({
+		method: 'post',
+		url: 'annotation-service-demo.php',
+		data:  {
+		   action : "dump_entire_json",
+		   jsonFile: jsonFile,
+		   json: JSON.encode(iipmooviewer.annotations)
+			}
+		}).send();
+	}
+	// Triggered when a "delete" event occurs on an annotation
+	iipmooviewer.addEvent('annotationDelete', function(annotationToDelete){
+		// The annotation is delete from "this.annotations", but not before 
+		// we send it on the server (necessary to receive it here as a parameter).
+		// Deleting before sending :
+		delete this.annotations[annotationToDelete.id];
+		// The whole iipviewer.annotations object is returned
+		sendEntireAnnotationsObject();
+	});
+		
+	// Triggered when an "addition" event occurs on an annotation
+	iipmooviewer.addEvent('annotationAdd', function(annotationToAdd){
+		// The whole iipviewer.annotations object is returned
+		// N.B. : The argument "annotationToAdd" is not used here.
+		sendEntireAnnotationsObject();
+	});
+			
+	// Triggered when an "edition" event occurs on an annotation
+	iipmooviewer.addEvent('annotationEdit', function(annotationToEdit){
+		// The whole iipviewer.annotations object is returned
+		// N.B. : The argument "annotationToEdit" is not used here.
+		sendEntireAnnotationsObject();
+	});
+
+
+	window.addEvent('domready',function() {
+		var buttons = ['newAnnotation', 'drawNewAnnotation', 'rotateanticlockwise', 'rotateclockwise',
+		'toggleNavigationWindow', 'toggleAnnotations', 'getRegionalURL', 'zoomIn', 'zoomOut', 'reset', 'toggleFullscreen'];
+		var position = get('toolbarPosition') || 'inside';  // inside or outside
+		
+		var orientation = get('toolbarOrientation') || 'vertical';  // vertical or horizontal
+		iipmooviewer.createExtendedToolbar('mytoolbar', position, orientation, buttons);
+	});
+  </script>
+
+ </head>
+
+ <body>
+   <div id="viewer"></div>
+   <div id="mytoolbar"></div>
+ </body>
+
+</html>
