@@ -26,11 +26,12 @@ Protocols.IIP = new Class({
    */
   parseMetaData: function(response){
     var tmp = response.split( "Max-size" );
-    if(!tmp[1]) alert( "Error: Unexpected response from server " + this.server );
+    if(!tmp[1]) return null;
     var size = tmp[1].split(" ");
     var max_size = { w: parseInt(size[0].substring(1,size[0].length)),
 		     h: parseInt(size[1]) };
     tmp = response.split( "Tile-size" );
+    if(!tmp[1]) return null;
     size = tmp[1].split(" ");
     var tileSize = { w: parseInt(size[0].substring(1,size[0].length)),
 		     h: parseInt(size[1]) };

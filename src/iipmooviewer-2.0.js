@@ -1410,7 +1410,8 @@ var IIPMooViewer = new Class({
 	  var response = transport || alert( "Error: No response from server " + this.server );
 
 	  // Parse the result
-	  var result = this.protocol.parseMetaData( response );
+	  var result = this.protocol.parseMetaData( response ) ||
+	    alert( "Error: Unexpected response from server " + this.server );
 	  this.max_size = result.max_size;
 	  this.tileSize = result.tileSize;
 	  this.num_resolutions = result.num_resolutions;
