@@ -129,8 +129,10 @@ var IIPMooViewer = new Class({
     // Enable fullscreen mode? If false, then disable. Otherwise option can be "native" for HTML5
     // fullscreen API mode or "page" for standard web page fill page mode
     this.enableFullscreen = 'native';
-    if( options.enableFullscreen == false ) this.enableFullscreen = false;
-    if( options.enableFullscreen == 'page' ) this.enableFullscreen = 'page';
+    if( typeof(options.enableFullcreen) != 'undefined' ){
+      if( options.enableFullcreen == false ) this.enableFullscreen = false;
+      if( options.enableFullscreen == 'page' ) this.enableFullscreen = 'page';
+    }
     this.fullscreen = null;
     if( this.enableFullscreen != false ){
       this.fullscreen = {
@@ -162,7 +164,7 @@ var IIPMooViewer = new Class({
 				       });
     }
 
-    this.winResize = (options.winResize==false)? false : true;
+    this.winResize = (typeof(options.winResize)!='undefined' && options.winResize==false)? false : true;
 
 
     // Set up our protocol handler
@@ -989,9 +991,9 @@ var IIPMooViewer = new Class({
     this.navigation.size.y = Math.round( (this.max_size.h/this.max_size.w)*thumb_width );
     
     // If the nav is stand-alone, fit it to the container
-    if(this.navOptions&&this.navOptions.id) {
+    if( this.navOptions&&this.navOptions.id&&document.id(this.navOptions.id) ){
       var navContainer = document.id(this.navOptions.id);
-      // Ifthe container width < 30, throw an error
+      // If the container width < 30, throw an error
       var navContainerSize = navContainer.getSize();
       if(navContainerSize.x < 30) throw "Error: Navigation container is too small!";
       this.navigation.size.x = navContainerSize.x;
@@ -1226,7 +1228,9 @@ var IIPMooViewer = new Class({
     this.calculateSizes();
     if( this.navigation){
 
-      if( this.navOptions&&this.navOptions.id ) this.navigation.create( document.id(this.navOptions.id) );
+      if( this.navOptions&&this.navOptions.id&&document.id(this.navOptions.id) ){
+	this.navigation.create( document.id(this.navOptions.id) );
+      }
       else this.navigation.create( this.container );
 
       this.navigation.setImage(this.protocol.getThumbnailURL(this.server,this.images[0].src,this.navigation.size.x));

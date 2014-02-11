@@ -34,7 +34,7 @@ var Navigation = new Class({
     this.options.navWinSize = options.navWinSize || 0.2;
     this.options.showCoords = (options.showCoords == true) ? true : false;
     this.prefix = options.prefix;
-    this.standalone = (options.navigation&&options.navigation.id) ? true : false;
+    this.standalone = (options.navigation&&options.navigation.id&&document.id(options.navigation.id)) ? true : false;
     this.options.navButtons = (options.navigation&&options.navigation.buttons) || ['reset','zoomIn','zoomOut'];
   },
 
@@ -203,8 +203,7 @@ var Navigation = new Class({
         });
     }
 
-    if(!this.standalone)
-      this.navcontainer.makeDraggable( {container:container, handle:toolbar} );
+    if(!this.standalone) this.navcontainer.makeDraggable( {container:container, handle:toolbar} );
 
   },
 
