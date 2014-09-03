@@ -17,7 +17,7 @@ Protocols.IIP = new Class({
     if( t.sds )      modifiers.push( 'SDS=' + t.sds );
     if( t.rotation ) modifiers.push( 'ROT=' + t.rotation );
     if( t.gamma )    modifiers.push( 'GAM=' + t.gamma );
-    if( t.shade )    modifiers.push( 'SHD=' + t.shade );
+    if( t.shade )    modifiers.push( 'SHD=' + t.shade + ",30" );
     modifiers.push( 'JTL=' + t.resolution + ',' + t.tileindex );
     return t.server+modifiers.join('&');
   },
