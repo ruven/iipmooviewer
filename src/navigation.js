@@ -1,6 +1,6 @@
 /* IIPMooViewer Navigation Widget
 
-   Copyright (c) 2007-2013 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2014 Ruven Pillay <ruven@users.sourceforge.net>
    IIPImage: http://iipimage.sourceforge.net
 
    --------------------------------------------------------------------
@@ -54,7 +54,7 @@ var Navigation = new Class({
     });
 
     // For standalone iphone/ipad the logo gets covered by the status bar
-    if( Browser.Platform.ios && window.navigator.standalone ) this.navcontainer.setStyle( 'top', 20 );
+    if( Browser.platform=='ios' && window.navigator.standalone ) this.navcontainer.setStyle( 'top', 20 );
 
     if(!this.standalone) {
       var toolbar = new Element( 'div', {
@@ -261,7 +261,7 @@ var Navigation = new Class({
     // And reposition the navigation window
     if( this.options.showNavWindow ){
       if( this.navcontainer ) this.navcontainer.setStyles({
-	top: (Browser.Platform.ios&&window.navigator.standalone) ? 20 : 10, // Nudge down window in iOS standalone mode
+	top: (Browser.platform=='ios'&&window.navigator.standalone) ? 20 : 10, // Nudge down window in iOS standalone mode
 	left: container.getPosition(container).x + container.getSize().x - this.size.x - 10
       });
 

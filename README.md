@@ -6,7 +6,7 @@ About
 -----
 IIPMooViewer is a high performance light-weight HTML5 Ajax-based javascript image streaming and zooming client designed for the IIPImage high resolution imaging system. It is compatible with Firefox, Chrome, Internet Explorer (Versions 6-10), Safari and Opera as well as mobile touch-based browsers for iOS and Android. Although designed for use with the IIP protocol and IIPImage, it has multi-protocol support and is additionally compatible with the Zoomify, Deepzoom, Djatoka (OpenURL) and IIIF protocols.
 
-Version 2.0 of IIPMooViewer is HTML5/CSS3 based and uses the Mootools javascript framework (version 1.4+). 
+Version 2.0 of IIPMooViewer is HTML5/CSS3 based and uses the Mootools javascript framework (version 1.5+). 
 
 
 Features
@@ -66,7 +66,7 @@ Distribution
 
 Minified files are created with the [closure compiler](https://developers.google.com/closure/compiler/) with the following command:
 <pre>
-java -jar /path/to/compiler.jar --js src/mootools-more-1.4.0.1.js src/iipmooviewer-2.0.js src/navigation.js src/scale.js src/touch.js src/protocols/iip.js src/annotations.js src/blending.js src/lang/help.en.js --js_output_file javascript/iipmooviewer-2.0-compressed.js --compilation_level SIMPLE_OPTIMIZATIONS
+java -jar /path/to/compiler.jar --js src/mootools-more-1.5.1.js src/iipmooviewer-2.0.js src/navigation.js src/scale.js src/touch.js src/protocols/iip.js src/annotations.js src/blending.js src/lang/help.en.js --js_output_file js/iipmooviewer-2.0-compressed.js --compilation_level SIMPLE_OPTIMIZATIONS
 </pre>
 
 You can thereby customize your build to include only those components you need. For example, if you require Zoomify or do not require annotation support, simply add or remove these from the build. Make sure, however, that the core iipmooviewer js file is included before the other components. Otherwise, if you prefer not to rebuild, use the default build and add the extra components you want as extra includes.
@@ -287,7 +287,7 @@ A number of localizations exist in the src/lang folder. To use, simply include t
 For example to create a new Chinese localization, create the file lang/help.zh.js and include it after the main iipmooviewer includes:
 
 <pre>
-  &lt;script type="text/javascript" src="javascript/mootools-core-1.4.5-full-nocompat-yc.js"&gt;&lt;/script&gt;
+  &lt;script type="text/javascript" src="javascript/mootools-core-1.5.1-full-nocompat-yc.js"&gt;&lt;/script&gt;
   &lt;script type="text/javascript" src="javascript/iipmooviewer-2.0-compressed.js"&gt;&lt;/script&gt;
   &lt;script type="text/javascript" src="src/lang/help.zh.js"&gt;&lt;/script&gt;
 </pre>
@@ -339,5 +339,5 @@ Please refer to the project site http://iipimage.sourceforge.net for further det
 
 ------------------------------------------------------------------------------------
 
-<pre>(c) 2007-2013 Ruven Pillay <ruven@users.sourceforge.net></pre>
+<pre>(c) 2007-2014 Ruven Pillay <ruven@users.sourceforge.net></pre>
 

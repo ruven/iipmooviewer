@@ -1,6 +1,16 @@
-// MooTools: the javascript framework.
-// Load this file's selection again by visiting: http://mootools.net/more/f0c595201cc3451c3f7e949f2b8b84b6 
-// Or build this file again with packager using: packager build More/Events.Pseudos More/Element.Event.Pseudos More/Element.Position More/Fx.Elements More/Fx.Move More/Fx.Reveal More/Fx.Slide More/Drag More/Drag.Move More/Slider More/Tips
+/*
+---
+MooTools: the javascript framework
+
+web build:
+ - http://mootools.net/more/8346bc1ad8b80f2f3162befc43c307e1
+
+packager build:
+ - packager build More/Element.Event.Pseudos More/Fx.Elements More/Fx.Move More/Fx.Reveal More/Fx.Slide More/Drag.Move More/Slider More/Swiff More/Tips
+
+...
+*/
+
 /*
 ---
 
@@ -31,8 +41,8 @@ provides: [MooTools.More]
 */
 
 MooTools.More = {
-	'version': '1.4.0.1',
-	'build': 'a4244edf2aa97ac8a196fc96082dd35af1abab87'
+	version: '1.5.1',
+	build: '2dd695ba957196ae4b0275a690765d6636a61ccd'
 };
 
 
@@ -48,7 +58,7 @@ license: MIT-style license
 authors:
   - Arian Stolwijk
 
-requires: [Core/Class.Extras, Core/Slick.Parser, More/MooTools.More]
+requires: [Core/Class.Extras, Core/Slick.Parser, MooTools.More]
 
 provides: [Events.Pseudos]
 
@@ -209,7 +219,7 @@ authors:
 
 requires: [Core/Element.Event, Core/Element.Delegation, Events.Pseudos]
 
-provides: [Element.Event.Pseudos, Element.Delegation]
+provides: [Element.Event.Pseudos, Element.Delegation.Pseudo]
 
 ...
 */
@@ -236,6 +246,82 @@ var proto = Element.prototype;
 /*
 ---
 
+script: Fx.Elements.js
+
+name: Fx.Elements
+
+description: Effect to change any number of CSS properties of any number of Elements.
+
+license: MIT-style license
+
+authors:
+  - Valerio Proietti
+
+requires:
+  - Core/Fx.CSS
+  - MooTools.More
+
+provides: [Fx.Elements]
+
+...
+*/
+
+Fx.Elements = new Class({
+
+	Extends: Fx.CSS,
+
+	initialize: function(elements, options){
+		this.elements = this.subject = $$(elements);
+		this.parent(options);
+	},
+
+	compute: function(from, to, delta){
+		var now = {};
+
+		for (var i in from){
+			var iFrom = from[i], iTo = to[i], iNow = now[i] = {};
+			for (var p in iFrom) iNow[p] = this.parent(iFrom[p], iTo[p], delta);
+		}
+
+		return now;
+	},
+
+	set: function(now){
+		for (var i in now){
+			if (!this.elements[i]) continue;
+
+			var iNow = now[i];
+			for (var p in iNow) this.render(this.elements[i], p, iNow[p], this.options.unit);
+		}
+
+		return this;
+	},
+
+	start: function(obj){
+		if (!this.check(obj)) return this;
+		var from = {}, to = {};
+
+		for (var i in obj){
+			if (!this.elements[i]) continue;
+
+			var iProps = obj[i], iFrom = from[i] = {}, iTo = to[i] = {};
+
+			for (var p in iProps){
+				var parsed = this.prepare(this.elements[i], p, iProps[p]);
+				iFrom[p] = parsed.from;
+				iTo[p] = parsed.to;
+			}
+		}
+
+		return this.parent(from, to);
+	}
+
+});
+
+
+/*
+---
+
 script: Element.Measure.js
 
 name: Element.Measure
@@ -252,7 +338,7 @@ authors:
 requires:
   - Core/Element.Style
   - Core/Element.Dimensions
-  - /MooTools.More
+  - MooTools.More
 
 provides: [Element.Measure]
 
@@ -469,13 +555,15 @@ var local = Element.Position = {
 	},
 
 	setOffsetOption: function(element, options){
-		var parentOffset = {x: 0, y: 0},
-			offsetParent = element.measure(function(){
-				return document.id(this.getOffsetParent());
-			}),
-			parentScroll = offsetParent.getScroll();
+		var parentOffset = {x: 0, y: 0};
+		var parentScroll = {x: 0, y: 0};
+		var offsetParent = element.measure(function(){
+			return document.id(this.getOffsetParent());
+		});
 
 		if (!offsetParent || offsetParent == element.getDocument().body) return;
+
+		parentScroll = offsetParent.getScroll();
 		parentOffset = offsetParent.measure(function(){
 			var position = this.getPosition();
 			if (this.getStyle('position') == 'fixed'){
@@ -642,82 +730,6 @@ Element.implement({
 /*
 ---
 
-script: Fx.Elements.js
-
-name: Fx.Elements
-
-description: Effect to change any number of CSS properties of any number of Elements.
-
-license: MIT-style license
-
-authors:
-  - Valerio Proietti
-
-requires:
-  - Core/Fx.CSS
-  - /MooTools.More
-
-provides: [Fx.Elements]
-
-...
-*/
-
-Fx.Elements = new Class({
-
-	Extends: Fx.CSS,
-
-	initialize: function(elements, options){
-		this.elements = this.subject = $$(elements);
-		this.parent(options);
-	},
-
-	compute: function(from, to, delta){
-		var now = {};
-
-		for (var i in from){
-			var iFrom = from[i], iTo = to[i], iNow = now[i] = {};
-			for (var p in iFrom) iNow[p] = this.parent(iFrom[p], iTo[p], delta);
-		}
-
-		return now;
-	},
-
-	set: function(now){
-		for (var i in now){
-			if (!this.elements[i]) continue;
-
-			var iNow = now[i];
-			for (var p in iNow) this.render(this.elements[i], p, iNow[p], this.options.unit);
-		}
-
-		return this;
-	},
-
-	start: function(obj){
-		if (!this.check(obj)) return this;
-		var from = {}, to = {};
-
-		for (var i in obj){
-			if (!this.elements[i]) continue;
-
-			var iProps = obj[i], iFrom = from[i] = {}, iTo = to[i] = {};
-
-			for (var p in iProps){
-				var parsed = this.prepare(this.elements[i], p, iProps[p]);
-				iFrom[p] = parsed.from;
-				iTo[p] = parsed.to;
-			}
-		}
-
-		return this.parent(from, to);
-	}
-
-});
-
-
-/*
----
-
 script: Fx.Move.js
 
 name: Fx.Move
@@ -731,7 +743,7 @@ authors:
 
 requires:
   - Core/Fx.Morph
-  - /Element.Position
+  - Element.Position
 
 provides: [Fx.Move]
 
@@ -804,7 +816,7 @@ authors:
 
 requires:
   - Core/Element.Style
-  - /MooTools.More
+  - MooTools.More
 
 provides: [Element.Shortcuts]
 
@@ -882,8 +894,8 @@ authors:
 
 requires:
   - Core/Fx.Morph
-  - /Element.Shortcuts
-  - /Element.Measure
+  - Element.Shortcuts
+  - Element.Measure
 
 provides: [Fx.Reveal]
 
@@ -918,13 +930,13 @@ Fx.Reveal = new Class({
 		widthOverride: null,*/
 		link: 'cancel',
 		styles: ['padding', 'border', 'margin'],
-		transitionOpacity: !Browser.ie6,
+		transitionOpacity: 'opacity' in document.documentElement,
 		mode: 'vertical',
 		display: function(){
 			return this.element.get('tag') != 'tr' ? 'block' : 'table-row';
 		},
 		opacity: 1,
-		hideInputs: Browser.ie ? 'select, input, textarea, object, embed' : null
+		hideInputs: !('opacity' in document.documentElement) ? 'select, input, textarea, object, embed' : null
 	},
 
 	dissolve: function(){
@@ -1131,7 +1143,7 @@ authors:
 requires:
   - Core/Fx
   - Core/Element.Style
-  - /MooTools.More
+  - MooTools.More
 
 provides: [Fx.Slide]
 
@@ -1308,7 +1320,7 @@ requires:
   - Core/Element.Event
   - Core/Element.Style
   - Core/Element.Dimensions
-  - /MooTools.More
+  - MooTools.More
 
 provides: [Drag]
 ...
@@ -1335,6 +1347,7 @@ var Drag = new Class({
 		invert: false,
 		preventDefault: false,
 		stopPropagation: false,
+		compensateScroll: false,
 		modifiers: {x: 'left', y: 'top'}
 	},
 
@@ -1353,11 +1366,16 @@ var Drag = new Class({
 		this.handles = ((htype == 'array' || htype == 'collection') ? $$(this.options.handle) : document.id(this.options.handle)) || this.element;
 		this.mouse = {'now': {}, 'pos': {}};
 		this.value = {'start': {}, 'now': {}};
+		this.offsetParent = (function(el){
+			var offsetParent = el.getOffsetParent();
+			var isBody = !offsetParent || (/^(?:body|html)$/i).test(offsetParent.tagName);
+			return isBody ? window : document.id(offsetParent);
+		})(this.element);
+		this.selection = 'selectstart' in document ? 'selectstart' : 'mousedown';
 
-		this.selection = (Browser.ie) ? 'selectstart' : 'mousedown';
+		this.compensateScroll = {start: {}, diff: {}, last: {}};
 
-
-		if (Browser.ie && !Drag.ondragstartFixed){
+		if ('ondragstart' in document && !('FileReader' in window) && !Drag.ondragstartFixed){
 			document.ondragstart = Function.from(false);
 			Drag.ondragstartFixed = true;
 		}
@@ -1368,19 +1386,47 @@ var Drag = new Class({
 			drag: this.drag.bind(this),
 			stop: this.stop.bind(this),
 			cancel: this.cancel.bind(this),
-			eventStop: Function.from(false)
+			eventStop: Function.from(false),
+			scrollListener: this.scrollListener.bind(this)
 		};
 		this.attach();
 	},
 
 	attach: function(){
 		this.handles.addEvent('mousedown', this.bound.start);
+		if (this.options.compensateScroll) this.offsetParent.addEvent('scroll', this.bound.scrollListener);
 		return this;
 	},
 
 	detach: function(){
 		this.handles.removeEvent('mousedown', this.bound.start);
+		if (this.options.compensateScroll) this.offsetParent.removeEvent('scroll', this.bound.scrollListener);
 		return this;
+	},
+
+	scrollListener: function(){
+
+		if (!this.mouse.start) return;
+		var newScrollValue = this.offsetParent.getScroll();
+
+		if (this.element.getStyle('position') == 'absolute'){
+			var scrollDiff = this.sumValues(newScrollValue, this.compensateScroll.last, -1);
+			this.mouse.now = this.sumValues(this.mouse.now, scrollDiff, 1);
+		} else {
+			this.compensateScroll.diff = this.sumValues(newScrollValue, this.compensateScroll.start, -1);
+		}
+		if (this.offsetParent != window) this.compensateScroll.diff = this.sumValues(this.compensateScroll.start, newScrollValue, -1);
+		this.compensateScroll.last = newScrollValue;
+		this.render(this.options);
+	},
+
+	sumValues: function(alpha, beta, op){
+		var sum = {}, options = this.options;
+		for (z in options.modifiers){
+			if (!options.modifiers[z]) continue;
+			sum[z] = alpha[z] + beta[z] * op;
+		}
+		return sum;
 	},
 
 	start: function(event){
@@ -1390,14 +1436,15 @@ var Drag = new Class({
 
 		if (options.preventDefault) event.preventDefault();
 		if (options.stopPropagation) event.stopPropagation();
+		this.compensateScroll.start = this.compensateScroll.last = this.offsetParent.getScroll();
+		this.compensateScroll.diff = {x: 0, y: 0};
 		this.mouse.start = event.page;
-
 		this.fireEvent('beforeStart', this.element);
 
 		var limit = options.limit;
 		this.limit = {x: [], y: []};
 
-		var z, coordinates;
+		var z, coordinates, offsetParent = this.offsetParent == window ? null : this.offsetParent;
 		for (z in options.modifiers){
 			if (!options.modifiers[z]) continue;
 
@@ -1405,7 +1452,7 @@ var Drag = new Class({
 
 			// Some browsers (IE and Opera) don't always return pixels.
 			if (style && !style.match(/px$/)){
-				if (!coordinates) coordinates = this.element.getCoordinates(this.element.getOffsetParent());
+				if (!coordinates) coordinates = this.element.getCoordinates(offsetParent);
 				style = coordinates[options.modifiers[z]];
 			}
 
@@ -1453,16 +1500,19 @@ var Drag = new Class({
 
 	drag: function(event){
 		var options = this.options;
-
 		if (options.preventDefault) event.preventDefault();
-		this.mouse.now = event.page;
+		this.mouse.now = this.sumValues(event.page, this.compensateScroll.diff, -1);
 
+		this.render(options);
+		this.fireEvent('drag', [this.element, event]);
+	},  
+
+	render: function(options){
 		for (var z in options.modifiers){
 			if (!options.modifiers[z]) continue;
 			this.value.now[z] = this.mouse.now[z] - this.mouse.pos[z];
 
 			if (options.invert) this.value.now[z] *= -1;
-
 			if (options.limit && this.limit[z]){
 				if ((this.limit[z][1] || this.limit[z][1] === 0) && (this.value.now[z] > this.limit[z][1])){
 					this.value.now[z] = this.limit[z][1];
@@ -1470,14 +1520,10 @@ var Drag = new Class({
 					this.value.now[z] = this.limit[z][0];
 				}
 			}
-
 			if (options.grid[z]) this.value.now[z] -= ((this.value.now[z] - (this.limit[z][0]||0)) % options.grid[z]);
-
 			if (options.style) this.element.setStyle(options.modifiers[z], this.value.now[z] + options.unit);
 			else this.element[options.modifiers[z]] = this.value.now[z];
 		}
-
-		this.fireEvent('drag', [this.element, event]);
 	},
 
 	cancel: function(event){
@@ -1498,6 +1544,7 @@ var Drag = new Class({
 		};
 		events[this.selection] = this.bound.eventStop;
 		this.document.removeEvents(events);
+		this.mouse.start = null;
 		if (event) this.fireEvent('complete', [this.element, event]);
 	}
 
@@ -1542,7 +1589,7 @@ authors:
 
 requires:
   - Core/Element.Dimensions
-  - /Drag
+  - Drag
 
 provides: [Drag.Move]
 
@@ -1569,10 +1616,7 @@ Drag.Move = new Class({
 		element = this.element;
 
 		this.droppables = $$(this.options.droppables);
-		this.container = document.id(this.options.container);
-
-		if (this.container && typeOf(this.container) != 'element')
-			this.container = document.id(this.container.getDocument().body);
+		this.setContainer(this.options.container);
 
 		if (this.options.style){
 			if (this.options.modifiers.x == 'left' && this.options.modifiers.y == 'top'){
@@ -1588,6 +1632,13 @@ Drag.Move = new Class({
 
 		this.addEvent('start', this.checkDroppables, true);
 		this.overed = null;
+	},
+	
+	setContainer: function(container) {
+		this.container = document.id(container);
+		if (this.container && typeOf(this.container) != 'element'){
+			this.container = document.id(this.container.getDocument().body);
+		}
 	},
 
 	start: function(event){
@@ -1612,7 +1663,8 @@ Drag.Move = new Class({
 			elementBorder = {},
 			containerMargin = {},
 			containerBorder = {},
-			offsetParentPadding = {};
+			offsetParentPadding = {},
+			offsetScroll = offsetParent.getScroll();
 
 		['top', 'right', 'bottom', 'left'].each(function(pad){
 			elementMargin[pad] = element.getStyle('margin-' + pad).toInt();
@@ -1624,10 +1676,10 @@ Drag.Move = new Class({
 
 		var width = element.offsetWidth + elementMargin.left + elementMargin.right,
 			height = element.offsetHeight + elementMargin.top + elementMargin.bottom,
-			left = 0,
-			top = 0,
-			right = containerCoordinates.right - containerBorder.right - width,
-			bottom = containerCoordinates.bottom - containerBorder.bottom - height;
+			left = 0 + offsetScroll.x,
+			top = 0 + offsetScroll.y,
+			right = containerCoordinates.right - containerBorder.right - width + offsetScroll.x,
+			bottom = containerCoordinates.bottom - containerBorder.bottom - height + offsetScroll.y;
 
 		if (this.options.includeMargins){
 			left += elementMargin.left;
@@ -1653,7 +1705,9 @@ Drag.Move = new Class({
 
 			if (container != offsetParent){
 				left += containerMargin.left + offsetParentPadding.left;
-				top += ((Browser.ie6 || Browser.ie7) ? 0 : containerMargin.top) + offsetParentPadding.top;
+				if (!offsetParentPadding.left && left < 0) left = 0;
+				top += offsetParent == document.body ? 0 : containerMargin.top + offsetParentPadding.top;
+				if (!offsetParentPadding.top && top < 0) top = 0;
 			}
 		} else {
 			left -= elementMargin.left;
@@ -1737,7 +1791,7 @@ authors:
 
 requires:
   - Core/Class
-  - /MooTools.More
+  - MooTools.More
 
 provides: [Class.Binds]
 
@@ -1776,9 +1830,10 @@ authors:
 
 requires:
   - Core/Element.Dimensions
-  - /Class.Binds
-  - /Drag
-  - /Element.Measure
+  - Core/Number
+  - Class.Binds
+  - Drag
+  - Element.Measure
 
 provides: [Slider]
 
@@ -1793,6 +1848,7 @@ var Slider = new Class({
 
 	options: {/*
 		onTick: function(intPosition){},
+		onMove: function(){},
 		onChange: function(intStep){},
 		onComplete: function(strStep){},*/
 		onTick: function(position){
@@ -1812,7 +1868,7 @@ var Slider = new Class({
 		options = this.options;
 		this.element = document.id(element);
 		knob = this.knob = document.id(knob);
-		this.previousChange = this.previousEnd = this.step = -1;
+		this.previousChange = this.previousEnd = this.step = options.initialStep ? options.initialStep : options.range ? options.range[0] : 0;
 
 		var limit = {},
 			modifiers = {x: false, y: false};
@@ -1830,7 +1886,7 @@ var Slider = new Class({
 		}
 
 		this.setSliderDimensions();
-		this.setRange(options.range);
+		this.setRange(options.range, null, true);
 
 		if (knob.getStyle('position') == 'static') knob.setStyle('position', 'relative');
 		knob.setStyle(this.property, -options.offset);
@@ -1858,8 +1914,8 @@ var Slider = new Class({
 		if (options.snap) this.setSnap(dragOptions);
 
 		this.drag = new Drag(knob, dragOptions);
+		if (options.initialStep != null) this.set(options.initialStep, true);
 		this.attach();
-		if (options.initialStep != null) this.set(options.initialStep);
 	},
 
 	attach: function(){
@@ -1887,7 +1943,7 @@ var Slider = new Class({
 	setSnap: function(options){
 		if (!options) options = this.drag.options;
 		options.grid = Math.ceil(this.stepWidth);
-		options.limit[this.axis][1] = this.full;
+		options.limit[this.axis][1] = this.element[this.offset];
 		return this;
 	},
 
@@ -1905,25 +1961,34 @@ var Slider = new Class({
 		return this;
 	},
 
-	set: function(step){
+	set: function(step, silently){
 		if (!((this.range > 0) ^ (step < this.min))) step = this.min;
 		if (!((this.range > 0) ^ (step > this.max))) step = this.max;
 
-		this.step = Math.round(step);
-		return this.checkStep()
-			.fireEvent('tick', this.toPosition(this.step))
-			.end();
+		this.step = (step).round(this.modulus.decimalLength);
+		if (silently) this.checkStep().setKnobPosition(this.toPosition(this.step));
+		else this.checkStep().fireEvent('tick', this.toPosition(this.step)).fireEvent('move').end();
+		return this;
 	},
 
-	setRange: function(range, pos){
+	setRange: function(range, pos, silently){
 		this.min = Array.pick([range[0], 0]);
 		this.max = Array.pick([range[1], this.options.steps]);
 		this.range = this.max - this.min;
 		this.steps = this.options.steps || this.full;
-		this.stepSize = Math.abs(this.range) / this.steps;
+		var stepSize = this.stepSize = Math.abs(this.range) / this.steps;
 		this.stepWidth = this.stepSize * this.full / Math.abs(this.range);
-		if (range) this.set(Array.pick([pos, this.step]).floor(this.min).max(this.max));
+		this.setModulus();
+
+		if (range) this.set(Array.pick([pos, this.step]).limit(this.min,this.max), silently);
 		return this;
+	},
+    
+	setModulus: function(){
+		var decimals = ((this.stepSize + '').split('.')[1] || []).length,
+			modulus = 1 + '';
+		while (decimals--) modulus += '0';
+		this.modulus = {multiplier: (modulus).toInt(10), decimalLength: modulus.length - 1};
 	},
 
 	clickedElement: function(event){
@@ -1934,10 +1999,11 @@ var Slider = new Class({
 
 		position = position.limit(-this.options.offset, this.full - this.options.offset);
 
-		this.step = Math.round(this.min + dir * this.toStep(position));
+		this.step = (this.min + dir * this.toStep(position)).round(this.modulus.decimalLength);
 
 		this.checkStep()
 			.fireEvent('tick', position)
+			.fireEvent('move')
 			.end();
 	},
 
@@ -1953,8 +2019,9 @@ var Slider = new Class({
 
 		position = position.limit(-this.options.offset, this.full -this.options.offset);
 
-		this.step = Math.round(this.min + dir * this.toStep(position));
+		this.step = (this.min + dir * this.toStep(position)).round(this.modulus.decimalLength);
 		this.checkStep();
+		this.fireEvent('move');
 	},
 
 	checkStep: function(){
@@ -1977,14 +2044,129 @@ var Slider = new Class({
 
 	toStep: function(position){
 		var step = (position + this.options.offset) * this.stepSize / this.full * this.steps;
-		return this.options.steps ? Math.round(step -= step % this.stepSize) : step;
+		return this.options.steps ? (step - (step * this.modulus.multiplier) % (this.stepSize * this.modulus.multiplier) / this.modulus.multiplier).round(this.modulus.decimalLength) : step;
 	},
 
 	toPosition: function(step){
-		return (this.full * Math.abs(this.min - step)) / (this.steps * this.stepSize) - this.options.offset;
+		return (this.full * Math.abs(this.min - step)) / (this.steps * this.stepSize) - this.options.offset || 0;
 	}
 
 });
+
+
+/*
+---
+
+name: Swiff
+
+description: Wrapper for embedding SWF movies. Supports External Interface Communication.
+
+license: MIT-style license.
+
+credits:
+  - Flash detection & Internet Explorer + Flash Player 9 fix inspired by SWFObject.
+
+requires: [Core/Options, Core/Object, Core/Element]
+
+provides: Swiff
+
+...
+*/
+
+(function(){
+
+var Swiff = this.Swiff = new Class({
+
+	Implements: Options,
+
+	options: {
+		id: null,
+		height: 1,
+		width: 1,
+		container: null,
+		properties: {},
+		params: {
+			quality: 'high',
+			allowScriptAccess: 'always',
+			wMode: 'window',
+			swLiveConnect: true
+		},
+		callBacks: {},
+		vars: {}
+	},
+
+	toElement: function(){
+		return this.object;
+	},
+
+	initialize: function(path, options){
+		this.instance = 'Swiff_' + String.uniqueID();
+
+		this.setOptions(options);
+		options = this.options;
+		var id = this.id = options.id || this.instance;
+		var container = document.id(options.container);
+
+		Swiff.CallBacks[this.instance] = {};
+
+		var params = options.params, vars = options.vars, callBacks = options.callBacks;
+		var properties = Object.append({height: options.height, width: options.width}, options.properties);
+
+		var self = this;
+
+		for (var callBack in callBacks){
+			Swiff.CallBacks[this.instance][callBack] = (function(option){
+				return function(){
+					return option.apply(self.object, arguments);
+				};
+			})(callBacks[callBack]);
+			vars[callBack] = 'Swiff.CallBacks.' + this.instance + '.' + callBack;
+		}
+
+		params.flashVars = Object.toQueryString(vars);
+		if ('ActiveXObject' in window){
+			properties.classid = 'clsid:D27CDB6E-AE6D-11cf-96B8-444553540000';
+			params.movie = path;
+		} else {
+			properties.type = 'application/x-shockwave-flash';
+		}
+		properties.data = path;
+
+		var build = '<object id="' + id + '"';
+		for (var property in properties) build += ' ' + property + '="' + properties[property] + '"';
+		build += '>';
+		for (var param in params){
+			if (params[param]) build += '<param name="' + param + '" value="' + params[param] + '" />';
+		}
+		build += '</object>';
+		this.object = ((container) ? container.empty() : new Element('div')).set('html', build).firstChild;
+	},
+
+	replaces: function(element){
+		element = document.id(element, true);
+		element.parentNode.replaceChild(this.toElement(), element);
+		return this;
+	},
+
+	inject: function(element){
+		document.id(element, true).appendChild(this.toElement());
+		return this;
+	},
+
+	remote: function(){
+		return Swiff.remote.apply(Swiff, [this.toElement()].append(arguments));
+	}
+
+});
+
+Swiff.CallBacks = {};
+
+Swiff.remote = function(obj, fn){
+	var rs = obj.CallFunction('<invoke name="' + fn + '" returntype="javascript">' + __flash__argumentsToXML(arguments, 2) + '</invoke>');
+	return eval(rs);
+};
+
+})();
 
 
 /*
@@ -2009,7 +2191,7 @@ requires:
   - Core/Element.Event
   - Core/Element.Style
   - Core/Element.Dimensions
-  - /MooTools.More
+  - MooTools.More
 
 provides: [Tips]
 

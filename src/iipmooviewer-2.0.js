@@ -2,7 +2,7 @@
    IIPMooViewer 2.0
    IIPImage Javascript Viewer <http://iipimage.sourceforge.net>
 
-   Copyright (c) 2007-2013 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2014 Ruven Pillay <ruven@users.sourceforge.net>
 
    ---------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@
 	      showNavWindow: whether to show the navigation window. Default true
 	      showNavButtons: whether to show the navigation buttons. Default true
 	      showCoords: whether to show live screen coordinates. Default false
-	      protocol: iip (default), zoomify or deepzoom
+	      protocol: iip (default), zoomify, deepzoom or iiif
 	      enableFullscreen: allow full screen mode. Default true
 	      viewport: object containing x, y, resolution, rotation of initial view
 	      winResize: whether view is reflowed on window resize. Default true
@@ -117,7 +117,7 @@ var IIPMooViewer = new Class({
 	 this.images[i] = { src:options.image[i], sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null, opacity:(i==0)?1:0 };
        }
     }
-    else this.images = [{ src:options.image, sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null } ];
+    else this.images = [{ src:options.image, sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null, shade: null } ];
 
     this.loadoptions = options.load || null;
 
@@ -224,10 +224,10 @@ var IIPMooViewer = new Class({
 
     // CSS3: Need to prefix depending on browser. Cannot handle IE<9
     this.CSSprefix = '';
-    if( Browser.firefox ) this.CSSprefix = '-moz-';
-    else if( Browser.chrome || Browser.safari || Browser.Platform.ios ) this.CSSprefix = '-webkit-';
-    else if( Browser.opera ) this.CSSprefix = '-o-';
-    else if( Browser.ie ) this.CSSprefix = 'ms-';  // Note that there should be no leading "-" !!
+    if( Browser.name=='firefox' ) this.CSSprefix = '-moz-';
+    else if( Browser.name=='chrome' || Browser.name=='safari' || Browser.platform=='ios' ) this.CSSprefix = '-webkit-';
+    else if( Browser.name=='opera' ) this.CSSprefix = '-o-';
+    else if( Browser.name=='ie' ) this.CSSprefix = 'ms-';  // Note that there should be no leading "-" !!
 
     // Override the `show` method of the Tips class so that tips are children of the image-viewer container.
     // This is needed so when the image-viewer container is "fullscreened", tips still show.
@@ -418,6 +418,7 @@ var IIPMooViewer = new Class({
 	  sds: (this.images[n].sds||'0,90'),
           contrast: (this.images[n].cnt||null),
 	  gamma: (this.images[n].gam||null),
+	  shade: (this.images[n].shade||null),
           tileindex: k,
           x: i,
           y: j
@@ -518,6 +519,7 @@ var IIPMooViewer = new Class({
       break;
     case 72: // h
       if( this.navOptions&&this.navOptions.id ) break;
+      event.preventDefault();
       if( this.navigation ) this.navigation.toggleWindow();
       if( this.credit ) this.container.getElement('div.credit').get('reveal').toggle();
       break;
@@ -525,6 +527,7 @@ var IIPMooViewer = new Class({
       if( this.navOptions&&this.navOptions.buttons &&
     	  ( !this.navOptions.buttons.contains('rotateLeft') &&
     	    !this.navOptions.buttons.contains('rotateRight') ) ) break;
+      event.preventDefault();
       if(!e.control){
 	var r = this.view.rotation;
 	if(e.shift) r -= 90 % 360;
@@ -536,6 +539,7 @@ var IIPMooViewer = new Class({
       break;
     case 65: // a
       if( this.annotations ) this.toggleAnnotations();
+      event.preventDefault();
       break;
     case 27: // esc
       if( this.fullscreen && this.fullscreen.isFullscreen ) if(!IIPMooViewer.sync) this.toggleFullScreen();
@@ -543,6 +547,7 @@ var IIPMooViewer = new Class({
       break;
     case 70: // f fullscreen, but if we have multiple views
       if(!IIPMooViewer.sync) this.toggleFullScreen();
+      event.preventDefault();
       break;
     case 67: // For control-c, show our current view location
       if(e.control) prompt( "URL of current view:", window.location.href.split("#")[0] + '#' +
@@ -1124,7 +1129,7 @@ var IIPMooViewer = new Class({
 
 
     // Add touch or drag events to our canvas
-    if( Browser.Platform.ios || Browser.Platform.android ){
+    if( Browser.platform=='ios' || Browser.platform=='android' ){
       // Add our touch events
       this.addTouchEvents();
     }
@@ -1258,9 +1263,9 @@ var IIPMooViewer = new Class({
 
 
     // Add tips if we are not on a mobile device
-    if( !(Browser.Platform.ios||Browser.Platform.android) ){
+    if( !(Browser.platform=='ios'||Browser.platform=='android') ){
       var tip_list = 'img.logo, div.toolbar, div.scale';
-      if( Browser.ie8||Browser.ie7 ) tip_list = 'img.logo, div.toolbar'; // IE8 bug which triggers window resize
+      if( Browser.name=='ie' && (Browser.version==8||Browser.version==7) ) tip_list = 'img.logo, div.toolbar'; // IE8 bug which triggers window resize
       new Tips( tip_list, {
 	className: 'tip', // We need this to force the tip in front of nav window
 	  onShow: function(tip,hovered){
@@ -1584,7 +1589,7 @@ IIPMooViewer.windows = function(s){
 
 /* Add a little convenience variable to detect buggy IE versions
  */
-Browser.buggy = Browser.ie && Browser.version < 9;
+Browser.buggy = ( Browser.name=='ie' && (!Browser.version || Browser.version<9) );
 
 
 /* Add hash change event to our Mootools native event list

@@ -13,7 +13,7 @@ IIPMooViewer.implement({
 
 
     // Add touch and gesture support for mobile iOS and Android
-    if( Browser.Platform.ios || Browser.Platform.android ){
+    if( Browser.platform=='ios' || Browser.platform=='android' ){
 
       var _this = this;
 
@@ -189,7 +189,7 @@ IIPMooViewer.implement({
     }
 
     // For standalone iphone/ipad the logo gets covered by the status bar
-    if( Browser.Platform.ios && window.navigator.standalone ) this.container.getElement('img.logo').setStyle( 'top', 15 );
+    if( Browser.platform=='ios' && window.navigator.standalone ) this.container.getElement('img.logo').setStyle( 'top', 15 );
 
   }
 

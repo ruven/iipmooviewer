@@ -41,6 +41,7 @@ html{ overflow: auto; } /* To eliminate unnecessary vertical scrollbars in IE6/7
   bottom: 10px;
   left: 10px;
   text-align: center;
+  #width: auto;
   _width: 0;  /* Fix IE6 scale width problem */
 }
 .iipmooviewer .scale:hover { filter: alpha(opacity = 100); }
@@ -73,4 +74,3 @@ img { -ms-interpolation-mode: bicubic; }
 /* Blending box */
 div.blending{ filter: alpha(opacity=60) }
 div.blending:hover{ filter: alpha(opacity=100) }
-

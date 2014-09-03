@@ -1,7 +1,7 @@
 
 /* Extend IIPMooViewer to handle blending
 
-   Copyright (c) 2007-2013 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2014 Ruven Pillay <ruven@users.sourceforge.net>
    IIPImage: http://iipimage.sourceforge.net
 
    --------------------------------------------------------------------
@@ -28,7 +28,7 @@ IIPMooViewer.implement({
     this.addEvent('load', function(){
 
       // Initialize our overlay image
-      this.images[1] = {src: images[0][0], sds: '0,90'};
+      this.images[1] = {src: images[0][0], sds: '0,90', opacity: 0};
 
       // Build our controls
       this.createBlendingInterface();
