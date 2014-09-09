@@ -1,6 +1,6 @@
 /* Extend IIPMooViewer to handle touch events
 
-   Copyright (c) 2007-2013 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2014 Ruven Pillay <ruven@users.sourceforge.net>
    IIPImage: http://iipimage.sourceforge.net
 
 */
@@ -11,9 +11,8 @@ IIPMooViewer.implement({
    */
   addTouchEvents: function(){
 
-
-    // Add touch and gesture support for mobile iOS and Android
-    if( Browser.platform=='ios' || Browser.platform=='android' ){
+    // Add touch and gesture support for mobile devices
+    if( 'ontouchstart' in window || navigator.msMaxTouchPoints ){
 
       var _this = this;
 
@@ -49,7 +48,7 @@ IIPMooViewer.implement({
 	    _this.canvas.store( 'taptime', t2 );
 	    _this.canvas.store( 'tapstart', 1 );
 
-	    if( t2-t1 < 500 ){
+	    if( t2-t1 < 250 ){
 	      // Double tap
 	      _this.canvas.eliminate('taptime');
 	      _this.zoomIn();
@@ -73,7 +72,7 @@ IIPMooViewer.implement({
         },
 
 	'touchmove': function(e){
-	  // Only handle single finger events
+	  // Handle single finger events
 	  if( e.touches.length == 1 ){
 
 	    _this.touchend = { x: e.touches[0].pageX, y: e.touches[0].pageY };
@@ -84,13 +83,14 @@ IIPMooViewer.implement({
 	    var view_x = _this.view.x - left;
 	    var view_y = _this.view.y - top;
 
-	    if( view_x > _this.wid-_this.view.w ) _this.touchend.x = this.touchstart.x -_this.wid + _this.view.w;
-	    if( view_y > _this.hei-_this.view.h ) _this.touchend.y = this.touchstart.y -_this.hei + _this.view.h;
+	    if( view_x > _this.wid - _this.view.w ) _this.touchend.x = _this.touchstart.x - _this.wid + _this.view.w + _this.view.x;
+	    if( view_y > _this.hei - _this.view.h ) _this.touchend.y = _this.touchstart.y - _this.hei + _this.view.h + _this.view.y;
 	    if( view_x < 0 ) _this.touchend.x = _this.touchstart.x + _this.view.x;
 	    if( view_y < 0 ) _this.touchend.y = _this.touchstart.y + _this.view.y;
 
-	    left = _this.touchend.x - _this.touchstart.x;
-	    top = _this.touchend.y - _this.touchstart.y;
+	    left = (_this.wid>_this.view.w) ? (_this.touchend.x - _this.touchstart.x) : 0;
+	    top = (_this.hei>_this.view.h) ? (_this.touchend.y - _this.touchstart.y) : 0;
+
 	    var transform = 'translate3d(' + left + 'px,' + top + 'px, 0 )';
 
 	    _this.canvas.setStyle( _this.CSSprefix+'transform', transform );
@@ -135,16 +135,18 @@ IIPMooViewer.implement({
 	      }
 	    }
 
-	    // Rotation
-	    var r1 = Math.atan2( _this.touchend[1].y - _this.touchend[0].y, _this.touchend[1].x - _this.touchend[0].x ) * 180 / Math.PI;
-	    var r2 = Math.atan2( _this.touchstart[1].y - _this.touchstart[0].y, _this.touchstart[1].x - _this.touchstart[0].x ) * 180 / Math.PI;
-	    var rotation = r1 - r2;
-	    if( Math.abs(rotation) > 25 ){
-	      var r = _this.view.rotation;
-	      if( rotation > 0 ) r += 90 % 360;
-	      else r -= 90 % 360;
-	      _this.rotate(r);
-	      if(IIPMooViewer.sync) IIPMooViewer.windows(_this).invoke( 'rotate', r );
+	    else{
+	      // Rotation
+	      var r1 = Math.atan2( _this.touchend[1].y - _this.touchend[0].y, _this.touchend[1].x - _this.touchend[0].x ) * 180 / Math.PI;
+	      var r2 = Math.atan2( _this.touchstart[1].y - _this.touchstart[0].y, _this.touchstart[1].x - _this.touchstart[0].x ) * 180 / Math.PI;
+	      var rotation = r1 - r2;
+	      if( Math.abs(rotation) > 25 ){
+		var r = _this.view.rotation;
+		if( rotation > 0 ) r += 90 % 360;
+		else r -= 90 % 360;
+		_this.rotate(r);
+		if(IIPMooViewer.sync) IIPMooViewer.windows(_this).invoke( 'rotate', r );
+	      }
 	    }
 
 	    _this.touchend = null;
@@ -187,10 +189,63 @@ IIPMooViewer.implement({
 	}
       });
     }
+  }
 
-    // For standalone iphone/ipad the logo gets covered by the status bar
-    if( Browser.platform=='ios' && window.navigator.standalone ) this.container.getElement('img.logo').setStyle( 'top', 15 );
+});
 
+
+// Refactor Drag class to enable touch events
+Class.refactor(Drag, {
+
+  attach: function(){
+    this.handles.addEvent('touchstart', this.bound.start);
+    return this.previous.apply(this, arguments);
+  },
+
+  detach: function(){
+    this.handles.removeEvent('touchstart', this.bound.start);
+    return this.previous.apply(this, arguments);
+  },
+
+  start: function(event){
+    document.body.addEvents({
+      touchmove: this.touchmoveCheck = function(evt) { evt.preventDefault(); this.bound.check(evt); }.bind(this),
+      touchend: this.bound.cancel
+    });
+    this.previous.apply(this, arguments);
+  },
+
+  check: function(event){
+    if (this.options.preventDefault) event.preventDefault();
+    var distance = Math.round(Math.sqrt(Math.pow(event.page.x - this.mouse.start.x, 2) + Math.pow(event.page.y - this.mouse.start.y, 2)));
+    if (distance > this.options.snap){
+      this.cancel();
+      this.document.addEvents({
+	mousemove: this.bound.drag,
+	mouseup: this.bound.stop
+      });
+      document.body.addEvents({
+	touchmove: this.bound.drag,
+	touchend: this.bound.stop
+      });
+      this.fireEvent('start', [this.element, event]).fireEvent('snap', this.element);
+    }
+  },
+
+  cancel: function(event){
+    document.body.removeEvents({
+      touchmove: this.touchmoveCheck,
+      touchend: this.bound.cancel
+    });
+    return this.previous.apply(this, arguments);
+  },
+
+  stop: function(event){
+    document.body.removeEvents({
+      touchmove: this.bound.drag,
+      touchend: this.bound.stop
+    });
+    return this.previous.apply(this, arguments);
   }
 
 });

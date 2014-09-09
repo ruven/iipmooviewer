@@ -53,9 +53,6 @@ var Navigation = new Class({
 	position: (this.standalone) ? 'static' : 'absolute' }
     });
 
-    // For standalone iphone/ipad the logo gets covered by the status bar
-    if( Browser.platform=='ios' && window.navigator.standalone ) this.navcontainer.setStyle( 'top', 20 );
-
     if(!this.standalone) {
       var toolbar = new Element( 'div', {
         'class': 'toolbar',
@@ -260,10 +257,7 @@ var Navigation = new Class({
 
     // And reposition the navigation window
     if( this.options.showNavWindow ){
-      if( this.navcontainer ) this.navcontainer.setStyles({
-	top: (Browser.platform=='ios'&&window.navigator.standalone) ? 20 : 10, // Nudge down window in iOS standalone mode
-	left: container.getPosition(container).x + container.getSize().x - this.size.x - 10
-      });
+      if( this.navcontainer ) this.navcontainer.setStyle( 'left', container.getPosition(container).x + container.getSize().x - this.size.x - 10 );
 
       // Resize our navigation window div
       if(this.zone) this.zone.getParent().setStyle('height', this.size.y );

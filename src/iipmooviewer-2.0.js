@@ -22,7 +22,7 @@
 
    ---------------------------------------------------------------------------
 
-   Built using the Mootools 1.4.5 javascript framework <http://www.mootools.net>
+   Built using the Mootools 1.5.1 javascript framework <http://www.mootools.net>
 
 
    Usage Example:
@@ -1094,8 +1094,8 @@ var IIPMooViewer = new Class({
       if( this.fullscreen.enter ){
 	// Monitor Fullscreen change events
         document.addEventListener( this.fullscreen.eventChangeName, function(){
-			     _this.fullscreen.isFullscreen = !_this.fullscreen.isFullscreen;
-			   });
+	  _this.fullscreen.isFullscreen = !_this.fullscreen.isFullscreen;
+	});
       }
       else{
 	// Disable fullscreen mode if we are already at 100% size and we don't have real Fullscreen
@@ -1113,7 +1113,7 @@ var IIPMooViewer = new Class({
       'events': {
 	click: function(){ this.fade('out'); }
       },
-      'html': '<div><div><h2><a href="http://iipimage.sourceforge.net"><img src="'+this.prefix+'iip.32x32.png"/></a>IIPMooViewer</h2>IIPImage HTML5 Ajax High Resolution Image Viewer - Version '+this.version+'<br/><ul><li>'+IIPMooViewer.lang.navigate+'</li><li>'+IIPMooViewer.lang.zoomIn+'</li><li>'+IIPMooViewer.lang.zoomOut+'</li><li>'+IIPMooViewer.lang.rotate+'</li><li>'+IIPMooViewer.lang.fullscreen+'<li>'+IIPMooViewer.lang.annotations+'</li><li>'+IIPMooViewer.lang.navigation+'</li></ul><br/>'+IIPMooViewer.lang.more+' <a href="http://iipimage.sourceforge.net">http://iipimage.sourceforge.net</a></div></div>'
+      'html': '<div><div><h2><a href="http://iipimage.sourceforge.net"><img src="'+this.prefix+'iip.32x32.png"/></a>IIPMooViewer</h2>IIPImage HTML5 High Resolution Image Viewer - Version '+this.version+'<br/><ul><li>'+IIPMooViewer.lang.navigate+'</li><li>'+IIPMooViewer.lang.zoomIn+'</li><li>'+IIPMooViewer.lang.zoomOut+'</li><li>'+IIPMooViewer.lang.rotate+'</li><li>'+IIPMooViewer.lang.fullscreen+'<li>'+IIPMooViewer.lang.annotations+'</li><li>'+IIPMooViewer.lang.navigation+'</li></ul><br/>'+IIPMooViewer.lang.more+' <a href="http://iipimage.sourceforge.net">http://iipimage.sourceforge.net</a></div></div>'
     }).inject( this.container );
 
     // Create our main window target div, add our events and inject inside the frame
@@ -1129,7 +1129,7 @@ var IIPMooViewer = new Class({
 
 
     // Add touch or drag events to our canvas
-    if( Browser.platform=='ios' || Browser.platform=='android' ){
+    if( 'ontouchstart' in window || navigator.msMaxTouchPoints ){
       // Add our touch events
       this.addTouchEvents();
     }
@@ -1186,10 +1186,12 @@ var IIPMooViewer = new Class({
       this.canvas.addEvent( 'mouseup', fn );
 
       // And additionally disable this during dragging
-      this.touch.addEvents({
-	start: function(e){ _this.canvas.removeEvents( 'mouseup' ); },
-	complete: function(e){ _this.canvas.addEvent( 'mouseup', fn ); }
-      });
+      if( this.touch ){
+	this.touch.addEvents({
+	  start: function(e){ _this.canvas.removeEvents( 'mouseup' ); },
+	  complete: function(e){ _this.canvas.addEvent( 'mouseup', fn ); }
+	});
+      }
     }
 
 
@@ -1214,6 +1216,11 @@ var IIPMooViewer = new Class({
 	mousedown: function(e){ var event = new DOMEvent(e); event.stop(); }
       }
     }).inject(this.container);
+
+
+    // For standalone iphone/ipad the logo gets covered by the status bar
+    if( Browser.platform=='ios' && window.navigator.standalone ) this.container.addClass( 'standalone' );
+    // info.setStyle( 'top', 15 );
 
 
     // Add some information or credit
@@ -1288,7 +1295,7 @@ var IIPMooViewer = new Class({
       this.view.res = this.viewport.resolution;
       this.wid = this.resolutions[this.view.res].w;
       this.hei = this.resolutions[this.view.res].h;
-      this.touch.options.limit = { x: Array(this.view.w-this.wid,0), y: Array(this.view.h-this.hei,0) };
+      if( this.touch ) this.touch.options.limit = { x: Array(this.view.w-this.wid,0), y: Array(this.view.h-this.hei,0) };
     }
 
     // Center our view or move to initial viewport position
@@ -1484,7 +1491,7 @@ var IIPMooViewer = new Class({
       this.view.res = this.viewport.resolution;
       this.wid = this.resolutions[this.view.res].w;
       this.hei = this.resolutions[this.view.res].h;
-      this.touch.options.limit = { x: Array(this.view.w-this.wid,0), y: Array(this.view.h-this.hei,0) };
+      if( this.touch ) this.touch.options.limit = { x: Array(this.view.w-this.wid,0), y: Array(this.view.h-this.hei,0) };
     }
     // Center our view or move to initial viewport position
     if( this.viewport && this.viewport.x!=null && this.viewport.y!=null ){
@@ -1534,7 +1541,7 @@ var IIPMooViewer = new Class({
 
     var ax = this.wid<this.view.w ? Array(Math.round((this.view.w-this.wid)/2), Math.round((this.view.w-this.wid)/2)) : Array(this.view.w-this.wid,0);
     var ay = this.hei<this.view.h ? Array(Math.round((this.view.h-this.hei)/2), Math.round((this.view.h-this.hei)/2)) : Array(this.view.h-this.hei,0);
-    this.touch.options.limit = { x: ax, y: ay };
+    if( this.touch ) this.touch.options.limit = { x: ax, y: ay };
   },
 
 
