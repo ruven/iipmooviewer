@@ -170,7 +170,7 @@ var IIPMooViewer = new Class({
     // Set up our protocol handler
     switch( options.protocol ){
       case 'openslide_deepzoom':
-        this.protocol = new Protocols.Openslide_DeepZoom():
+        this.protocol = new Protocols.OpenSlide_DeepZoom();
         break;
       case 'zoomify':
 	this.protocol = new Protocols.Zoomify();
