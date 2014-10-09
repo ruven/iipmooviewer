@@ -15,7 +15,7 @@ Protocols.Djatoka = new Class({
 
   /* Return an individual tile request URL
    */
-  getTileURL: function(server,image,resolution,sds,contrast,k,x,y){
+  getTileURL: function(t){
     var f = this.getMultiplier(t.resolution);
     var djatoka_x = t.x*f; var djatoka_y = t.y*f;
     var src = t.server + this.url_ver
