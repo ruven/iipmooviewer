@@ -1328,8 +1328,8 @@ var IIPMooViewer = new Class({
     if( 'onhashchange' in window ){
       window.addEvent( 'hashchange', function(){
 			 var params = window.location.hash.split('#')[1].split(',');
-			 _this.zoomTo( params[2] );
-			 _this.centerTo( params[0], params[1] );
+			 _this.zoomTo( parseInt(params[2]) );
+			 _this.centerTo( parseFloat(params[0]), parseFloat(params[1]) );
 		       });
     }
 
