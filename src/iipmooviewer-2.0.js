@@ -1248,8 +1248,9 @@ var IIPMooViewer = new Class({
       this.navigation.setImage(this.protocol.getThumbnailURL(this.server,this.images[0].src,this.navigation.size.x));
       this.navigation.addEvents({
        'rotate': function(r){
-	  _this.rotate(_this.view.rotation+r);
-	  if( IIPMooViewer.sync ) IIPMooViewer.windows(_this).invoke( 'rotateLeft' );
+        var rotation = _this.view.rotation+r;
+	  _this.rotate(rotation);
+	  if( IIPMooViewer.sync ) IIPMooViewer.windows(_this).invoke( 'rotate', rotation );
 	},
 	'zoomIn': function(){
 	  _this.zoomIn();
