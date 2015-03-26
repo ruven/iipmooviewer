@@ -299,27 +299,25 @@ var IIPMooViewer = new Class({
 
 
     // If our size is smaller than the display window, only get these tiles!
-    var len = view.w;
-    if( this.wid < view.w ) len = this.wid;
+    var len = Math.min(this.wid, view.w);
     var endx =  Math.ceil( ((len + view.x)/this.tileSize.w) - 1 ) + border;
 
 
-    len = view.h;
-    if( this.hei < view.h ) len = this.hei;
+    var len = Math.min(this.hei, view.h);
     var endy = Math.ceil( ( (len + view.y)/this.tileSize.h) - 1 ) + border;
 
 
     // Number of tiles is dependent on view width and height
-    var xtiles = Math.ceil( this.wid / this.tileSize.h );
+    var xtiles = Math.ceil( this.wid / this.tileSize.w );
     var ytiles = Math.ceil( this.hei / this.tileSize.h );
 
-    if( endx >= xtiles ) endx = xtiles-1;
-    if( endy >= ytiles ) endy = ytiles-1;
+    endx = Math.min( endx, xtiles - 1 );
+    endy = Math.min( endy, ytiles - 1 );
 
 
     /* Calculate the offset from the tile top left that we want to display.
        Also Center the image if our viewable image is smaller than the window
-    */
+     */
     var xoffset = Math.floor(view.x % this.tileSize.w);
     if( this.wid < view.w ) xoffset -=  (view.w - this.wid)/2;
 
