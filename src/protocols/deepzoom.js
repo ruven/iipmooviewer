@@ -21,25 +21,17 @@ Protocols.DeepZoom = new Class({
     /* Parse a Deepzoom protocol metadata request
      */
     parseMetaData: function (response) {
-        var parser = new DOMParser();
-        var xmlDoc = parser.parseFromString(response, "text/xml");
-
-        var image = xmlDoc.getElementsByTagName("Image")[0];
-
-        var tileSize = parseInt(image.getAttribute("TileSize"));
-        this.tileSize = tileSize;
-        this.suffix = "." + image.getAttribute("Format");
-
-        var size = xmlDoc.getElementsByTagName("Size")[0];
-        var width = parseInt(size.getAttribute("Width"));
-        var height = parseInt(size.getAttribute("Height"));
+        this.suffix = "." + /Format="(\w+)/.exec(response)[1]; 
+        var ts = parseInt(/TileSize="(\d+)/.exec(response)[1]);
+        var width = parseInt(/Width="(\d+)/.exec(response)[1]);
+        var height = parseInt(/Height="(\d+)/.exec(response)[1]);
 
         // Number of resolutions is the ceiling of Log2(max)
         var max = Math.max(width, height);
 
         var result = {
-            max_size: { w: width, h: height },
-            tileSize: { w: tileSize, h: tileSize },
+            max_size: {w: width, h: height},
+            tileSize: {w: ts, h: ts},
             num_resolutions: Math.ceil(Math.log(max) / Math.LN2)
         };
 
