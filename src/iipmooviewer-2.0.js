@@ -549,9 +549,9 @@ var IIPMooViewer = new Class({
       break;
     case 67: // For control-c, show our current view location
       if(e.control) prompt( "URL of current view:", window.location.href.split("#")[0] + '#' +
+			    this.view.res + ':' +
 			    (this.view.x+this.view.w/2)/this.wid + ',' +
-			    (this.view.y+this.view.h/2)/this.hei + ',' +
-			    this.view.res );
+			    (this.view.y+this.view.h/2)/this.hei );
       break;
     default:
       break;
@@ -1326,8 +1326,9 @@ var IIPMooViewer = new Class({
     // Add a hash change event if this is supported by the browser
     if( 'onhashchange' in window ){
       window.addEvent( 'hashchange', function(){
-			 var params = window.location.hash.split('#')[1].split(',');
-			 _this.zoomTo( parseInt(params[2]) );
+			 var params = window.location.hash.split('#')[1].split(':');
+			 _this.zoomTo( parseInt(params[0]) );
+			 params = params.split(',');
 			 _this.centerTo( parseFloat(params[0]), parseFloat(params[1]) );
 		       });
     }

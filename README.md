@@ -66,7 +66,7 @@ Distribution
 
 Minified files are created with the [closure compiler](https://developers.google.com/closure/compiler/) with the following command:
 <pre>
-java -jar /path/to/compiler.jar --js src/mootools-more-1.5.1.js src/iipmooviewer-2.0.js src/navigation.js src/scale.js src/touch.js src/protocols/iip.js src/annotations.js src/blending.js src/lang/help.en.js --js_output_file js/iipmooviewer-2.0-compressed.js --compilation_level SIMPLE_OPTIMIZATIONS
+java -jar /path/to/compiler.jar --js src/mootools-more-1.5.2.js src/iipmooviewer-2.0.js src/navigation.js src/scale.js src/touch.js src/protocols/iip.js src/annotations.js src/blending.js src/lang/help.en.js --js_output_file js/iipmooviewer-2.0.min.js --compilation_level SIMPLE_OPTIMIZATIONS
 </pre>
 
 You can thereby customize your build to include only those components you need. For example, if you require Zoomify or do not require annotation support, simply add or remove these from the build. Make sure, however, that the core iipmooviewer js file is included before the other components. Otherwise, if you prefer not to rebuild, use the default build and add the extra components you want as extra includes.
@@ -128,7 +128,7 @@ start
 at resolution 4 with the center of the view port at both 90% of the size of the image:
 <pre>{resolution:4, x:0.9, y:0.9, rotation:0}</pre>
 
-<b>protocol</b> : protocol to use with the server: iip, zoomify or deepzoom [default: "iip"]
+<b>protocol</b> : protocol to use with the server: iip, zoomify, deepzoom or iiif [default: "iip"]
 
 <b>preload</b> : preload an extra layer of tiles surrounding the viewport [default: false]
 
@@ -287,7 +287,7 @@ A number of localizations exist in the src/lang folder. To use, simply include t
 For example to create a new Chinese localization, create the file lang/help.zh.js and include it after the main iipmooviewer includes:
 
 <pre>
-  &lt;script type="text/javascript" src="javascript/mootools-core-1.5.1-full-nocompat-yc.js"&gt;&lt;/script&gt;
+  &lt;script type="text/javascript" src="javascript/mootools-core-1.5.2-compressed.js"&gt;&lt;/script&gt;
   &lt;script type="text/javascript" src="javascript/iipmooviewer-2.0-compressed.js"&gt;&lt;/script&gt;
   &lt;script type="text/javascript" src="src/lang/help.zh.js"&gt;&lt;/script&gt;
 </pre>
@@ -334,10 +334,16 @@ It is possible to restyle widgets such as the credit information box. Simply cre
 to change the font, background or borders etc.
 
 
+Licensing
+---------
+iipmooviewer is released under the GNU General Public License (GPL). See the copyright notice COPYING in this directory for licensing details or go to 
+http://www.gnu.org/licenses/gpl.html for more details.
+
+
 ------------------------------------------------------------------------------------
 Please refer to the project site http://iipimage.sourceforge.net for further details
 
 ------------------------------------------------------------------------------------
 
-<pre>(c) 2007-2014 Ruven Pillay <ruven@users.sourceforge.net></pre>
+<pre>(c) 2007-2015 Ruven Pillay <ruven@users.sourceforge.net></pre>
 
