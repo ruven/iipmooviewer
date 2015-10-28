@@ -18,8 +18,8 @@ Protocols.IIIF = new Class({
     var tile_x = this.tileSize.w * Math.pow(2,  this.num_resolutions - t.resolution - 1);
     var tile_y = this.tileSize.h * Math.pow(2,  this.num_resolutions - t.resolution - 1);
     var src = t.server + "/" + t.image + "/" + orig_x + "," + orig_y + "," + tile_x + "," + tile_y;
-    if (tile_x != 256) {
-      src += "/!256,256";
+    if (tile_x != this.tileSize.w) {
+      src += "/!" + this.tileSize.w + "," + this.tileSize.h;
     } else {
       src += "/full";
     }
@@ -33,6 +33,7 @@ Protocols.IIIF = new Class({
     var p = eval("(" + response + ")");
     var w = parseInt(p.width);
     var h = parseInt(p.height);
+    // Handle both 1.1 and 2.0 IIIF API's
     if( typeOf( p.scale_factors ) !== "null" ){ this.num_resolutions = p.scale_factors.length; }
     else this.num_resolutions = p.tiles[0].scaleFactors.length;
     this.tileSize = { w: 256, h: 256 };
