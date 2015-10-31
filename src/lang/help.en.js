@@ -1,7 +1,7 @@
 IIPMooViewer.lang = {
 	'help': 'click for help',
 	'scale': 'draggable scale',
-	'navigate': 'To navigate within image: drag image within main window or drag zone within the navigation window or click an are a within navigation window',
+	'navigate': 'To navigate within image: drag image within main window or drag zone within the navigation window or click an area within navigation window',
 	'zoomIn': 'To zoom in: double click or use the mouse scroll wheel or simply press the "+" key',
 	'zoomOut': 'To zoom out: shift double click or use the mouse wheel or press the "-" key',
 	'rotate': 'To rotate image clockwise: press the "r" key, anti-clockwise: press shift and "r"',
