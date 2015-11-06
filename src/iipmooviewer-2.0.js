@@ -1411,7 +1411,7 @@ var IIPMooViewer = new Class({
    */
   load: function(){
 
-    // If we have supplied the relevent information, simply use the given data
+    // If we have supplied the relevant information, simply use the given data
     if( this.loadoptions ){
       this.max_size = this.loadoptions.size;
       this.tileSize = this.loadoptions.tiles;
