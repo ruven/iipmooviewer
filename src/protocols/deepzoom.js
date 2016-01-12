@@ -2,6 +2,7 @@
  */
 
 Protocols.DeepZoom = new Class({
+
     /* Return metadata URL
      */
     getMetaDataURL: function (server, image) {
@@ -29,6 +30,9 @@ Protocols.DeepZoom = new Class({
         // Number of resolutions is the ceiling of Log2(max)
         var max = Math.max(width, height);
 
+	// We need to keep track of this for our thumbnail function
+	var this.tileSize = ts;
+
         var result = {
             max_size: {w: width, h: height},
             tileSize: {w: ts, h: ts},
@@ -45,7 +49,7 @@ Protocols.DeepZoom = new Class({
     },
 
     /* Return thumbnail URL
-    */
+     */
     getThumbnailURL: function (server, image, width) {
         // Strip off the .dzi or .xml suffix from the image name
         var prefix = image.substr(0, image.lastIndexOf("."));
