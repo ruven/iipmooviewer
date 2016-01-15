@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="18.059662"
+   height="18.015955"
+   id="svg5960">
+  <defs
+     id="defs5962">
+    <linearGradient
+       x1="-42.309338"
+       y1="189.54932"
+       x2="-40.58511"
+       y2="183.81453"
+       id="linearGradient6690"
+       xlink:href="#linearGradient6684-97"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       id="linearGradient6684-97">
+      <stop
+         id="stop6686-3"
+         style="stop-color:#ffbf00;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop6688-72"
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       x1="-37.330727"
+       y1="187.86301"
+       x2="-33.694717"
+       y2="178.65753"
+       id="linearGradient6731"
+       xlink:href="#linearGradient3480-60"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0,1,-1,0,145.0076,219.9968)" />
+    <linearGradient
+       id="linearGradient3480-60">
+      <stop
+         id="stop3482-1"
+         style="stop-color:#646464;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3484-65"
+         style="stop-color:#000000;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       x1="-42.309338"
+       y1="189.54932"
+       x2="-40.58511"
+       y2="183.81453"
+       id="linearGradient3256"
+       xlink:href="#linearGradient6684-97"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-1,0,0,1,288.09077,344.99998)" />
+    <linearGradient
+       x1="-37.330727"
+       y1="187.86301"
+       x2="-33.694717"
+       y2="178.65753"
+       id="linearGradient3258"
+       xlink:href="#linearGradient3480-60"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0,1,1,0,143.08317,564.99678)" />
+  </defs>
+  <metadata
+     id="metadata5965">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-316.03119,-518.98405)"
+     id="layer1">
+    <rect
+       width="16"
+       height="16"
+       x="-333.09076"
+       y="520"
+       transform="scale(-1,1)"
+       id="rect7457"
+       style="color:#000000;fill:none;stroke:none;stroke-width:1;marker:none;display:inline" />
+    <path
+       d="m 325.59077,520.49998 0,15 6,0 -6,-15 z"
+       id="path7459"
+       style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000024;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;display:inline" />
+    <path
+       d="m 317.59077,533.49998 15,0 0,-6 -15,6 z"
+       id="path7461"
+       style="color:#000000;fill:url(#linearGradient3256);fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient3258);stroke-width:1.0000006;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;display:inline" />
+    <path
+       d="m 324.12202,521.96873 0,1 -3,0 -1.0149,0.99215 -1,0 2.0149,-1.99217 3,0 0,2e-5 z"
+       id="use7610"
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#000000;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans" />
+    <path
+       d="m 324.06244,521.96132 0,1 -3,0 -1.03125,1 0,3.03125 2,0 -2.5,3 -2.5,-3 2,0 0,-3.03125 2.03125,-2 3,0 z"
+       id="use5439"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;display:inline" />
+  </g>
+</svg>

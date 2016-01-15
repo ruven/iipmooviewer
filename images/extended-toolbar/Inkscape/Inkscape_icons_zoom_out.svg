@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="18.06176"
+   height="18.028467"
+   id="svg5960">
+  <defs
+     id="defs5962">
+    <radialGradient
+       cx="171.77553"
+       cy="153.06299"
+       r="7.4696794"
+       fx="171.77553"
+       fy="153.06299"
+       id="radialGradient6099"
+       xlink:href="#linearGradient2888-8"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.122233,1.252981,-2.05495,1.830229,297.3402,-339.2527)" />
+    <linearGradient
+       id="linearGradient2888-8">
+      <stop
+         id="stop2889-2"
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop2894-4"
+         style="stop-color:#8ab3de;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3480-5">
+      <stop
+         id="stop3482-5"
+         style="stop-color:#646464;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3484-1"
+         style="stop-color:#000000;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       x1="8"
+       y1="251"
+       x2="14.320742"
+       y2="257.66202"
+       id="linearGradient6134"
+       xlink:href="#linearGradient3480-5"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(515.0312,-162.961)" />
+    <linearGradient
+       x1="8"
+       y1="251"
+       x2="14.320742"
+       y2="257.66202"
+       id="linearGradient3017"
+       xlink:href="#linearGradient3480-5"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(298.92013,288.10635)" />
+  </defs>
+  <metadata
+     id="metadata5965">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-302.82717,-535.03781)"
+     id="layer1">
+    <g
+       transform="matrix(1,0,0,0.997925,298.85768,288.58294)"
+       id="use5803">
+      <path
+         d="m 186,159 a 7,7 0 1 1 -14,0 7,7 0 1 1 14,0 z"
+         transform="matrix(1.00786,0,0,1.007983,-167.1731,96.0569)"
+         id="path6091"
+         style="color:#000000;fill:none;stroke:#000000;stroke-width:0.94033492;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-opacity:0.26512966;stroke-dasharray:none;stroke-dashoffset:0;marker:none;display:inline" />
+      <rect
+         width="16"
+         height="16"
+         x="5.0272999"
+         y="248.02901"
+         id="rect6093"
+         style="color:#000000;fill:none;stroke:none;stroke-width:1;marker:none;display:inline" />
+      <path
+         d="M 18.03125,259 16,261.0312 l 3,3 2.03125,-2.0312 -3,-3 z"
+         id="path6095"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none" />
+      <path
+         d="m 186,159 a 7,7 0 1 1 -14,0 7,7 0 1 1 14,0 z"
+         transform="matrix(1.00786,0,0,1.007983,-167.8785,95.25998)"
+         id="path6097"
+         style="color:#000000;fill:url(#radialGradient6099);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99317169;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;display:inline" />
+    </g>
+    <path
+       d="m 314.95138,542.07735 -0.004,2.029 -7.99605,0 0.004,-2.029 7.99605,0 z"
+       id="path10652"
+       style="color:#000000;fill:url(#linearGradient3017);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;marker:none;display:inline" />
+  </g>
+</svg>
