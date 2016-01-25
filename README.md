@@ -102,6 +102,13 @@ option is the <b>image</b> variable)
    (a) id: the id of the element where the navigation box will be embedded. Defaults to the main container.
    (b) draggable: a boolean, indicating whether the navigation box is draggable. Defaults to true, however, if a navigation id is specified, defaults to false.
    (c) buttons: an array of the available buttons: reset, zoomIn, zoomOut, rotateLeft, rotateRight. Defaults to: ['reset','zoomIn','zoomOut']
+The default is the following:
+<pre>
+  navigation: {
+    draggable: true,
+    buttons: ['reset','zoomIn','zoomOut']
+  }
+</pre>
 
 <b>showCoords</b> : whether to show live screen coordinates [default: false]
 
@@ -109,12 +116,12 @@ option is the <b>image</b> variable)
 
 <b>units</b> : define the units used. Can be in degrees or meters [default: meters]. Or define completely new unit system. The default structure is the following:
 <pre>
-{
-  dims:   ["pm", "nm", "&#181;m", "mm", "cm", "m", "km"], // Unit suffixes
-  orders: [ 1e-12, 1e-9, 1e-6, 0.001, 0.01, 1, 1000 ],    // Unit orders
-  mults: [1,2,5,10,50,100],                               // Different scalings usable for each unit
-  factor: 1000                                            // Default multiplication factor
-}
+  units: {
+    dims:   ["pm", "nm", "&#181;m", "mm", "cm", "m", "km"], // Unit suffixes
+    orders: [ 1e-12, 1e-9, 1e-6, 0.001, 0.01, 1, 1000 ],    // Unit orders
+    mults: [1,2,5,10,50,100],                               // Different scalings usable for each unit
+    factor: 1000                                            // Default multiplication factor
+  }
 </pre>
 
 <b>prefix</b>: path prefix if image subdirectory moved (for example to a different host) [default: "images/"]
@@ -345,5 +352,4 @@ Please refer to the project site http://iipimage.sourceforge.net for further det
 
 ------------------------------------------------------------------------------------
 
-<pre>(c) 2007-2015 Ruven Pillay <ruven@users.sourceforge.net></pre>
-
+<pre>(c) 2007-2016 Ruven Pillay <ruven@users.sourceforge.net></pre>
