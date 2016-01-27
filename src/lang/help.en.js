@@ -1,5 +1,4 @@
 IIPMooViewer.lang = {
-	'help': 'click for help',
 	'scale': 'draggable scale',
 	'navigate': 'To navigate within image: drag image within main window or drag zone within the navigation window or click an area within navigation window',
 	'zoomIn': 'To zoom in: double click or use the mouse scroll wheel or simply press the "+" key',
@@ -12,5 +11,14 @@ IIPMooViewer.lang = {
 	'exitFullscreen': 'Press "Esc" to exit fullscreen mode',
 	'loading': 'loading',
 	'drag': '* Drag to move<br/>* Double Click to show/hide buttons<br/>* Press h to hide',
-	'annotationsDisabled': 'Annotations disabled<br/>Press "a" to re-enable'
+	'annotationsDisabled': 'Annotations disabled<br/>Press "a" to re-enable',
+	'tooltips': {
+		'help': 'click for help',
+		'reset': 'Reset View',
+		'zoomIn': 'Zoom In',
+		'zoomOut': 'Zoom Out',
+		'rotateLeft': 'Rotate left',
+		'rotateRight': 'Rotate right',
+		'print': 'Print View'
+	}
 };

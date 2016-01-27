@@ -1,5 +1,4 @@
 IIPMooViewer.lang = {
-    'help': 'Klicken Sie bitte um Hilfstext anzuzeigen!',
     'scale': 'Ziehbare Skala',
     'navigate': 'Um innerhalb des Bildes zu navigieren: Ziehen sie den hervorgehobenen Ausschnitt im Hauptbild oder ziehen sie den hervorgehobenen Ausschnitt im Navigationsbild oder klicken Sie innerhalb des Navigationsbildes.',
     'zoomIn': 'Um den Bildausschnitt zu vergrößern: Doppelklicken Sie oder verwenden Sie das Mausrad oder drücken Sie einfach die Taste "+"',
@@ -12,5 +11,13 @@ IIPMooViewer.lang = {
     'exitFullscreen': 'Drücken Sie "Esc", um den Vollbildmodus zu verlassen',
     'loading': 'Laden',
     'drag': '* Ziehen um zu bewegen<br/>* Doppelklicken zum Anzeigen / Ausblenden der Buttons<br/>* Drücken Sie h um sie zu verstecken',
-    'annotationsDisabled': 'Anmerkungen sind deaktiviert<br/>Drücken Sie "a", um Anmerkungen wieder zu aktivieren'
+    'annotationsDisabled': 'Anmerkungen sind deaktiviert<br/>Drücken Sie "a", um Anmerkungen wieder zu aktivieren',
+    'tooltips': {
+      'help': 'Klicken Sie bitte um Hilfstext anzuzeigen!',
+      'reset': 'Ansicht zurücksetzen',
+      'zoomIn': 'Hereinzoomen',
+      'zoomOut': 'Herauszoomen',
+      'rotateLeft': 'Ansicht 90° nach Links drehen',
+      'rotateRight': 'Ansicht 90° nach Rechts drehen'
+    }
 };

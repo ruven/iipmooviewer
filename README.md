@@ -66,7 +66,7 @@ Distribution
 
 Minified files are created with the [closure compiler](https://developers.google.com/closure/compiler/) with the following command:
 <pre>
-java -jar /path/to/compiler.jar --js src/mootools-more-1.5.2.js src/iipmooviewer-2.0.js src/navigation.js src/scale.js src/touch.js src/protocols/iip.js src/annotations.js src/blending.js src/lang/help.en.js --js_output_file js/iipmooviewer-2.0-min.js --compilation_level SIMPLE_OPTIMIZATIONS
+java -jar /path/to/compiler.jar --js src/mootools-more-1.6.0.js src/iipmooviewer-2.0.js src/navigation.js src/scale.js src/touch.js src/protocols/iip.js src/annotations.js src/blending.js src/lang/help.en.js --js_output_file js/iipmooviewer-2.0-min.js --compilation_level SIMPLE_OPTIMIZATIONS
 </pre>
 
 You can thereby customize your build to include only those components you need. For example, if you require Zoomify or do not require annotation support, simply add or remove these from the build. Make sure, however, that the core iipmooviewer js file is included before the other components. Otherwise, if you prefer not to rebuild, use the default build and add the extra components you want as extra includes.
@@ -101,8 +101,7 @@ option is the <b>image</b> variable)
 <b>navigation</b> : a hash containing options for the navigation box:
    (a) id: the id of the element where the navigation box will be embedded. Defaults to the main container.
    (b) draggable: a boolean, indicating whether the navigation box is draggable. Defaults to true, however, if a navigation id is specified, defaults to false.
-   (c) buttons: an array of the available buttons: reset, zoomIn, zoomOut, rotateLeft, rotateRight. Defaults to: ['reset','zoomIn','zoomOut']
-The default is the following:
+   (c) buttons: an array of the available buttons: reset, zoomIn, zoomOut, rotateLeft, rotateRight. The default is the following:
 <pre>
   navigation: {
     draggable: true,
@@ -294,7 +293,7 @@ A number of localizations exist in the src/lang folder. To use, simply include t
 For example to create a new Chinese localization, create the file lang/help.zh.js and include it after the main iipmooviewer includes:
 
 <pre>
-  &lt;script type="text/javascript" src="javascript/mootools-core-1.5.2-compressed.js"&gt;&lt;/script&gt;
+  &lt;script type="text/javascript" src="javascript/mootools-core-1.6.0-compressed.js"&gt;&lt;/script&gt;
   &lt;script type="text/javascript" src="javascript/iipmooviewer-2.0-compressed.js"&gt;&lt;/script&gt;
   &lt;script type="text/javascript" src="src/lang/help.zh.js"&gt;&lt;/script&gt;
 </pre>

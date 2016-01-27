@@ -2,7 +2,7 @@
    IIPMooViewer 2.0
    IIPImage Javascript Viewer <http://iipimage.sourceforge.net>
 
-   Copyright (c) 2007-2014 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2016 Ruven Pillay <ruven@users.sourceforge.net>
 
    ---------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@
 
    ---------------------------------------------------------------------------
 
-   Built using the Mootools 1.5.1 javascript framework <http://www.mootools.net>
+   Built using the Mootools 1.6.0 javascript framework <http://www.mootools.net>
 
 
    Usage Example:
@@ -62,7 +62,7 @@
 	         (c) buttons: an array of the available buttons: reset, zoomIn, zoomOut, rotateLeft, rotateRight
 	                      Defaults to: ['reset','zoomIn','zoomOut'] 
 
-   Note: Requires mootools version 1.4 or later <http://www.mootools.net>
+   Note: Requires mootools version 1.5 or later <http://www.mootools.net>
        : The page MUST have a standard-compliant HTML declaration at the beginning
 
 */
@@ -1207,7 +1207,7 @@ var IIPMooViewer = new Class({
     var info = new Element( 'img', {
       'src': this.prefix+'iip.32x32.png',
       'class': 'logo',
-      'title': IIPMooViewer.lang.help,
+      'title': IIPMooViewer.lang.tooltips['help'],
       'events': {
 	click: function(){ _this.container.getElement('div.info').fade(0.95); },
 	// Prevent user from dragging image

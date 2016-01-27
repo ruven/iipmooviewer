@@ -140,6 +140,7 @@ var Navigation = new Class({
 	new Element('img',{
 	  'src': prefix + k + (Browser.buggy?'.png':'.svg'),
 	  'class': k,
+	  'title': IIPMooViewer.lang.tooltips[k],
  	  'events':{
 	    'error': function(){
 	      this.removeEvents('error'); // Prevent infinite reloading

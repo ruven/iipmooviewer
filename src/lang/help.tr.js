@@ -1,5 +1,4 @@
-﻿IIPMooViewer.lang = {
-	'help': 'Yardım için tıklayınız',
+IIPMooViewer.lang = {
 	'scale': 'Ölçek',
 	'navigate': 'Resmi gezinmek için: resmi ana pencere içinde sürükleyiniz veya gezinti bölmesi içinde bir alana tıklayınız',
 	'zoomIn': 'Yakınlaştırmak için: çift tıklayınız veya fare kaydırma tekerleğini kullanınız veya "+" tuşuna basınız',
@@ -12,5 +11,14 @@
 	'exitFullscreen': 'Tam ekran modundan çıkmak için "Esc" tuşuna basınız',
 	'loading': 'Yükleniyor',
 	'drag': '* Taşımak için sürükleyiniz<br/>* Düğmeleri göstermek veya gizlemek için çift tıklayınız<br/>* Gizlemek için "h" tuşuna basınız',
-	'annotationsDisabled': 'Notlar devre dışı<br/>Yeniden etkinleştirmek için "a" tuşuna basınız'
+	'annotationsDisabled': 'Notlar devre dışı<br/>Yeniden etkinleştirmek için "a" tuşuna basınız',
+	'tooltips': {
+		'help': 'Yardım için tıklayınız',
+		'reset': 'Reset',
+		'zoomIn': 'Yakınlaştırmak',
+		'zoomOut': 'Uzaklaştırmak',
+		'rotateLeft': 'Yönünün tersine döndürmek',
+		'rotateRight': 'Saat yönünde döndürmek',
+		'print': 'Baskı'
+	}
 };
