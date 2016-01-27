@@ -1,4 +1,4 @@
-/* MooTools: the javascript framework. license: MIT-style license. copyright: Copyright (c) 2006-2015 [Valerio Proietti](http://mad4milk.net/).*/ 
+/* MooTools: the javascript framework. license: MIT-style license. copyright: Copyright (c) 2006-2016 [Valerio Proietti](http://mad4milk.net/).*/ 
 /*!
 Web Build: http://mootools.net/more/builder/28d40e444bec8b00f153c3cdb314d764
 */
@@ -32,8 +32,8 @@ provides: [MooTools.More]
 */
 
 MooTools.More = {
-	version: '1.5.2',
-	build: 'facdf0458d10fd214aa9f5fa71935a23a772cc48'
+	version: '1.6.0',
+	build: '45b71db70f879781a7e0b0d3fb3bb1307c2521eb'
 };
 
 /*
@@ -284,6 +284,7 @@ var Drag = this.Drag = new Class({
 		limit: false,
 		handle: false,
 		invert: false,
+		unDraggableTags: ['button', 'input', 'a', 'textarea', 'select', 'option'],
 		preventDefault: false,
 		stopPropagation: false,
 		compensateScroll: false,
@@ -315,7 +316,7 @@ var Drag = this.Drag = new Class({
 		this.compensateScroll = {start: {}, diff: {}, last: {}};
 
 		if ('ondragstart' in document && !('FileReader' in window) && !Drag.ondragstartFixed){
-			document.ondragstart = Function.from(false);
+			document.ondragstart = Function.convert(false);
 			Drag.ondragstartFixed = true;
 		}
 
@@ -325,7 +326,7 @@ var Drag = this.Drag = new Class({
 			drag: this.drag.bind(this),
 			stop: this.stop.bind(this),
 			cancel: this.cancel.bind(this),
-			eventStop: Function.from(false),
+			eventStop: Function.convert(false),
 			scrollListener: this.scrollListener.bind(this)
 		};
 		this.attach();
@@ -371,6 +372,8 @@ var Drag = this.Drag = new Class({
 	},
 
 	start: function(event){
+		if (this.options.unDraggableTags.contains(event.target.get('tag'))) return;
+
 		var options = this.options;
 
 		if (event.rightClick) return;
@@ -584,8 +587,8 @@ Drag.Move = new Class({
 		this.addEvent('start', this.checkDroppables, true);
 		this.overed = null;
 	},
-	
-	setContainer: function(container) {
+
+	setContainer: function(container){
 		this.container = document.id(container);
 		if (this.container && typeOf(this.container) != 'element'){
 			this.container = document.id(this.container.getDocument().body);
@@ -750,12 +753,12 @@ provides: [Class.Binds]
 
 Class.Mutators.Binds = function(binds){
 	if (!this.prototype.initialize) this.implement('initialize', function(){});
-	return Array.from(binds).concat(this.prototype.Binds || []);
+	return Array.convert(binds).concat(this.prototype.Binds || []);
 };
 
 Class.Mutators.initialize = function(initialize){
 	return function(){
-		Array.from(this.Binds).each(function(name){
+		Array.convert(this.Binds).each(function(name){
 			var original = this[name];
 			if (original) this[name] = original.bind(this);
 		}, this);
@@ -865,17 +868,16 @@ Element.implement({
 		} else if (parent){
 			try { //safari sometimes crashes here, so catch it
 				dim = getSize(this, options);
-			}catch(e){}
+			} catch (e){}
 		}
 
 		return Object.append(dim, (dim.x || dim.x === 0) ? {
-				width: dim.x,
-				height: dim.y
-			} : {
-				x: dim.width,
-				y: dim.height
-			}
-		);
+			width: dim.x,
+			height: dim.y
+		} : {
+			x: dim.width,
+			y: dim.height
+		});
 	},
 
 	getComputedSize: function(options){
@@ -1101,7 +1103,7 @@ var Slider = this.Slider = new Class({
 		if (range) this.set(Array.pick([pos, this.step]).limit(this.min,this.max), silently);
 		return this;
 	},
-    
+
 	setModulus: function(){
 		var decimals = ((this.stepSize + '').split('.')[1] || []).length,
 			modulus = 1 + '';
@@ -1255,7 +1257,7 @@ Element.implement({
 		try {
 			//IE fails here if the element is not in the dom
 			d = this.getStyle('display');
-		} catch(e){}
+		} catch (e){}
 		if (d == 'none') return this;
 		return this.store('element:_originalDisplay', d || '').setStyle('display', 'none');
 	},
@@ -1282,7 +1284,7 @@ Document.implement({
 			try {
 				//IE fails here if selected element is not in dom
 				document.selection.empty();
-			} catch(e){}
+			} catch (e){}
 		}
 	}
 
@@ -1369,7 +1371,7 @@ Fx.Reveal = new Class({
 				});
 
 				this.element.setStyles({
-					display: Function.from(this.options.display).call(this),
+					display: Function.convert(this.options.display).call(this),
 					overflow: 'hidden'
 				});
 
@@ -1426,7 +1428,7 @@ Fx.Reveal = new Class({
 
 				var zero = {
 					height: 0,
-					display: Function.from(this.options.display).call(this)
+					display: Function.convert(this.options.display).call(this)
 				};
 				Object.each(startStyles, function(style, name){
 					zero[name] = 0;
@@ -1440,7 +1442,7 @@ Fx.Reveal = new Class({
 
 				this.$chain.unshift(function(){
 					this.element.style.cssText = this.cssText;
-					this.element.setStyle('display', Function.from(this.options.display).call(this));
+					this.element.setStyle('display', Function.convert(this.options.display).call(this));
 					if (!this.hidden) this.showing = false;
 					if (hideThese) hideThese.setStyle('visibility', 'visible');
 					this.callChain();
@@ -1772,7 +1774,7 @@ Element.implement({
 				slide[flag ? 'slideOut' : 'slideIn'](mode);
 				this.store('slide:flag', !flag);
 				toggle = true;
-			break;
+				break;
 			default: slide.start(how, mode);
 		}
 		if (!toggle) this.eliminate('slide:flag');
@@ -1959,8 +1961,8 @@ var Tips = this.Tips = new Class({
 			['title', 'text'].each(function(value){
 				var content = element.retrieve('tip:' + value);
 				var div = this['_' + value + 'Element'] = new Element('div', {
-						'class': 'tip-' + value
-					}).inject(this.container);
+					'class': 'tip-' + value
+				}).inject(this.container);
 				if (content){
 					this.fill(div, content);
 					showTip = true;
