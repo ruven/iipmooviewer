@@ -1,7 +1,6 @@
-
 /* Extend IIPMooViewer to handle blending
 
-   Copyright (c) 2007-2014 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2016 Ruven Pillay <ruven@users.sourceforge.net>
    IIPImage: http://iipimage.sourceforge.net
 
    --------------------------------------------------------------------
@@ -32,7 +31,7 @@ IIPMooViewer.implement({
 
       // Build our controls
       this.createBlendingInterface();
- 
+
       // Go through our list of images and inject them into our menus
       images.each( function(item){
 	var o = new Element('option', {

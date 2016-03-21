@@ -2,7 +2,7 @@
    IIPMooViewer 2.0 - Annotation Extensions
    IIPImage Javascript Viewer <http://iipimage.sourceforge.net>
 
-   Copyright (c) 2007-2012 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2016 Ruven Pillay <ruven@users.sourceforge.net>
 
    ---------------------------------------------------------------------------
 
@@ -111,7 +111,6 @@ IIPMooViewer.implement({
       'styles': position
     }).inject(this.canvas);
     if (!this.annotationsVisible) annotation.addClass('hidden');
-
 
     // Add edit events to annotations if we have included the functions
     if (typeof(this.editAnnotation) == "function") {

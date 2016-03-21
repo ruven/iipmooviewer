@@ -54,15 +54,15 @@
 	      winResize: whether view is reflowed on window resize. Default true
 	      preload: load extra surrounding tiles
 	      navigation: a hash containing options for the navigation box:
-	         (a) id: the id of the element where the navigation box will be embedded. 
+	         (a) id: the id of the element where the navigation box will be embedded.
 	                 Defaults to the main container.
 	         (b) draggable: a boolean, indicating whether the navigation box is draggable.
-	                 Defaults to true, however, if a navigation id is specified, defaults 
+	                 Defaults to true, however, if a navigation id is specified, defaults
 	                 to false.
 	         (c) buttons: an array of the available buttons: reset, zoomIn, zoomOut, rotateLeft, rotateRight
-	                      Defaults to: ['reset','zoomIn','zoomOut'] 
+	                      Defaults to: ['reset','zoomIn','zoomOut']
 
-   Note: Requires mootools version 1.5 or later <http://www.mootools.net>
+   Note: Requires mootools version 1.6 or later <http://www.mootools.net>
        : The page MUST have a standard-compliant HTML declaration at the beginning
 
 */
@@ -255,7 +255,7 @@ var IIPMooViewer = new Class({
     this.canvas.setStyle( 'cursor', 'wait' );
 
     // Set our rotation origin - calculate differently if canvas is smaller than view port
-    
+
     if( !Browser.buggy ){
       var view = this.getView();
       var wid = this.wid;
@@ -667,7 +667,7 @@ var IIPMooViewer = new Class({
     else{
       this.positionCanvas();
       // The morph event automatically calls requestImages
-      this.requestImages();      
+      this.requestImages();
     }
 
     if(IIPMooViewer.sync) IIPMooViewer.windows(this).invoke( 'moveTo', xmove, ymove );
@@ -706,7 +706,7 @@ var IIPMooViewer = new Class({
       ymove = this.view.y - (this.view.x + pos.x);
     }
 
-    // Need to do the moveTo rather than just requestImages() to avoid problems with rotated views 
+    // Need to do the moveTo rather than just requestImages() to avoid problems with rotated views
     this.moveTo( xmove, ymove );
 
     if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'moveTo', xmove, ymove );
@@ -851,7 +851,7 @@ var IIPMooViewer = new Class({
 	  x: this.canvas.style.left.toInt() + cpos.x,
 	  y: this.canvas.style.top.toInt() + cpos.y
 	};
-	
+
 	// Center our zooming on the mouse position when over the main target window
 	this.view.x = event.page.x - pos.x - Math.floor(this.view.w/2);
 	this.view.y = event.page.y - pos.y - Math.floor(this.view.h/2);
@@ -983,16 +983,16 @@ var IIPMooViewer = new Class({
     var thumb_width = Math.round(this.view.w * this.navigation.options.navWinSize);
 
     // For panoramic images, use a large navigation window
-    if( this.max_size.w > 2*this.max_size.h ) thumb_width = Math.round( this.view.w/2 );
+    if( this.max_size.w > 2*this.max_size.h ) thumb_width = Math.round( this.view.w/3 );
 
-    // Make sure our height is not more than 50% of view height
-    if( (this.max_size.h/this.max_size.w)*thumb_width > this.view.h*0.5 ){
-      thumb_width = Math.round( this.view.h * 0.5 * this.max_size.w/this.max_size.h );
+    // Make sure our height is not more than 40% of view height
+    if( (this.max_size.h/this.max_size.w)*thumb_width > this.view.h*0.4 ){
+      thumb_width = Math.round( this.view.h * 0.4 * this.max_size.w/this.max_size.h );
     }
 
     this.navigation.size.x = thumb_width;
     this.navigation.size.y = Math.round( (this.max_size.h/this.max_size.w)*thumb_width );
-    
+
     // If the nav is stand-alone, fit it to the container
     if( this.navOptions&&this.navOptions.id&&document.id(this.navOptions.id) ){
       var navContainer = document.id(this.navOptions.id);
@@ -1446,7 +1446,7 @@ var IIPMooViewer = new Class({
   /* Reflow our viewer after a resize
    */
   reflow: function(){
-    
+
     this.containerPosition = this.container.getPosition();
     var target_size = this.container.getSize();
     this.view.w = target_size.x;
@@ -1563,7 +1563,7 @@ var IIPMooViewer = new Class({
       this.navigation.update( view.x/this.wid, view.y/this.hei, view.w/this.wid, view.h/this.hei );
     }
   },
-  
+
   /* Toggle navigation window
    */
   toggleNavigationWindow: function() {
