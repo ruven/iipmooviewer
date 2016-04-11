@@ -30,7 +30,7 @@ The distribution contains all the necessary library files in both compressed and
 
 Server
 ------
-You first must have a working version of the IIPImage server running if you want to use the IIP protocol and features. See http://iipimage.sourceforge.net for details. IIPMooViewer, however, also supports the Zoomify and Deepzoom protocols if you are unable to install the server or are working in a legacy environment.
+You first must have a working version of the IIPImage server running if you want to use the IIP protocol and features. See http://iipimage.sourceforge.net for details. IIPMooViewer, however, also supports the IIIF protocol if you have an IIIF server, or the Zoomify and Deepzoom protocols if you are unable to install the server or are working in a legacy environment.
 
 
 Images
@@ -49,10 +49,7 @@ Now modify the path and image names in the example HTML page provided - index.ht
     });
 </pre>
 
-Note that IIPMooViewer works best when it's in its own page, as it expands to
-100% width and height. If you wish to embed it in another page, you may do so
-with an `<iframe>`. To get IIPMooViewer's fullscreen to work when it is in an
-`<iframe>`, add the `allowFullScreen` attribute to the `<iframe>` tag.
+Note that IIPMooViewer works best when it's in its own page. If you wish to embed it in a page, you may specify any div within your page or alternatively use an `<iframe>` if you wish to keep the IIPMooViewer code separate. Note that to enable fullscreen when using an `<iframe>`, add the `allowFullScreen` attribute to the `<iframe>` tag.
 
 Distribution
 ------------
@@ -317,7 +314,6 @@ iipmooviewer.blend( [ ['color.tif','color'],
 </pre>
 
 
-
 Linking to a Specific View
 --------------------------
 A hash tag in the form x, y, resolution can be appended to the URL to 
@@ -339,6 +335,51 @@ Styling
 It is possible to restyle widgets such as the credit information box. Simply create your own CSS rule to override the default rule for:
 <pre>.iipmooviewer .credit</pre>
 to change the font, background or borders etc.
+
+
+Gallery
+-------
+If you have a series of images, it's possible to use IIPMooViewer within an image gallery. A Gallery component is available in src/gallery.js with a minified version in js/gallery.min.js. This provides a light-weight, ergonomic and fully responsive gallery component which is mobile-friendly and fully touch-enabled. The input list of images can be provided either as a JSON object within your HTML itself or via an Ajax request.
+
+To use the gallery component, make sure you include both the gallery CSS and JS files:
+
+<pre>
+  <link rel="stylesheet" type="text/css" media="all" href="css/gallery.min.css" />
+  <script type="text/javascript" src="js/gallery.min.js"></script>
+</pre>
+
+To create the component, simply create an instance of the class with the URL of your JSON.
+
+<pre>
+  <script type="text/javascript">
+    // Create our image gallery and load our list of images from JSON 
+    new Gallery( "targetframe", {
+      images: "gallery.json"
+    });
+  </script>
+</pre>
+
+The list of images should be structured as an array as in the following example:
+<pre>
+  [
+     {
+       image: "/path/image1.tif",
+       caption: "caption 1",
+       title: "Title 1",
+       scale: 20.0,
+       server: "/fcgi-bin/iipsrv.fcgi"
+     },
+     {
+       image: "/path/image2.tif",
+       caption: "caption 2",
+       title: "Title 2",
+       scale: 10.0,
+       server: "/fcgi-bin/iipsrv.fcgi"
+     }
+  ];
+</pre>
+
+The "image" parameter is mandatory, otherwise all other parameters are optional. If "server" is not set, the default IIPImage server path /fcgi-bin/iipsrv.fcgi is used. The caption field, if provided, will be overlaid on the viewer, whereas the title field, if given, provides a tooltip when the mouse is over the image. The scale option is a value for the scale for the given image in pixels/mm and is used in the same way as a scale given to IIPMooViewer directly. An example HTML template is provided in the provided gallery.html.
 
 
 Licensing
