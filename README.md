@@ -344,19 +344,19 @@ If you have a series of images, it's possible to use IIPMooViewer within an imag
 To use the gallery component, make sure you include both the gallery CSS and JS files:
 
 <pre>
-  <link rel="stylesheet" type="text/css" media="all" href="css/gallery.min.css" />
-  <script type="text/javascript" src="js/gallery.min.js"></script>
+  &lt;link rel="stylesheet" type="text/css" media="all" href="css/gallery.min.css" /&gt;
+  &lt;script type="text/javascript" src="js/gallery.min.js"&gt;&lt;/script&gt;
 </pre>
 
 To create the component, simply create an instance of the class with the URL of your JSON.
 
 <pre>
-  <script type="text/javascript">
+  &lt;script type="text/javascript"&gt;
     // Create our image gallery and load our list of images from JSON 
     new Gallery( "targetframe", {
       images: "gallery.json"
     });
-  </script>
+  &lt;/script&gt;
 </pre>
 
 The list of images should be structured as an array as in the following example:
