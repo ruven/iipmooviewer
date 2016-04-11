@@ -466,7 +466,7 @@ var IIPMooViewer = new Class({
     var w = this.resolutions[this.view.res].w;
     var h = this.resolutions[this.view.res].h;
     var region = {x: this.view.x/w, y: this.view.y/h, w: this.view.w/w, h: this.view.h/h};
-    var url = this.protocol.getRegionURL( this.server, this.images[0].src, region, w );
+    var url = this.protocol.getRegionURL( this.server, this.images[0].src, region, w, h );
     return url;
   },
 
@@ -1263,7 +1263,8 @@ var IIPMooViewer = new Class({
 	  if( IIPMooViewer.sync ) IIPMooViewer.windows(_this).invoke( 'reload' );
 	},
 	'scroll': this.scrollNavigation.bind(this),
-	'zoom': this.zoom.bind(this)
+	'zoom': this.zoom.bind(this),
+	'print': this.print.bind(this)
      });
     }
 
@@ -1499,6 +1500,11 @@ var IIPMooViewer = new Class({
     }
     else this.recenter();
 
+    // Create scale if it doesn't exist
+    if( typeof(Scale)==="function" && this.viewport && this.viewport.scale!=null && !this.scale ){
+      this.scale = new Scale(this.viewport.scale);
+    }
+
     this.canvas.setStyles({
       width: this.wid,
       height: this.hei
@@ -1564,13 +1570,36 @@ var IIPMooViewer = new Class({
     }
   },
 
+
   /* Toggle navigation window
    */
   toggleNavigationWindow: function() {
     if( this.navigation ) {
       this.navigation.toggleWindow();
     }
-  }
+  },
+
+
+  /* Print view - opens a new window, prints, then closes
+   */
+  print: function() {
+
+   var w = this.resolutions[this.view.res].w;
+   var h = this.resolutions[this.view.res].h;
+   var region = {x: this.view.x/w, y: this.view.y/h, w: this.view.w/w, h: this.view.h/h};
+   var url = this.protocol.getRegionURL( this.server, this.images[0].src, region, 1280, 1754 );
+
+   // Open window
+   var print_window = window.open( url, '_blank' );
+
+   // Once image is loaded, print and close
+   print_window.addEventListener( 'load', function(){
+     this.focus();
+     this.print();
+     this.close();
+   });
+ }
+
 
 });
 

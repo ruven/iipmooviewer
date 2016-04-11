@@ -178,6 +178,7 @@ coordinate ratios (0.0 -> 1.0 ) of the center of the view port.
 
 <b>toggleAnnotations()</b>: toggle display of annotations
 
+<b>print()</b>: print current image view
 
 Annotations
 -----------

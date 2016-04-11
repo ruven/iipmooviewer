@@ -159,9 +159,10 @@ var Navigation = new Class({
       var _this = this;
       if(this.options.navButtons.contains('reset')) navbuttons.getElement('img.reset').addEvent( 'click', function(){ _this.fireEvent('reload'); });
       if(this.options.navButtons.contains('zoomIn')) navbuttons.getElement('img.zoomIn').addEvent( 'click', function(){ _this.fireEvent('zoomIn'); });
-      if(this.options.navButtons.contains('zoomOut')) navbuttons.getElement('img.zoomOut').addEvent( 'click', function(){ _this.fireEvent('zoomOut'); }); 
+      if(this.options.navButtons.contains('zoomOut')) navbuttons.getElement('img.zoomOut').addEvent( 'click', function(){ _this.fireEvent('zoomOut'); });
       if(this.options.navButtons.contains('rotateLeft')) navbuttons.getElement('img.rotateLeft').addEvent( 'click', function(){ _this.fireEvent('rotate',-90); });
       if(this.options.navButtons.contains('rotateRight')) navbuttons.getElement('img.rotateRight').addEvent( 'click', function(){ _this.fireEvent('rotate',90); });
+      if(this.options.navButtons.contains('print')) navbuttons.getElement('img.print').addEvent( 'click', function(){ _this.fireEvent('print'); });
 
     }
 
