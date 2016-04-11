@@ -47,9 +47,12 @@ Protocols.IIP = new Class({
 
   /* Return URL for a full view
    */
-  getRegionURL: function(server,image,region,width){
+  getRegionURL: function(server,image,region,width,height){
     var rgn = region.x + ',' + region.y + ',' + region.w + ',' + region.h;
-    return server+'?FIF='+image+'&WID='+width+'&RGN='+rgn+'&CVT=jpeg';
+    var size;
+    if( width ) size += '&WID='+width;
+    if( height ) size += '&HEI='+height;
+    return server+'?FIF='+image+size+'&RGN='+rgn+'&CVT=jpeg';
   },
 
   /* Return thumbnail URL

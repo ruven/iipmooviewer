@@ -44,7 +44,7 @@ Protocols.DeepZoom = new Class({
 
     /* Return URL for a full view - not possible with Deepzoom
      */
-    getRegionURL: function (server, image, region, w) {
+    getRegionURL: function (server, image, region, w, h) {
         return null;
     },
 

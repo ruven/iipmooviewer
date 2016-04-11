@@ -47,7 +47,7 @@ Protocols.IIIF = new Class({
 
   /* Return URL for a full view
    */
-  getRegionURL: function(server,image,region,width){
+  getRegionURL: function(server,image,region,width,height){
     return server + "/" + image + "/" + region.x + "," + region.y
       + "," + region.w + "," + region.h + "/" + width + ",/0/native.jpg";
   },

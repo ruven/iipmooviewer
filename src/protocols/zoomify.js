@@ -40,7 +40,7 @@ Protocols.Zoomify = new Class({
 
   /* Return URL for a full view - not possible with Zoomify
    */
-  getRegionURL: function(server,image,region,w){
+  getRegionURL: function(server,image,region,w,h){
     return null;
   },
 
