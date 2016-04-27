@@ -49,7 +49,7 @@ Protocols.IIP = new Class({
    */
   getRegionURL: function(server,image,region,width,height){
     var rgn = region.x + ',' + region.y + ',' + region.w + ',' + region.h;
-    var size;
+    var size = '';
     if( width ) size += '&WID='+width;
     if( height ) size += '&HEI='+height;
     return server+'?FIF='+image+size+'&RGN='+rgn+'&CVT=jpeg';
