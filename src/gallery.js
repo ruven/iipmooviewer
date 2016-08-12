@@ -54,7 +54,7 @@ var Gallery = new Class({
 	  alert("Error obtaining json: " + error);
 	  },
 	onFailure: function(text,error){
-	  alert("Failture obtaining json: " + error);
+	  alert("Failure obtaining json: " + error);
 	}
       }).get();
     }
