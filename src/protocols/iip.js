@@ -6,7 +6,9 @@ Protocols.IIP = new Class({
   /* Return metadata URL
    */
   getMetaDataURL: function(server,image){
-    return server+"?FIF=" + image + "&obj=IIP,1.0&obj=Max-size&obj=Tile-size&obj=Resolution-number";
+    var url = server+"?FIF=" + image + "&obj=IIP,1.0&obj=Max-size&obj=Tile-size&obj=Resolution-number";
+    if( this.ask_resolutions ) url += '&obj=Resolutions';
+    return url;
   },
 
   /* Return an individual tile request URL
@@ -37,11 +39,27 @@ Protocols.IIP = new Class({
 		     h: parseInt(size[1]) };
     tmp = response.split( "Resolution-number" );
     var num_resolutions = parseInt( tmp[1].substring(1,tmp[1].length) );
+
+    // Create our result object
     var result = {
       'max_size': max_size,
       'tileSize': tileSize,
       'num_resolutions': num_resolutions
     };
+
+    // Get our list of exact resolutions if our server is capable
+    if( this.ask_resolutions ){
+      tmp = response.split( 'Resolutions' );
+      tmp = tmp[1].substring(1,tmp[1].length);
+      var tmp2 = tmp.split(',');
+      var resolutions = new Array();
+      for( var i=0; i<tmp2.length; i++ ){
+	var s = tmp2[i].split(' ');
+	resolutions.push({w: parseInt(s[0]), h: parseInt(s[1])});
+      }
+      if( resolutions.length==num_resolutions ) result.resolutions = resolutions;
+    }
+
     return result;
   },
 

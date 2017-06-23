@@ -42,6 +42,16 @@ Protocols.IIIF = new Class({
       'tileSize': this.tileSize,
       'num_resolutions': this.num_resolutions
     };
+    // Add a list of resolutions if given
+    if( typeOf(p.sizes) !== "null" ){
+      result.resolutions = new Array(this.num_resolutions);
+      for( var r=0; r<this.num_resolutions-1; r++ ){
+	var size = p.sizes[r];
+	result.resolutions[r] = {w:size.width,h:size.height};
+      }
+      // Add the full size image
+      result.resolutions[this.num_resolutions-1] = {w:w,h:h};
+    }
     return result;
   },
 

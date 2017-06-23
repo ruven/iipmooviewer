@@ -1005,16 +1005,22 @@ var IIPMooViewer = new Class({
   },
 
 
+  /* Check and update container position and size
+   */
+  updateContainerSize: function(){
+    this.containerPosition = this.container.getPosition();
+    var target_size = this.container.getSize();
+    this.view.w = target_size.x;
+    this.view.h = target_size.y;
+  },
+  
+
   /* Calculate some dimensions
    */
   calculateSizes: function(){
 
-    // Set up our default sizes
-    var target_size = this.container.getSize();
-    this.view.x = -1; // Intitalize x,y with dummy values
-    this.view.y = -1;
-    this.view.w = target_size.x;
-    this.view.h = target_size.y;
+    // Get our container size
+    this.updateContainerSize();
 
     // Calculate our navigation window size
     if( this.navigation ) this.calculateNavSize();
@@ -1024,25 +1030,38 @@ var IIPMooViewer = new Class({
     var tx = this.max_size.w;
     var ty = this.max_size.h;
 
-    // Calculate our list of resolution sizes and the best resolution
-    // for our window size
-    this.resolutions = new Array(this.num_resolutions);
-    this.resolutions.push({w:tx,h:ty});
-    this.view.res = 0;
-    for( var i=1; i<this.num_resolutions; i++ ){
-      tx = Math.floor(tx/2);
-      ty = Math.floor(ty/2);
+    // Calculate our list of resolution sizes if we don't have a full list
+    // from the server
+    if( typeof(this.resolutions) == 'undefined' ){
+
+      this.resolutions = new Array(this.num_resolutions);
       this.resolutions.push({w:tx,h:ty});
-      if( tx < this.view.w && ty < this.view.h ) this.view.res++;
+
+      for( var i=1; i<this.num_resolutions; i++ ){
+	tx = Math.floor(tx/2);
+	ty = Math.floor(ty/2);
+	this.resolutions.push({w:tx,h:ty});
+      }
+
+      // We reverse so that the smallest resolution is at index 0      
+      this.resolutions.reverse();
     }
-    this.view.res -= 1;
+
+    // Calculate the resolution that fits into the view port
+    this.view.res = 0;
+    for( var i=this.num_resolutions-1; i>0; i-- ){
+      var tx = this.resolutions[i].w;
+      var ty = this.resolutions[i].h;
+      if( tx <  this.view.w && ty < this.view.h ){
+	this.view.res = i;
+	break;
+      }
+    }
 
     // Sanity check and watch our for small screen displays causing the res to be negative
     if( this.view.res < 0 ) this.view.res = 0;
     if( this.view.res >= this.num_resolutions ) this.view.res = this.num_resolutions-1;
 
-    // We reverse so that the smallest resolution is at index 0
-    this.resolutions.reverse();
     this.wid = this.resolutions[this.view.res].w;
     this.hei = this.resolutions[this.view.res].h;
 
@@ -1236,7 +1255,7 @@ var IIPMooViewer = new Class({
 
     // Calculate some sizes and create the navigation window
     this.calculateSizes();
-    if( this.navigation){
+    if( this.navigation ){
 
       if( this.navOptions&&this.navOptions.id&&document.id(this.navOptions.id) ){
 	this.navigation.create( document.id(this.navOptions.id) );
@@ -1338,9 +1357,6 @@ var IIPMooViewer = new Class({
     // we are fully set up
     if(this.winResize) window.addEvent( 'resize', this.reflow.bind(this) );
 
-    // Record our container position
-    this.containerPosition = this.container.getPosition();
-
     this.fireEvent('load');
 
   },
@@ -1393,6 +1409,7 @@ var IIPMooViewer = new Class({
 	this.max_size = result.max_size;
 	this.tileSize = result.tileSize;
 	this.num_resolutions = result.num_resolutions;
+	if( typeof(this.resolutions) != 'undefined' ) this.resolutions = result.resolutions;
 
 	this.reload();
 
@@ -1432,6 +1449,7 @@ var IIPMooViewer = new Class({
 	  this.max_size = result.max_size;
 	  this.tileSize = result.tileSize;
 	  this.num_resolutions = result.num_resolutions;
+	  if( typeof(this.resolutions) != 'undefined' ) this.resolutions = result.resolutions;
 
 	  this.createWindows();
         }.bind(this),
@@ -1448,10 +1466,8 @@ var IIPMooViewer = new Class({
    */
   reflow: function(){
 
-    this.containerPosition = this.container.getPosition();
-    var target_size = this.container.getSize();
-    this.view.w = target_size.x;
-    this.view.h = target_size.y;
+    // Check changes to the container
+    this.updateContainerSize();
 
     // Constrain our canvas if it is smaller than the view window
     this.positionCanvas();
