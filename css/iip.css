@@ -302,6 +302,10 @@
 
 .iipmooviewer .canvas .annotation.edit {
   border-color: yellow;
+  cursor: grab;
+}
+.iipmooviewer .canvas .annotation.edit.drag {
+  cursor: grabbing;
 }
 
 .iipmooviewer .canvas .annotation.handle {
