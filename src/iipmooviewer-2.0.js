@@ -169,6 +169,9 @@ var IIPMooViewer = new Class({
 
     // Set up our protocol handler
     switch( options.protocol ){
+      case 'openslide_deepzoom':
+        this.protocol = new Protocols.OpenSlide_DeepZoom();
+        break;
       case 'zoomify':
 	this.protocol = new Protocols.Zoomify();
 	break;
@@ -484,28 +487,34 @@ var IIPMooViewer = new Class({
       this.nudge(-d,0);
       if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'nudge', -d, 0 );
       event.preventDefault(); // Prevent default only for navigational keys
+      this.fireEvent('viewUpdated');
       break;
     case 38: // up
       this.nudge(0,-d);
       if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'nudge', 0, -d );
       event.preventDefault();
+      this.fireEvent('viewUpdated');
       break;
     case 39: // right
       this.nudge(d,0);
       if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'nudge', d, 0 );
       event.preventDefault();
+      this.fireEvent('viewUpdated');
       break;
     case 40: // down
       this.nudge(0,d);
       if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'nudge', 0, d );
       event.preventDefault();
+      this.fireEvent('viewUpdated');
       break;
     case 107: // plus
       if(!e.control){
 	this.zoomIn();
 	if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke('zoomIn');
 	event.preventDefault();
+	this.fireEvent('viewUpdated');
       }
+      this.fireEvent('viewUpdated');
       break;
     case 109: // minus
     case 189: // minus
@@ -513,7 +522,9 @@ var IIPMooViewer = new Class({
 	this.zoomOut();
 	if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke('zoomOut');
 	event.preventDefault();
+	this.fireEvent('viewUpdated');
       }
+      this.fireEvent('viewUpdated');
       break;
     case 72: // h
       if( this.navOptions&&this.navOptions.id ) break;
@@ -671,6 +682,8 @@ var IIPMooViewer = new Class({
     }
 
     if(IIPMooViewer.sync) IIPMooViewer.windows(this).invoke( 'moveTo', xmove, ymove );
+    this.fireEvent('viewUpdated');
+
 
   },
 
@@ -710,6 +723,7 @@ var IIPMooViewer = new Class({
     this.moveTo( xmove, ymove );
 
     if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'moveTo', xmove, ymove );
+    this.fireEvent('viewUpdated');
 
   },
 
@@ -884,6 +898,8 @@ var IIPMooViewer = new Class({
       if( z==-1 ) IIPMooViewer.windows(this).invoke('zoomOut');
       else IIPMooViewer.windows(this).invoke('zoomIn');
     }
+
+    this.fireEvent('viewUpdated');
 
   },
 
@@ -1272,14 +1288,17 @@ var IIPMooViewer = new Class({
 	'zoomIn': function(){
 	  _this.zoomIn();
 	  if( IIPMooViewer.sync ) IIPMooViewer.windows(_this).invoke( 'zoomIn' );
+	  _this.fireEvent('viewUpdated');
 	},
 	'zoomOut': function(){
 	  _this.zoomOut();
 	  if( IIPMooViewer.sync ) IIPMooViewer.windows(_this).invoke( 'zoomOut' );
+	  _this.fireEvent('viewUpdated');
 	},
 	'reload': function(){
 	  _this.reload();
 	  if( IIPMooViewer.sync ) IIPMooViewer.windows(_this).invoke( 'reload' );
+	  _this.fireEvent('viewUpdated');
 	},
 	'scroll': this.scrollNavigation.bind(this),
 	'zoom': this.zoom.bind(this),
@@ -1484,6 +1503,7 @@ var IIPMooViewer = new Class({
     if( this.scale ){
       this.scale.update( this.wid/this.max_size.w, this.view.w );
       this.scale.reflow(this.container);
+      this.fireEvent('viewUpdated');
     }
 
     // Update images

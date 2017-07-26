@@ -53,6 +53,7 @@ IIPMooViewer.implement({
 	      _this.canvas.eliminate('taptime');
 	      _this.zoomIn();
 	      if(IIPMooViewer.sync) IIPMooViewer.windows(_this).invoke('zoomIn');
+	      _this.fireEvent('viewUpdated');
 	    }
 	    else{
 	      // Record our start position
@@ -128,10 +129,12 @@ IIPMooViewer.implement({
 	      if( scale > 0 ){
 		_this.zoomIn();
 		if(IIPMooViewer.sync) IIPMooViewer.windows(_this).invoke('zoomIn');
+		_this.fireEvent('viewUpdated');
 	      }
 	      else if( scale < 0 ){
 		_this.zoomOut();
 		if(IIPMooViewer.sync) IIPMooViewer.windows(_this).invoke('zoomOut');
+		_this.fireEvent('viewUpdated');
 	      }
 	    }
 
@@ -146,6 +149,7 @@ IIPMooViewer.implement({
 		else r -= 90 % 360;
 		_this.rotate(r);
 		if(IIPMooViewer.sync) IIPMooViewer.windows(_this).invoke( 'rotate', r );
+		_this.fireEvent('viewUpdated');
 	      }
 	    }
 
@@ -179,6 +183,7 @@ IIPMooViewer.implement({
 	    _this.requestImages();
 	    if( _this.navigation ) _this.navigation.update(_this.view.x/_this.wid,_this.view.y/_this.hei,_this.view.w/_this.wid,_this.view.h/_this.hei);
 	    if(IIPMooViewer.sync) IIPMooViewer.windows(_this).invoke( 'moveTo', _this.view.x, _this.view.y );
+	    _this.fireEvent('viewUpdated');
 
 	    // This activates hardware acceleration
 	    _this.canvas.setStyle( _this.CSSprefix+'transform', 'translateZ(0)' );
