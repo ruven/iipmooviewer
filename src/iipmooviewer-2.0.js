@@ -670,7 +670,12 @@ var IIPMooViewer = new Class({
       this.requestImages();
     }
 
-    if(IIPMooViewer.sync) IIPMooViewer.windows(this).invoke( 'moveTo', xmove, ymove );
+    if( IIPMooViewer.sync ){
+      // Use center of view for synchronization
+      var x = (xmove + (this.view.w/2)) / this.wid;
+      var y = (ymove + (this.view.h/2)) / this.hei;
+      IIPMooViewer.windows(this).invoke( 'centerTo', x, y );
+    }
 
   },
 
@@ -709,7 +714,12 @@ var IIPMooViewer = new Class({
     // Need to do the moveTo rather than just requestImages() to avoid problems with rotated views
     this.moveTo( xmove, ymove );
 
-    if( IIPMooViewer.sync ) IIPMooViewer.windows(this).invoke( 'moveTo', xmove, ymove );
+    if( IIPMooViewer.sync ){
+      // Use center of view for synchronization
+      var x = (xmove + (this.view.w/2)) / this.wid;
+      var y = (ymove + (this.view.h/2)) / this.hei;
+      IIPMooViewer.windows(this).invoke( 'centerTo', x, y );
+    }
 
   },
 
@@ -865,14 +875,14 @@ var IIPMooViewer = new Class({
 	this.view.y = Math.round( (event.page.y - pos.y - z_size.y/2) * this.hei/n_size.y );
       }
 
-      // Set the view in each synchronized window
+      // Set the view in each synchronized window - take into account view size
       if( IIPMooViewer.sync ){
-	var _x = this.view.x;
-	var _y = this.view.y;
+	var x = (this.view.x+(this.view.w/2)) / this.wid;
+	var y = (this.view.y+(this.view.h/2)) / this.hei;
 	IIPMooViewer.windows(this).each( function(el){
-	  el.view.x = _x;
-	  el.view.y = _y;
-        });
+	  el.view.x = Math.round( x*el.wid - (el.view.w/2) );
+	  el.view.y = Math.round( y*el.hei - (el.view.h/2) );
+	});
       }
     }
 
