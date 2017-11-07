@@ -170,7 +170,8 @@ var Gallery = new Class({
       server: this.images[0].server || null,
       image: this.images[0].image,
       credit: this.images[0].caption,
-      scale: this.images[0].scale || null
+      scale: this.images[0].scale || null,
+      prefix: this.images[0].prefix || null
     });
   },
 
