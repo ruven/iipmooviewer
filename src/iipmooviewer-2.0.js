@@ -103,7 +103,7 @@ var IIPMooViewer = new Class({
       // Accept hash tags of the form ratio x, ratio y, resolution
       // For example http://your.server/iipmooviewer/test.html#0.4,0.6,5
       var params = window.location.hash.split('#')[1].split(',');
-      if( c.length == 3 ){
+      if( params.length == 3 ){
 	this.viewport = {
 	  x: parseFloat(params[0]),
 	  y: parseFloat(params[1]),
