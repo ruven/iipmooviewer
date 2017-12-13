@@ -271,7 +271,7 @@ Protocols
 IIPMooViewer supports the IIP, Zoomify, Deepzoom, Djatoka and IIIF protocols. By default it will use IIP, but to use, for example Zoomify, first include the protocol after the other javascript includes as this is not included by default:
 
 <pre>
-  &lt;script type="text/javascript" src="src/protocols/zoomify.js"&gt;&lt;/script&gt;
+  &lt;script src="src/protocols/zoomify.js"&gt;&lt;/script&gt;
 </pre>
 
 Protocols such as zoomify don't have a server as such, so set this value to / or to the path prefix for the image. For example, if you have an image with URL /images/zoomify/image1, use:
@@ -293,9 +293,9 @@ A number of localizations exist in the src/lang folder. To use, simply include t
 For example to create a new Chinese localization, create the file lang/help.zh.js and include it after the main iipmooviewer includes:
 
 <pre>
-  &lt;script type="text/javascript" src="javascript/mootools-core-1.6.0-compressed.js"&gt;&lt;/script&gt;
-  &lt;script type="text/javascript" src="javascript/iipmooviewer-2.0-compressed.js"&gt;&lt;/script&gt;
-  &lt;script type="text/javascript" src="src/lang/help.zh.js"&gt;&lt;/script&gt;
+  &lt;script src="javascript/mootools-core-1.6.0-compressed.js"&gt;&lt;/script&gt;
+  &lt;script src="javascript/iipmooviewer-2.0-compressed.js"&gt;&lt;/script&gt;
+  &lt;script src="src/lang/help.zh.js"&gt;&lt;/script&gt;
 </pre>
 
 Image Blending
@@ -349,13 +349,13 @@ To use the gallery component, make sure you include both the gallery CSS and JS 
 
 <pre>
   &lt;link rel="stylesheet" type="text/css" media="all" href="css/gallery.min.css" /&gt;
-  &lt;script type="text/javascript" src="js/gallery.min.js"&gt;&lt;/script&gt;
+  &lt;script src="js/gallery.min.js"&gt;&lt;/script&gt;
 </pre>
 
 To create the component, simply create an instance of the class with the URL of your JSON.
 
 <pre>
-  &lt;script type="text/javascript"&gt;
+  &lt;script&gt;
     // Create our image gallery and load our list of images from JSON 
     new Gallery( "targetframe", {
       images: "gallery.json"
