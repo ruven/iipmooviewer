@@ -18,6 +18,7 @@ IIPMooViewer.lang = {
       'zoomIn': 'Hereinzoomen',
       'zoomOut': 'Herauszoomen',
       'rotateLeft': 'Ansicht 90° nach Links drehen',
-      'rotateRight': 'Ansicht 90° nach Rechts drehen'
+      'rotateRight': 'Ansicht 90° nach Rechts drehen',
+      'print': 'Druckansicht'
     }
 };
