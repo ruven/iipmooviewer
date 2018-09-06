@@ -53,7 +53,7 @@ Note that IIPMooViewer works best when it's in its own page. If you wish to embe
 
 Distribution
 ------------
-/javascript : the necessary minified iipmooviewer and mootools javascript files
+/js : the necessary minified iipmooviewer and mootools javascript files
 
 /css : iip.css and ie.css (for Internet Explorer)
 
@@ -61,7 +61,7 @@ Distribution
 
 /src : uncompressed source javascript files
 
-Minified files are created with the [closure compiler](https://developers.google.com/closure/compiler/) with the following command:
+The minified files are created with the [closure compiler](https://developers.google.com/closure/compiler/) with the following command:
 <pre>
 java -jar /path/to/compiler.jar --js src/mootools-more-1.6.0.js --js src/iipmooviewer-2.0.js --js src/navigation.js --js src/scale.js --js src/touch.js --js src/protocols/iip.js --js src/annotations.js --js src/blending.js --js src/lang/help.en.js --js_output_file js/iipmooviewer-2.0-min.js --compilation_level SIMPLE_OPTIMIZATIONS
 </pre>
@@ -397,4 +397,4 @@ Please refer to the project site http://iipimage.sourceforge.net for further det
 
 ------------------------------------------------------------------------------------
 
-<pre>(c) 2007-2017 Ruven Pillay <ruven@users.sourceforge.net></pre>
+<pre>(c) 2007-2018 Ruven Pillay <ruven@users.sourceforge.net></pre>

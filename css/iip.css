@@ -597,7 +597,10 @@ div.blending div#area div#knob{
 /* iPhone, iPad and Android Devices
  */
 @media screen and (max-device-width: 480px){
-  .iipmooviewer { -webkit-text-size-adjust: 80%; }
+  .iipmooviewer {
+    -webkit-text-size-adjust: 80%;
+    text-size-adjust: 80%;
+  }
   .iipmooviewer .info div div { width: 100%; }
   .iipmooviewer .info div div ul { padding: 1em; }
   .iipmooviewer .info div div, .info div div ul li { font-size: 8pt; }
@@ -607,8 +610,14 @@ div.blending div#area div#knob{
   }
 }
 @media only screen and (min-device-width: 481px) and (max-device-width: 1024px) {
-  .iipmooviewer { -webkit-text-size-adjust: 120%; }
-  .navcontainer .loadBarContainer .loadBar { -webkit-text-size-adjust: 95%; }
+  .iipmooviewer {
+    -webkit-text-size-adjust: 120%;
+    text-size-adjust: 120%;
+  }
+  .navcontainer .loadBarContainer .loadBar {
+    -webkit-text-size-adjust: 95%;
+    text-size-adjust: 95%
+  }
   .iipmooviewer .info div div { width: 100%; }
   .iipmooviewer .navcontainer .navbuttons img {
     width: 36px;
@@ -625,4 +634,24 @@ div.blending div#area div#knob{
    */
   .iipmooviewer.standalone img.logo { top: 15px; }
   .iipmooviewer.standalone .navcontainer { top: 20px; }
+}
+/* For high resolution displays
+ */
+@media only screen and (min-resolution: 150dpi){
+  .iipmooviewer {
+    text-size-adjust: 120%;
+  }
+  .iipmooviewer .navcontainer .navbuttons img {
+    width: 18px;
+    height: 18px;
+    padding: 1px;
+  }
+  .iipmooviewer img.logo {
+    width: 36px;
+    height: 36px;
+  }
+  .iipmooviewer .info div div { font-size: 110%; }
+  .iipmooviewer .info div div ul { font-size: 90%; }
+  .navcontainer .loadBarContainer .loadBar { font-size: 60%; }
+  .iipmooviewer .tip { font-size: 90%; }
 }
