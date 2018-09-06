@@ -1157,27 +1157,27 @@ var IIPMooViewer = new Class({
     });
 
 
-    // Add touch or drag events to our canvas
+    // Add touch or drag events to our canvas for touch-enabled devices
     if( 'ontouchstart' in window || navigator.msMaxTouchPoints ){
       // Add our touch events
       this.addTouchEvents();
     }
-    else{
-      // Create our main view drag object for our canvas.
-      // Add synchronization via the Drag complete hook as well as coordinate updating
-      var coordsBind = this.updateCoords.bind(this);
-      this.touch = new Drag( this.canvas, {
-	onStart: function(){
-	  _this.canvas.addClass('drag');
-	  _this.canvas.removeEvent('mousemove:throttle(75)',coordsBind);
-        },
-        onComplete: function(){
-	  _this.scroll();
-	  _this.canvas.removeClass('drag');
-	  _this.canvas.addEvent('mousemove:throttle(75)',coordsBind);
-	}
-      });
-    }
+
+
+    // Create our main view drag object for our canvas.
+    // Add synchronization via the Drag complete hook as well as coordinate updating
+    var coordsBind = this.updateCoords.bind(this);
+    this.touch = new Drag( this.canvas, {
+      onStart: function(){
+	_this.canvas.addClass('drag');
+	_this.canvas.removeEvent('mousemove:throttle(75)',coordsBind);
+      },
+      onComplete: function(){
+	_this.scroll();
+	_this.canvas.removeClass('drag');
+	_this.canvas.addEvent('mousemove:throttle(75)',coordsBind);
+      }
+    });
 
 
     // Inject our canvas into the container, but events need to be added after injection

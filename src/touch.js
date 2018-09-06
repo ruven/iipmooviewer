@@ -37,6 +37,10 @@ IIPMooViewer.implement({
       this.canvas.addEvents({
 
         'touchstart': function(e){
+
+	  // Disable mouse events during touch dragging
+	  _this.touch.detach();
+
 	  e.preventDefault();
 	  _this.touchend = null;
 
@@ -107,6 +111,9 @@ IIPMooViewer.implement({
         },
 
 	'touchend': function(e){
+
+	  // Re-enable mouse dragging when touch events have terminated
+	  _this.touch.attach();
 
 	  // Handle gestures first
 	  if( _this.canvas.retrieve('gesturestart') == 1 ){
