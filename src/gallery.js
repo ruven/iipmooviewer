@@ -81,12 +81,12 @@ var Gallery = new Class({
     var thumbnail_container = new Element('div', {
       'class': 'thumbnails',
       'events': {
-	'mousewheel': function(e){						
+	'mousewheel': function(e){
   	  var delta = e.wheel;
  	  var sl = thumbnail_container.getScroll().x;
 	  sl -= (delta*40);
   	  thumbnail_container.scrollTo(sl);
-	  e.preventDefault();				
+	  e.preventDefault();
 	}
       }
     }).inject(this.container);
@@ -171,7 +171,8 @@ var Gallery = new Class({
       image: this.images[0].image,
       credit: this.images[0].caption,
       scale: this.images[0].scale || null,
-      prefix: this.images[0].prefix || null
+      prefix: this.images[0].prefix || null,
+      navigation: this.options.navigation || null
     });
   },
 
