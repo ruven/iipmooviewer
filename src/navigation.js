@@ -16,6 +16,7 @@
    --------------------------------------------------------------------
 */
 
+'use strict';
 
 var Navigation = new Class({
 
@@ -23,7 +24,7 @@ var Navigation = new Class({
 
   options: {},         // Options
   position: {x:0,y:0}, // Position of navigation window
-  size: {x:0,y:0},     // Size of navigation window  
+  size: {x:0,y:0},     // Size of navigation window
 
 
   /* Constructor

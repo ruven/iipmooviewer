@@ -69,6 +69,9 @@
 
 
 
+'use strict';
+
+
 /* Main IIPMooViewer Class
  */
 var IIPMooViewer = new Class({
@@ -245,6 +248,7 @@ var IIPMooViewer = new Class({
 
     // Load us up when the DOM is fully loaded!
     window.addEvent( 'domready', this.load.bind(this) );
+
   },
 
 
@@ -522,6 +526,7 @@ var IIPMooViewer = new Class({
       event.preventDefault();
       if( this.navigation ) this.navigation.toggleWindow();
       if( this.credit ) this.container.getElement('div.credit').get('reveal').toggle();
+      if( this.blend_list != 'undefined' ) this.container.getElement('div.multiblend').get('reveal').toggle();
       break;
     case 82: // r
       if( this.navOptions&&this.navOptions.buttons &&

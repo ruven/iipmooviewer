@@ -593,6 +593,30 @@ div.blending div#area div#knob{
   background: linear-gradient(left, #b8bac6 0%,#dbdce2 30%,#f5f6f6 49%,#dddfe3 70%,#b8bac6 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b8bac6', endColorstr='#b8bac6',GradientType=1 ); /* IE6-8 */
 }
+/* Multiblend widget
+ */
+div.multiblend{
+  width: 25%;
+  bottom: 0;
+  z-index: 10;
+  position: absolute;
+  margin: 0 0 10px 10px;
+  padding-bottom: 20px;
+}
+div.multiblend div.caption{
+  width: 100%;
+  position: relative;
+  margin: auto;
+}
+div.multiblend div.caption span {
+  margin-top: 3px;
+  position: absolute;
+  min-width: 5em;
+}
+/* Need to force z-index in multiblend mode
+ */
+img.layer0{ z-index: 0; }
+img.layer1{ z-index: 1; }
 
 /* iPhone, iPad and Android Devices
  */

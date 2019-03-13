@@ -5,6 +5,9 @@
 
 */
 
+'use strict';
+
+
 IIPMooViewer.implement({
 
   /* Create touch events
