@@ -29,7 +29,7 @@ var Gallery = new Class({
 
     this.container = id || alert('No element ID given to Gallery constructor');
     this.current_image = 0;
-
+    this.options = options;
 
     // Check type of provided images option. If an array, simply use it
     // Otherwise, if it's a string, use an Ajax request
