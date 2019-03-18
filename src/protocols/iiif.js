@@ -33,10 +33,15 @@ Protocols.IIIF = new Class({
     var p = eval("(" + response + ")");
     var w = parseInt(p.width);
     var h = parseInt(p.height);
+
     // Handle both 1.1 and 2.0 IIIF API's
     if( typeOf( p.scale_factors ) !== "null" ){ this.num_resolutions = p.scale_factors.length; }
     else this.num_resolutions = p.tiles[0].scaleFactors.length;
+
     this.tileSize = { w: 256, h: 256 };
+    if( p.tiles[0].width ) this.tileSize.w = parseInt( p.tiles[0].width );
+    if( p.tiles[0].height ) this.tileSize.h = parseInt( p.tiles[0].height );
+
     var result = {
       'max_size': { w: w, h: h },
       'tileSize': this.tileSize,
