@@ -6,7 +6,7 @@ About
 -----
 IIPMooViewer is a high performance light-weight HTML5 Ajax-based javascript image streaming and zooming client designed for the IIPImage high resolution imaging system. It is compatible with Firefox, Chrome, Internet Explorer (Versions 6-10), Safari and Opera as well as mobile touch-based browsers for iOS and Android. Although designed for use with the IIP protocol and IIPImage, it has multi-protocol support and is additionally compatible with the Zoomify, Deepzoom, Djatoka (OpenURL) and IIIF protocols.
 
-Version 2.0 of IIPMooViewer is HTML5/CSS3 based and uses the Mootools javascript framework (version 1.5+). 
+Version 2.0 of IIPMooViewer is HTML5/CSS3 based and uses the Mootools javascript framework (version 1.6+). 
 
 
 Features
@@ -35,8 +35,7 @@ You first must have a working version of the IIPImage server running if you want
 
 Images
 ------
-Create a pyramidal tiled TIFF image using VIPS (http://vips.sf.net) or 
-imagemagick. Or JPEG2000 if you have a JPEG2000 enabled IIPImage server.
+Create a pyramidal tiled TIFF image using VIPS (http://vips.sf.net) or imagemagick. Or JPEG2000 if you have a JPEG2000 enabled IIPImage server.
 
 
 Configuration
@@ -300,7 +299,11 @@ For example to create a new Chinese localization, create the file lang/help.zh.j
 
 Image Blending
 --------------
-It's also possible to load several images for comparison and dynamically blend between them to compare. This is useful, for example, for comparing scientific imagery of the same scene or object. Images should be of the same size and registered. The blending component is in src/blending.js, but is built by default into the main compressed iipmooviewer js file in the javascript/ folder. To use, simply load the the viewer as normal with the default image, but use the blend() function to provide a list of all images and text for use in the selection box. For eample:
+It's also possible to load several registered images for comparison and blend between them using a slider to compare. This is useful, for example, for comparing scientific imagery, multispectral or images taken at different times of the same scene or object. Images should all be of the same size and be precisely registered. The blending functionality is in src/blending.js and is built by default into the main minimized iipmooviewer js file in the js/ folder. There are two blending modes available. The first provides a pair of drop down menus from which to select the blended images and a slider blend between them. The second blending modes provides a simpler interface with a single slider that allows the user to transition sequentially between all the blended images.
+
+Menu-driven blending mode is activated via the "blend()" function. To use, simply load the the viewer as normal with the default image, but use the blend() function to provide a list of all images and text for use in the selection box as in the following example:
+
+For sequential slider-driven blending use the "multiblend()" function:
 
 <pre>
 var iipmooviewer = new IIPMooViewer( "targetframe", {
@@ -308,12 +311,13 @@ var iipmooviewer = new IIPMooViewer( "targetframe", {
   credit: 'Compare scientific images'
 });
 
-iipmooviewer.blend( [ ['color.tif','color'],
-                      ['uv.tif','ultra-violet'],
-                      ['ir.tif','infra-red'],
-                      ['xray.tif','X-ray']
-                    ] );
+iipmooviewer.multiblend( [ ['color.tif','color'],
+                           ['uv.tif','ultra-violet'],
+                           ['ir.tif','infra-red'],
+                           ['xray.tif','X-ray']
+                         ] );
 </pre>
+
 
 
 Linking to a Specific View
@@ -393,8 +397,8 @@ http://www.gnu.org/licenses/gpl.html for more details.
 
 
 ------------------------------------------------------------------------------------
-Please refer to the project site http://iipimage.sourceforge.net for further details
+Please refer to the project site https://iipimage.sourceforge.io for further details
 
 ------------------------------------------------------------------------------------
 
-<pre>(c) 2007-2018 Ruven Pillay <ruven@users.sourceforge.net></pre>
+<pre>(c) 2007-2019 Ruven Pillay <ruven@users.sourceforge.net></pre>
