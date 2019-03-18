@@ -303,6 +303,20 @@ It's also possible to load several registered images for comparison and blend be
 
 Menu-driven blending mode is activated via the "blend()" function. To use, simply load the the viewer as normal with the default image, but use the blend() function to provide a list of all images and text for use in the selection box as in the following example:
 
+<pre>
+var iipmooviewer = new IIPMooViewer( "targetframe", {
+  image: 'color.tif',
+  credit: 'Compare scientific images'
+});
+
+iipmooviewer.blend( [ ['color.tif','color'],
+                      ['uv.tif','ultra-violet'],
+                      ['ir.tif','infra-red'],
+                      ['xray.tif','X-ray']
+                    ] );
+</pre>
+
+
 For sequential slider-driven blending use the "multiblend()" function:
 
 <pre>
