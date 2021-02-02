@@ -48,7 +48,7 @@ Protocols.IIIF = new Class({
       'num_resolutions': this.num_resolutions
     };
     // Add a list of resolutions if given
-    if( typeOf(p.sizes) !== "null" ){
+    if( typeOf(p.sizes) !== "null" && p.sizes.length == this.num_resolutions ){
       result.resolutions = new Array(this.num_resolutions);
       for( var r=0; r<this.num_resolutions-1; r++ ){
 	var size = p.sizes[r];
