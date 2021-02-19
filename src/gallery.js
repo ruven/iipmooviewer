@@ -1,6 +1,6 @@
 /* Gallery Widget for IIPMooViewer
 
-   Copyright (c) 2016 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2016-2021 Ruven Pillay <ruven@users.sourceforge.net>
    IIPImage: http://iipimage.sourceforge.net
 
    --------------------------------------------------------------------
@@ -135,6 +135,30 @@ var Gallery = new Class({
   },
 
 
+  /* Switch to particular gallery image
+   */
+  goTo: function( index ){
+
+    if( index < 0 ) return;
+    if( index > this.images.length ) return;
+
+    this.thumbnails.getElement('img#thumbnail_'+this.current_image).removeClass('selected');
+
+    // Record the current location
+    this.images[this.current_image].view = {
+      x: (this.iipmooviewer.view.x + (this.iipmooviewer.view.w/2)) / this.iipmooviewer.wid,
+      y: (this.iipmooviewer.view.y + (this.iipmooviewer.view.h/2)) / this.iipmooviewer.hei,
+      resolution: this.iipmooviewer.view.res
+    };
+
+    // Save the current index and update our viewer
+    this.current_image = index;
+    this.updateViewer( this.images[index] );
+    this.thumbnails.getElement('img#thumbnail_'+this.current_image).addClass('selected');
+
+  },
+
+
   /* Create individual thumbnails
    */
   createThumbnails: function(){
@@ -180,7 +204,7 @@ var Gallery = new Class({
   /* Update the viewer
    */
   updateViewer: function( image ){
-    this.iipmooviewer.server = image.server || null;
+    if( this.server ) this.iipmooviewer.server = image.server;
     this.iipmooviewer.setCredit( image.caption );
     this.iipmooviewer.viewport = image.view || null;
     this.iipmooviewer.changeImage( image.image );
