@@ -613,10 +613,6 @@ div.multiblend div.caption span {
   position: absolute;
   min-width: 5em;
 }
-/* Need to force z-index in multiblend mode
- */
-img.layer0{ z-index: 0; }
-img.layer1{ z-index: 1; }
 
 /* iPhone, iPad and Android Devices
  */

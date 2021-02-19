@@ -1,6 +1,6 @@
 /* Extend IIPMooViewer to handle blending
 
-   Copyright (c) 2007-2019 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2021 Ruven Pillay <ruven@users.sourceforge.net>
    IIPImage: http://iipimage.sourceforge.net
 
    --------------------------------------------------------------------
@@ -20,6 +20,7 @@
 
 
 IIPMooViewer.implement({
+
 
   /* Take a list of images and add a control panel for blending
    */
@@ -78,24 +79,120 @@ IIPMooViewer.implement({
 	}
       }
     });
+
     // Make sure the slider takes into account window resize events
     window.addEvent('resize', function(){ slider.autosize(); });
 
+    // Add onchange events to our baselayer and overlay <select> menus
+    document.id('baselayer').addEvent('change', function(){
+
+      // Get the list of img elements in this layer
+      var baselayer = _this.canvas.getChildren('img.layer0');
+      _this.nTilesLoaded -= baselayer.length;
+
+      // Change the image URL for each individual tile in our lower layer
+      baselayer.each( function(t){
+	var regex = new RegExp( _this.images[0].src );
+	var url = t.get('src' ).replace( regex, document.id('baselayer').value );
+	t.set( 'src', url );
+      });
+
+      // Update the image path
+      _this.images[0].src = document.id('baselayer').value;
+    });
+
+    // Do the same for the overlay image
+    document.id('overlay').addEvent('change', function(){
+
+      // Get the list of img elements in this layer
+      var overlay = _this.canvas.getChildren('img.layer1');
+
+      // If the overlay layer does not in fact exist, we need to first create it
+      if( overlay.length == 0 ){
+	var opacity = 0;
+	if( _this.images[1] ) opacity = _this.images[1].opacity;
+	_this.images[1] = {src: document.id('overlay').value, opacity: opacity};
+	_this.tiles.empty();
+	_this.requestImages();
+      }
+      // Otherwise just update the tile URLs
+      else{
+
+	_this.nTilesLoaded -= overlay.length;
+
+	// Change the image URL for each individual tile in our overlay layer
+	overlay.each( function(t){
+	  var regex = new RegExp( _this.images[1].src );
+	  var url = t.get('src' ).replace( regex, document.id('overlay').value );
+	  t.set( 'src', url );
+	});
+
+	// Update the image path
+	_this.images[1].src = document.id('overlay').value;
+      }
+    });
+
+  },
+
+
+  /* Take a list of images and add a control panel for switching between them
+   */
+  menu: function(images) {
+
+    // We build this only after the viewer has fully loaded
+    this.addEvent('load', function(){
+
+       // Build our controls
+      this.createMenuInterface();
+
+      // Go through our list of images and inject them into our menus
+      images.each( function(item){
+	new Element('option', {
+	  'value': item[0],
+	  'html': item[1]
+	 }).inject( document.id('baselayer') );
+      });
+    });
+   },
+
+
+  /* Create our single menu control panel and add events
+   */
+  createMenuInterface: function() {
+
+    var _this = this;
+
+    // Create our control panel and inject it into our container
+    new Element( 'div', {
+      'class': 'blending',
+      'html': '<h2 title="<h2>Image Selection</h2>Select an image from the menu">Image Selection</h2><select id="baselayer"></select>'
+    }).inject( this.navigation.navcontainer );
+
+    // Add a tooltip
+    new Tips( 'div.blending h2', {
+      className: 'tip',
+      onShow: function(t){ t.setStyle('opacity',0); t.fade(0.7); },
+      onHide: function(t){ t.fade(0); }
+    });
+
+
     // Add on change events to our select menus
     document.id('baselayer').addEvent('change', function(){
+
+      var layers = _this.canvas.getChildren('img.layer0');
+      _this.nTilesLoaded -= layers.length;
+
+      // Change the image URL for each tile
+      layers.each( function(t){
+	t.fade(0); // Add fade effect
+        var regex = new RegExp( _this.images[0].src );
+        var url = t.get('src' ).replace( regex, document.id('baselayer').value );
+	t.addEvent('load', function(){ this.fade(1); }); // Fade back on load
+        t.set( 'src', url );
+      });
       _this.images[0].src = document.id('baselayer').value;
-      _this.canvas.getChildren('img.layer0').destroy();
-      _this.tiles.empty();
-      _this.requestImages();
     });
-    document.id('overlay').addEvent('change', function(){
-      var opacity = 0;
-      if( _this.images[1] ) opacity = _this.images[1].opacity;
-      _this.images[1] = {src: document.id('overlay').value, opacity: opacity};
-      _this.canvas.getChildren('img.layer1').destroy();
-      _this.tiles.empty();
-      _this.requestImages();
-    });
+
   },
 
 
@@ -180,9 +277,10 @@ IIPMooViewer.implement({
 		var url = t.get('src' ).replace( regex, _this.images[1].src );
 		t.set( 'src', url );
 	      });
-	      // Invert our layer classes
+	      // Invert our layer classes and move our new layer 1 class to bottom to overlay layer 0
 	      layers_0.addClass('layer1').removeClass('layer0');
 	      layers_1.addClass('layer0').removeClass('layer1').setStyle('opacity',null);
+	      _this.canvas.adopt( layers_0 );
 	    }
 	    // Slider moved back to previous image on left
 	    else if( layer0 == this.blend_index - 1 ){
@@ -196,6 +294,8 @@ IIPMooViewer.implement({
 	      // Invert our layer classes - do layer 1 first to avoid flashing effect
 	      layers_1.addClass('layer0').setStyle('opacity',null).removeClass('layer1');
 	      layers_0.addClass('layer1').removeClass('layer0');
+	      // Move our new layer 1 class to bottom to overlay layer 0
+	      _this.canvas.adopt( layers_0 );
 	    }
 	    // Movements of more than 1, so reload both layers - no swapping of class labels
 	    else{

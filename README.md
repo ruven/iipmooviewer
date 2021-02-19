@@ -333,6 +333,22 @@ iipmooviewer.multiblend( [ ['color.tif','color'],
 </pre>
 
 
+For a more simple single menu based image selection to enable switching between images, use the "menu()" function:
+
+<pre>
+var iipmooviewer = new IIPMooViewer( "targetframe", {
+  image: 'color.tif',
+  credit: 'Select between registered images'
+});
+
+iipmooviewer.menu( [ ['color.tif','color'],
+                     ['uv.tif','ultra-violet'],
+                     ['ir.tif','infra-red'],
+                     ['xray.tif','X-ray']
+                   ] );
+</pre>
+
+
 
 Linking to a Specific View
 --------------------------
@@ -403,6 +419,10 @@ The list of images should be structured as an array as in the following example:
 
 The "image" parameter is mandatory, otherwise all other parameters are optional. If "server" is not set, the default IIPImage server path /fcgi-bin/iipsrv.fcgi is used. The caption field, if provided, will be overlaid on the viewer, whereas the title field, if given, provides a tooltip when the mouse is over the image. The scale option is a value for the scale for the given image in pixels/mm and is used in the same way as a scale given to IIPMooViewer directly. An example HTML template is provided in the provided gallery.html.
 
+### Gallery Functions
+
+goTo( n ): switch view to image within gallery with index _n_
+
 
 Licensing
 ---------
@@ -415,4 +435,4 @@ Please refer to the project site https://iipimage.sourceforge.io for further det
 
 ------------------------------------------------------------------------------------
 
-<pre>(c) 2007-2019 Ruven Pillay <ruven@users.sourceforge.net></pre>
+<pre>(c) 2007-2021 Ruven Pillay <ruven@users.sourceforge.net></pre>

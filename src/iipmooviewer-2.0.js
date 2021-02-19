@@ -2,7 +2,7 @@
    IIPMooViewer 2.0
    IIPImage Javascript Viewer <http://iipimage.sourceforge.net>
 
-   Copyright (c) 2007-2016 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2021 Ruven Pillay <ruven@users.sourceforge.net>
 
    ---------------------------------------------------------------------------
 
@@ -440,7 +440,7 @@ var IIPMooViewer = new Class({
 	     this.nTilesLoaded++;
 	     if( this.navigation ) this.navigation.refreshLoadBar( this.nTilesLoaded, this.nTilesToLoad );
 	     if( this.nTilesLoaded >= this.nTilesToLoad ) this.canvas.setStyle( 'cursor', null );
-	     this.tiles.push(id); // Add to our list of loaded tiles
+	     this.tiles.include(id); // Add to our list of loaded tiles
 	  }.bind(this,tile,k),
 	  'error': function(){
 	     // Try to reload if we have an error.
