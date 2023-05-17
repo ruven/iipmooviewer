@@ -2,7 +2,7 @@
    IIPMooViewer 2.0
    IIPImage Javascript Viewer <http://iipimage.sourceforge.net>
 
-   Copyright (c) 2007-2021 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2023 Ruven Pillay <ruven@users.sourceforge.net>
 
    ---------------------------------------------------------------------------
 
@@ -96,10 +96,11 @@ var IIPMooViewer = new Class({
     if( options.viewport ){
       this.viewport = {
 	resolution: ('resolution' in options.viewport) ? parseInt(options.viewport.resolution) : null,
-	rotation: ('rotation' in options.viewport) ? parseInt(options.viewport.rotation) : null,
-	contrast: ('contrast' in options.viewport) ? parseFloat(options.viewport.contrast) : null,
-	x: ('x' in options.viewport) ? parseFloat(options.viewport.x) : null,
-	y: ('y' in options.viewport) ? parseFloat(options.viewport.y) : null
+	rotation:   ('rotation' in options.viewport) ? parseInt(options.viewport.rotation) : null,
+	contrast:   ('contrast' in options.viewport) ? options.viewport.contrast : null,
+	gamma:      ('gamma' in options.viewport) ? options.viewport.gamma : null,
+	x:          ('x' in options.viewport) ? parseFloat(options.viewport.x) : null,
+	y:          ('y' in options.viewport) ? parseFloat(options.viewport.y) : null
       }
     }
     else if( (window.location.hash.length>0) && (options.disableHash!=true) ){
@@ -119,10 +120,18 @@ var IIPMooViewer = new Class({
     options.image || alert( 'Image location not set in class constructor options');
     if( typeOf(options.image) == 'array' ){
        for( i=0; i<options.image.length;i++ ){
-	 this.images[i] = { src:options.image[i], sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null, opacity:(i==0)?1:0 };
+	 this.images[i] = { src: options.image[i],
+			    sds: null,
+			    gam: (this.viewport&&this.viewport.gamma!=null)? this.viewport.gamma : null,
+			    cnt: (this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null,
+			    opacity: (i==0)?1:0 };
        }
     }
-    else this.images = [{ src:options.image, sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null, shade: null } ];
+    else this.images = [{ src: options.image,
+			  sds: null,
+			  gam: (this.viewport&&this.viewport.gamma!=null)? this.viewport.gamma : null,
+			  cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null,
+			  shade: null } ];
 
     this.loadoptions = options.load || null;
 
@@ -419,7 +428,7 @@ var IIPMooViewer = new Class({
 	  server: this.server,
 	  image:this.images[n].src,
 	  resolution: this.view.res,
-	  sds: (this.images[n].sds||'0,90'),
+	  sds: (this.images[n].sds||null),
           contrast: (this.images[n].cnt||null),
 	  gamma: (this.images[n].gam||null),
 	  shade: (this.images[n].shade||null),
@@ -930,7 +939,9 @@ var IIPMooViewer = new Class({
 
     if( (r <= this.num_resolutions-1) && (r >= 0) ){
 
-      var factor = Math.pow( 2, r-this.view.res );
+      // Calculate scale between resolutions - assume constant scaling
+      var s = this.resolutions[1].w / this.resolutions[0].w;
+      var factor = Math.pow( s, r-this.view.res );
 
       // Calculate an offset to take into account the view port size
       // Center if our image width at this resolution is smaller than the view width - only need to do this on zooming in as our
@@ -1082,7 +1093,9 @@ var IIPMooViewer = new Class({
     this.wid = this.resolutions[this.view.res].w;
     this.hei = this.resolutions[this.view.res].h;
 
-    if( this.scale ) this.scale.calculateDefault(this.max_size.w);
+    if( this.scale ){
+      this.scale.calculateDefault(this.max_size.w);
+    }
 
   },
 
@@ -1412,7 +1425,10 @@ var IIPMooViewer = new Class({
   changeImage: function( image ){
 
     // Replace our image array
-    this.images = [{ src:image, sds:"0,90", cnt:(this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null } ];
+    this.images = [{ src: image, sds: null,
+		     cnt: (this.viewport&&this.viewport.contrast!=null)? this.viewport.contrast : null,
+		     gam: (this.viewport&&this.viewport.gamma!=null)? this.viewport.gamma : null
+		   } ];
 
     // Send a new AJAX request for the metadata
     var metadata = new Request({
@@ -1468,7 +1484,7 @@ var IIPMooViewer = new Class({
 	  this.max_size = result.max_size;
 	  this.tileSize = result.tileSize;
 	  this.num_resolutions = result.num_resolutions;
-	  if( typeof(this.resolutions) != 'undefined' ) this.resolutions = result.resolutions;
+	  if( typeof(result.resolutions) != 'undefined' ) this.resolutions = result.resolutions;
 
 	  this.createWindows();
         }.bind(this),
@@ -1495,6 +1511,7 @@ var IIPMooViewer = new Class({
     if( this.navigation ){
       this.calculateNavSize();
       this.navigation.reflow(this.container);
+      this.navigation.setImage( this.protocol.getThumbnailURL(this.server,this.images[0].src,this.navigation.size.x) );
     }
 
     // Reset and reposition our scale

@@ -65,7 +65,7 @@ var Navigation = new Class({
       });
       toolbar.store( 'tip:text', IIPMooViewer.lang.drag );
       toolbar.inject(this.navcontainer);
-    }  
+    }
 
 
     // Create our navigation div and inject it inside our frame if requested
