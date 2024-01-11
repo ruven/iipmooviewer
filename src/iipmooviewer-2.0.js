@@ -2,7 +2,7 @@
    IIPMooViewer 2.0
    IIPImage Javascript Viewer <http://iipimage.sourceforge.net>
 
-   Copyright (c) 2007-2023 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2024 Ruven Pillay <ruven@users.sourceforge.net>
 
    ---------------------------------------------------------------------------
 
@@ -1454,6 +1454,9 @@ var IIPMooViewer = new Class({
 	onFailure: function(){ alert('Error: Unable to get image metadata from server!'); }
     } );
 
+    // Delete unnecessary header - causes problems for CORS requests to 3rd party IIIF servers
+    if( this.protocol.__proto__ === Protocols.IIIF.prototype ) delete metadata.headers["X-Requested-With"];
+
     // Send the metadata request
     metadata.send();
   },
@@ -1490,6 +1493,9 @@ var IIPMooViewer = new Class({
         }.bind(this),
 	onFailure: function(){ alert('Error: Unable to get image metadata from server!'); }
       });
+
+      // Delete unnecessary header - causes problems for CORS requests to 3rd party IIIF servers
+      if( this.protocol.__proto__ === Protocols.IIIF.prototype ) delete metadata.headers["X-Requested-With"];
 
       // Send the metadata request
       metadata.send();
