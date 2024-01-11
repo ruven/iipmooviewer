@@ -1094,6 +1094,7 @@ var IIPMooViewer = new Class({
     this.hei = this.resolutions[this.view.res].h;
 
     if( this.scale ){
+      if( this.dpi ) this.scale.pixelScale = this.dpi * 1000; // Convert to pixels per mm
       this.scale.calculateDefault(this.max_size.w);
     }
 
@@ -1443,6 +1444,7 @@ var IIPMooViewer = new Class({
 	this.tileSize = result.tileSize;
 	this.num_resolutions = result.num_resolutions;
 	if( typeof(this.resolutions) != 'undefined' ) this.resolutions = result.resolutions;
+	if( typeof(result.dpi) != 'undefined' ) this.dpi = result.dpi;
 
 	this.reload();
 
@@ -1488,6 +1490,7 @@ var IIPMooViewer = new Class({
 	  this.tileSize = result.tileSize;
 	  this.num_resolutions = result.num_resolutions;
 	  if( typeof(result.resolutions) != 'undefined' ) this.resolutions = result.resolutions;
+	  if( typeof(result.dpi) != 'undefined' ) this.dpi = result.dpi;
 
 	  this.createWindows();
         }.bind(this),
