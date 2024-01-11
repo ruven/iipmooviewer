@@ -142,18 +142,70 @@ IIPMooViewer.implement({
     // We build this only after the viewer has fully loaded
     this.addEvent('load', function(){
 
-       // Build our controls
+      // Build our controls
       this.createMenuInterface();
 
       // Go through our list of images and inject them into our menus
       images.each( function(item){
-	new Element('option', {
-	  'value': item[0],
-	  'html': item[1]
-	 }).inject( document.id('baselayer') );
+        new Element('option', {
+          'value': item[0],
+          'html': item[1]
+        }).inject( document.id('baselayer') );
       });
     });
-   },
+
+  },
+
+
+  /* Handle image stacks
+   */
+  stack: function() {
+
+    var _this = this;
+
+    // We build this only after the viewer has fully loaded
+    this.addEvent('load', function(){
+
+      // Send an AJAX request for the metadata
+      var metadata = new Request.JSON({
+        method: 'get',
+        url: this.protocol.getStackInfoURL(_this.server,_this.images[0].src),
+        onComplete: function( json ){
+          this.elements = json || alert( "Error: No response from server " + this.server );
+          //var sorted_elements = elements.map((x) => x);
+          //sorted_elements.sort(function(a, b){
+          //  return b.scale - a.scale;
+          //});
+
+          // Build our controls
+	  this.createMenuInterface();
+
+	  var image = this.images[0].src + "&SDS=";
+
+	  // Go through our list of images and inject them into our menus
+	  this.elements.each( function(item){
+	    new Element('option', {
+	      'value': image + item.id,
+	      'html': item.name// + " (" + item.scale + ")"
+	    }).inject( document.id('baselayer') );
+	  });
+
+	  // Trigger a change event
+	  document.id('baselayer').fireEvent( "change" );
+	  var src = this.images[0].src;
+	  if( this.images[0].cnt ) src += "&CNT=" + this.images[0].cnt;
+	  if( this.images[0].gam ) src += "&GAM=" + this.images[0].gam;
+	  this.navigation.setImage( this.protocol.getThumbnailURL(this.server,src,this.navigation.size.x) );
+	  this.fireEvent('stack');
+
+	}.bind(this),
+	onFailure: function(){ alert('Error: Unable to get stack information from server!'); }
+      });
+
+      // Send the metadata request
+      metadata.send();
+    });
+  },
 
 
   /* Create our single menu control panel and add events
@@ -334,6 +386,50 @@ IIPMooViewer.implement({
 
     // Make sure the slider takes into account window resize events
     window.addEvent('resize', function(){ slider.autosize(); });
+
+  },
+
+
+  /* Add image processing options
+   */
+  enableImageProcessing: function() {
+
+    var _this = this;
+
+    // We build this only after the viewer has fully loaded
+    this.addEvent('load', function(){ 
+
+      // Create our control panel and inject it into our container
+      new Element( 'div', {
+	'id': 'processing',
+	'class': 'blending processing',
+	'html': '<h2 title="<h2>Image Processing</h2>Image Processing">Image Processing</h2><div><input type="radio" name="processing" id="linear" value="" checked><label for="linear">Linear</label></div><div><input type="radio" name="processing" id="stretch" value="ST"><label for="stretch">Linear Stretch</label></div><div><input type="radio" name="processing" id="log" value="log"><label for="gamma">Log</label></div><div><input type="radio" name="processing" id="equalization" value="EQ"><label for="equalization">Histogram Equalization</label></div>'
+      }).inject( this.navigation.navcontainer );
+
+      // Set default radio button
+      if( this.images[0].gam == "log" ) document.id("log").checked = true;
+      else if( this.images[0].cnt == "st" ) document.id("stretch").checked = true;
+      else if( this.images[0].cnt == "eq" ) document.id("equalization").checked = true;
+      else document.id("linear").checked = true;
+
+      // Update image on input change
+      this.navigation.navcontainer.getElements('div.processing div input').addEvent('change', function(e){
+	var p = e.target.value;
+	// Need to treat log differently
+	if( p == "log" ){
+	  _this.images[0].cnt = null;
+	  _this.images[0].gam = e.target.value;
+	}
+	else{
+	  _this.images[0].gam = null;
+	  _this.images[0].cnt = e.target.value;
+	}
+	_this.canvas.get('morph').cancel();
+	_this.canvas.getChildren('img').destroy();
+	_this.tiles.empty();
+	_this.requestImages();
+      });
+    });
 
   }
 

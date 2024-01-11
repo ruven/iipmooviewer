@@ -500,7 +500,7 @@ a.logo:link, a.logo:visited {
 
 /* Blending box
  */
-div.blending{
+div.blending {
   width: 100%;
   background: #111;
   color: #bbbbbb;
@@ -612,6 +612,11 @@ div.multiblend div.caption span {
   margin-top: 3px;
   position: absolute;
   min-width: 5em;
+}
+
+div.processing div {
+  text-align: left;
+  margin-top: 5px;
 }
 
 /* iPhone, iPad and Android Devices
