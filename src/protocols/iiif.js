@@ -18,12 +18,17 @@ Protocols.IIIF = new Class({
     var tile_x = this.tileSize.w * Math.pow(2,  this.num_resolutions - t.resolution - 1);
     var tile_y = this.tileSize.h * Math.pow(2,  this.num_resolutions - t.resolution - 1);
     var src = t.server + "/" + t.image + "/" + orig_x + "," + orig_y + "," + tile_x + "," + tile_y;
-    if (tile_x != this.tileSize.w) {
+
+    // Handle bottom edge tiles that may be smaller than the standard tile size
+    if( this.resolutions && (t.y+1) * this.tileSize.h > this.resolutions[t.resolution].h ){
+      src += "/," + (this.resolutions[t.resolution].h - t.y * this.tileSize.h );
+    }
+    else if( tile_x != this.tileSize.w ){
       src += "/!" + this.tileSize.w + "," + this.tileSize.h;
     } else {
-      src += "/full";
+      src += "/max";
     }
-    src += "/0/native.jpg";
+    src += "/0/default.jpg";
     return src;
   },
 
@@ -47,8 +52,9 @@ Protocols.IIIF = new Class({
       'tileSize': this.tileSize,
       'num_resolutions': this.num_resolutions
     };
+
     // Add a list of resolutions if given
-    if( typeOf(p.sizes) !== "null" && p.sizes.length == this.num_resolutions ){
+    if( typeOf(p.sizes) !== "null" && p.sizes.length == this.num_resolutions-1 ){
       result.resolutions = new Array(this.num_resolutions);
       for( var r=0; r<this.num_resolutions-1; r++ ){
 	var size = p.sizes[r];
@@ -57,6 +63,23 @@ Protocols.IIIF = new Class({
       // Add the full size image
       result.resolutions[this.num_resolutions-1] = {w:w,h:h};
     }
+    // Otherwise calculate ourselves
+    else{
+      result.resolutions = new Array();
+      var tx = w;
+      var ty = h;
+      result.resolutions.push({w:tx,h:ty});
+      for( var i=1; i<this.num_resolutions; i++ ){
+        tx = Math.floor(tx/2);
+        ty = Math.floor(ty/2);
+        result.resolutions.push({w:tx,h:ty});
+      }
+      // We reverse so that the smallest resolution is at index 0
+      result.resolutions.reverse();
+    }
+    // Store these resolution sizes
+    this.resolutions = result.resolutions;
+
     return result;
   },
 
@@ -70,7 +93,7 @@ Protocols.IIIF = new Class({
   /* Return thumbnail URL
    */
   getThumbnailURL: function(server,image,width){
-    return server + "/" + image + "/full/" + width + ",/0/native.jpg";
+    return server + "/" + image + "/full/" + width + ",/0/default.jpg";
   },
 
   /* Like Djatoka, IIIF wants the region offests in terms of the highest resolution it has.

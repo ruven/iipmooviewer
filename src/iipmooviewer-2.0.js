@@ -216,7 +216,7 @@ var IIPMooViewer = new Class({
     this.max_size = {};       // Dimensions of largest resolution
     this.wid = 0;             // Width of current resolution
     this.hei = 0;             // Height of current resolution
-    this.resolutions = [];    // List of available resolutions
+    this.resolutions = null;  // List of available resolutions
     this.num_resolutions = 0; // Number of available resolutions
     this.view = {
       x: 0,                   // Location and dimensions of current visible view
@@ -1060,9 +1060,9 @@ var IIPMooViewer = new Class({
 
     // Calculate our list of resolution sizes if we don't have a full list
     // from the server
-    if( typeof(this.resolutions) == 'undefined' ){
+    if( this.resolutions === null || typeof(this.resolutions) == 'undefined' ){
 
-      this.resolutions = new Array(this.num_resolutions);
+      this.resolutions = new Array();
       this.resolutions.push({w:tx,h:ty});
 
       for( var i=1; i<this.num_resolutions; i++ ){
