@@ -1457,7 +1457,9 @@ var IIPMooViewer = new Class({
     } );
 
     // Delete unnecessary header - causes problems for CORS requests to 3rd party IIIF servers
-    if( this.protocol.__proto__ === Protocols.IIIF.prototype ) delete metadata.headers["X-Requested-With"];
+    if( typeof(Protocols.IIIF) === "function" && this.protocol.__proto__ === Protocols.IIIF.prototype ){
+      delete metadata.headers["X-Requested-With"];
+    }
 
     // Send the metadata request
     metadata.send();
@@ -1498,7 +1500,9 @@ var IIPMooViewer = new Class({
       });
 
       // Delete unnecessary header - causes problems for CORS requests to 3rd party IIIF servers
-      if( this.protocol.__proto__ === Protocols.IIIF.prototype ) delete metadata.headers["X-Requested-With"];
+      if( typeof(Protocols.IIIF) === "function" && this.protocol.__proto__ === Protocols.IIIF.prototype ){
+	delete metadata.headers["X-Requested-With"];
+      }
 
       // Send the metadata request
       metadata.send();
