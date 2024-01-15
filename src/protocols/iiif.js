@@ -19,9 +19,12 @@ Protocols.IIIF = new Class({
     var tile_y = this.tileSize.h * Math.pow(2,  this.num_resolutions - t.resolution - 1);
     var src = t.server + "/" + t.image + "/" + orig_x + "," + orig_y + "," + tile_x + "," + tile_y;
 
-    // Handle bottom edge tiles that may be smaller than the standard tile size
-    if( this.resolutions && (t.y+1) * this.tileSize.h > this.resolutions[t.resolution].h ){
-      src += "/," + (this.resolutions[t.resolution].h - t.y * this.tileSize.h );
+    // Handle bottom righ tiles that may be smaller than the standard tile size
+    if( this.resolutions &&
+	(t.x+1) * this.tileSize.w > this.resolutions[t.resolution].w &&
+	(t.y+1) * this.tileSize.h > this.resolutions[t.resolution].h ){
+      src += "/" + (this.resolutions[t.resolution].w - (t.x * this.tileSize.w) ) + ",";
+
     }
     else if( tile_x != this.tileSize.w ){
       src += "/!" + this.tileSize.w + "," + this.tileSize.h;
@@ -54,7 +57,7 @@ Protocols.IIIF = new Class({
     };
 
     // Add a list of resolutions if given
-    if( typeOf(p.sizes) !== "null" && p.sizes.length == this.num_resolutions-1 ){
+    if( typeOf(p.sizes) !== "null" && (p.sizes.length == this.num_resolutions-1 || p.sizes.length == this.num_resolutions) ){
       result.resolutions = new Array(this.num_resolutions);
       for( var r=0; r<this.num_resolutions-1; r++ ){
 	var size = p.sizes[r];
