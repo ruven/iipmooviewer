@@ -1314,7 +1314,9 @@ var IIPMooViewer = new Class({
 	},
 	'scroll': this.scrollNavigation.bind(this),
 	'zoom': this.zoom.bind(this),
-	'print': this.print.bind(this)
+	'print': this.print.bind(this),
+	// Check functionality has been included and exists
+	'newAnnotation': ( typeOf(this.newAnnotation) === "function" ) ? this.newAnnotation.bind(this) : function(){ alert("Annotation editing module not found"); }
      });
     }
 

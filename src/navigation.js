@@ -164,6 +164,7 @@ var Navigation = new Class({
       if(this.options.navButtons.contains('rotateLeft')) navbuttons.getElement('img.rotateLeft').addEvent( 'click', function(){ _this.fireEvent('rotate',-90); });
       if(this.options.navButtons.contains('rotateRight')) navbuttons.getElement('img.rotateRight').addEvent( 'click', function(){ _this.fireEvent('rotate',90); });
       if(this.options.navButtons.contains('print')) navbuttons.getElement('img.print').addEvent( 'click', function(){ _this.fireEvent('print'); });
+      if(this.options.navButtons.contains('newAnnotation')) navbuttons.getElement('img.newAnnotation').addEvent( 'click', function(){ _this.fireEvent('newAnnotation'); });
 
     }
 
