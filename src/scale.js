@@ -73,6 +73,9 @@ var Scale = new Class({
    */
   update: function( ratio, view_width ){
 
+    // Do nothing if no DPI set
+    if( this.pixelscale === null ) return;
+
     // Determine the number of pixels a unit takes at this scale. x1000 because we want per m
     var pixels = this.units.factor * this.pixelscale * ratio;
 
@@ -111,6 +114,10 @@ var Scale = new Class({
   /* Reposition our scale wrt to our container
    */
   reflow: function( container ){
+
+    // Do nothing if no DPI set
+    if( this.pixelscale === null ) return;
+
     var top = container.getSize().y -
       container.getElement('div.scale').getSize().y - 10;
     this.scale.setStyles({

@@ -1161,7 +1161,7 @@ var IIPMooViewer = new Class({
       'events': {
 	click: function(){ this.fade('out'); }
       },
-      'html': '<div><div><h2><a href="http://iipimage.sourceforge.net"><img src="'+this.prefix+'iip.32x32.png"/></a>IIPMooViewer</h2>IIPImage HTML5 High Resolution Image Viewer - Version '+this.version+'<br/><ul><li>'+IIPMooViewer.lang.navigate+'</li><li>'+IIPMooViewer.lang.zoomIn+'</li><li>'+IIPMooViewer.lang.zoomOut+'</li><li>'+IIPMooViewer.lang.rotate+'</li><li>'+IIPMooViewer.lang.fullscreen+'<li>'+IIPMooViewer.lang.annotations+'</li><li>'+IIPMooViewer.lang.navigation+'</li></ul><br/>'+IIPMooViewer.lang.more+' <a href="http://iipimage.sourceforge.net">http://iipimage.sourceforge.net</a></div></div>'
+      'html': '<div><div><h2><a href="http://iipimage.sourceforge.net"><img src="'+this.prefix+'iip.32x32.png"/></a>IIPMooViewer</h2>IIPImage HTML5 High Resolution Image Viewer - Version '+this.version+'<br/><ul><li>'+IIPMooViewer.lang.navigate+'</li><li>'+IIPMooViewer.lang.zoomIn+'</li><li>'+IIPMooViewer.lang.zoomOut+'</li><li>'+IIPMooViewer.lang.rotate+'</li><li>'+IIPMooViewer.lang.fullscreen+'<li>'+IIPMooViewer.lang.annotations+'</li><li>'+IIPMooViewer.lang.navigation+'</li></ul><br/>'+IIPMooViewer.lang.more+' <a href="https://iipimage.sourceforge.io">https://iipimage.sourceforge.io</a></div></div>'
     }).inject( this.container );
 
     // Create our main window target div, add our events and inject inside the frame
@@ -1280,12 +1280,13 @@ var IIPMooViewer = new Class({
     }
 
 
+    // Calculate some sizes
+    this.calculateSizes();
+
     // Add a scale if requested and if we actually have a value
     if( this.scale && this.scale.pixelscale !== null ) this.scale.create(this.container);
 
-
-    // Calculate some sizes and create the navigation window
-    this.calculateSizes();
+    // Create the navigation window
     if( this.navigation ){
 
       if( this.navOptions&&this.navOptions.id&&document.id(this.navOptions.id) ){
