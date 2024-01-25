@@ -23,7 +23,7 @@ Protocols.IIIF = new Class({
     if( this.resolutions &&
 	(t.x+1) * this.tileSize.w > this.resolutions[t.resolution].w &&
 	(t.y+1) * this.tileSize.h > this.resolutions[t.resolution].h ){
-      src += "/!" + (this.resolutions[t.resolution].w - (t.x * this.tileSize.w) ) + ","+ this.tileSize.h;
+      src += "/!" + (this.resolutions[t.resolution].w - (t.x * this.tileSize.w) ) + "," + (this.resolutions[t.resolution].h - (t.y * this.tileSize.h) );
 
     }
     else if( tile_x != this.tileSize.w ){
