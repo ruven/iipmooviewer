@@ -44,7 +44,7 @@
 	      prefix: path prefix if images or javascript subdirectory moved (default 'images/')
               render: tile rendering style - 'spiral' for a spiral from the centre or
                       'random' for a rendering of tiles in a random order
-	      scale: pixels per mm
+	      scale: pixels per mm or true if DPI obtained automatically from image server
 	      showNavWindow: whether to show the navigation window. Default true
 	      showNavButtons: whether to show the navigation buttons. Default true
 	      showCoords: whether to show live screen coordinates. Default false
@@ -1094,7 +1094,7 @@ var IIPMooViewer = new Class({
     this.hei = this.resolutions[this.view.res].h;
 
     if( this.scale ){
-      if( this.dpi ) this.scale.pixelScale = this.dpi * 1000; // Convert to pixels per mm
+      if( this.dpi ) this.scale.pixelscale = this.dpi.x; // Assume DPI equal in both directions
       this.scale.calculateDefault(this.max_size.w);
     }
 
@@ -1280,8 +1280,8 @@ var IIPMooViewer = new Class({
     }
 
 
-    // Add a scale if requested
-    if( this.scale ) this.scale.create(this.container);
+    // Add a scale if requested and if we actually have a value
+    if( this.scale && this.scale.pixelscale !== null ) this.scale.create(this.container);
 
 
     // Calculate some sizes and create the navigation window

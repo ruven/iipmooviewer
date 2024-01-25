@@ -107,7 +107,7 @@ option is the <b>image</b> variable)
 
 <b>showCoords</b> : whether to show live screen coordinates [default: false]
 
-<b>scale</b> : adds a scale to the image. Specify the number of pixels per units. Should be given in pixels per mm if the default meter unit is used. Otherwise pixels per degree if degree units are used.
+<b>scale</b> : adds a scale to the image. Specify the number of pixels per units. Should be given in pixels per mm if the default meter unit is used. Otherwise pixels per degree if degree units are used. If set to true, DPI will be retrieved directly from image server
 
 <b>units</b> : define the units used. Can be in degrees or meters [default: meters]. Or define completely new unit system. The default structure is the following:
 <pre>
@@ -435,4 +435,4 @@ Please refer to the project site https://iipimage.sourceforge.io for further det
 
 ------------------------------------------------------------------------------------
 
-<pre>(c) 2007-2021 Ruven Pillay <ruven@users.sourceforge.net></pre>
+<pre>(c) 2007-2024 Ruven Pillay <ruven@users.sourceforge.net></pre>

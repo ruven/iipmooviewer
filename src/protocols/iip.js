@@ -67,13 +67,13 @@ Protocols.IIP = new Class({
     }
 
     if( this.ask_dpi ){
-      tmp	= response.split( 'DPI:' );
+      tmp = response.split( 'DPI:' );
       if(tmp[1]){
 	var dpi = tmp[1].split(" ");
-	result.dpi = { x: parseFloat(dpi[0]),
-		       y: parseFloat(dpi[1]) };
+	// Convert from iipsrv's pixels/m to pixels per mm
+	result.dpi = { x: parseFloat(dpi[0])/1000.0,
+		       y: parseFloat(dpi[1])/1000.0 };
       }
-
     }
     if( resolutions.length==num_resolutions ) result.resolutions = resolutions;
 

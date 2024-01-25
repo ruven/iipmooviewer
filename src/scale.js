@@ -1,6 +1,6 @@
 /* IIPMooViewer Scale Widget
 
-   Copyright (c) 2007-2013 Ruven Pillay <ruven@users.sourceforge.net>
+   Copyright (c) 2007-2024 Ruven Pillay <ruven@users.sourceforge.net>
    IIPImage: http://iipimage.sourceforge.net
 
    --------------------------------------------------------------------
@@ -23,7 +23,8 @@ var Scale = new Class({
    */
   initialize: function( pixelscale, units ){
 
-    this.pixelscale = pixelscale;
+    if( typeof(pixelscale) === "boolean" ) this.pixelscale = null;
+    else this.pixelscale = pixelscale;
 
     // Allow a range of units, multiples and labels.
     // First define default for meters
