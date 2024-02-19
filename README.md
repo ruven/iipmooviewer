@@ -27,6 +27,9 @@ Installation
 ------------
 The distribution contains all the necessary library files in both compressed and uncompressed formats. Modify the parameters in the index.html template example file provided.
 
+StandAlone Usage
+----------------
+To try this viewer itself, you can compile it first (described in the [Distribution section](#Distribution), then copy whole directory into your web server content directory. Launch your webserver, and you can view it in your browser.
 
 Server
 ------
