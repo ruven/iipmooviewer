@@ -132,6 +132,8 @@ at resolution 4 with the center of the view port at both 90% of the size of the 
 
 <b>protocol</b> : protocol to use with the server: iip, zoomify, deepzoom or iiif [default: "iip"]
 
+<b>format</b> : image format to request for tiles when using IIP or IIIF protocol (JPEG, WebP, AVIF, PNG etc depending on image server capabilities)
+
 <b>preload</b> : preload an extra layer of tiles surrounding the viewport [default: false]
 
 <b>disableHash</b> : disable setting viewport through the hashchange event. See the section "Linking to a Specific View" below [default: enabled]

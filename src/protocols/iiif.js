@@ -3,6 +3,10 @@
 
 Protocols.IIIF = new Class({
 
+  /* Default format for requests
+   */
+  format: "jpg",
+
   /* Return metadata URL
    */
   getMetaDataURL: function(server,image){
@@ -19,7 +23,7 @@ Protocols.IIIF = new Class({
     var tile_y = this.tileSize.h * Math.pow(2,  this.num_resolutions - t.resolution - 1);
     var src = t.server + "/" + t.image + "/" + orig_x + "," + orig_y + "," + tile_x + "," + tile_y;
 
-    // Handle bottom righ tiles that may be smaller than the standard tile size
+    // Handle bottom right tiles that may be smaller than the standard tile size
     if( this.resolutions &&
 	(t.x+1) * this.tileSize.w > this.resolutions[t.resolution].w &&
 	(t.y+1) * this.tileSize.h > this.resolutions[t.resolution].h ){
@@ -31,7 +35,7 @@ Protocols.IIIF = new Class({
     } else {
       src += "/max";
     }
-    src += "/0/default.jpg";
+    src += "/0/default." + this.format;
     return src;
   },
 
@@ -90,13 +94,13 @@ Protocols.IIIF = new Class({
    */
   getRegionURL: function(server,image,region,width,height){
     return server + "/" + image + "/" + region.x + "," + region.y
-      + "," + region.w + "," + region.h + "/" + width + ",/0/default.jpg";
+      + "," + region.w + "," + region.h + "/" + width + ",/0/default." + this.format;
   },
 
   /* Return thumbnail URL
    */
   getThumbnailURL: function(server,image,width){
-    return server + "/" + image + "/full/" + width + ",/0/default.jpg";
+    return server + "/" + image + "/full/" + width + ",/0/default." + this.format;
   },
 
   /* Like Djatoka, IIIF wants the region offests in terms of the highest resolution it has.
@@ -104,6 +108,24 @@ Protocols.IIIF = new Class({
    */
   getMultiplier: function(resolution) {
     return this.tileSize.w * Math.pow(2, this.num_resolutions - resolution - 1);
+  },
+
+  /* Set image format for image requests
+   */
+  setFormat: function(format){
+    switch( format.toUpperCase() ){
+      case 'WEBP':
+        this.format = "webp";
+        break;
+      case 'PNG':
+        this.format = "png";
+        break;
+      case 'AVIF':
+        this.format = "avif";
+        break;
+      default:
+        this.format = 'jpg';
+    }
   }
 
 });

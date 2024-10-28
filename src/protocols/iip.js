@@ -6,6 +6,10 @@ Protocols.IIP = new Class({
   ask_resolutions: true,
   ask_dpi: true,
 
+  /* Default format for requests
+   */
+  format: "JTL",
+
 
   /* Return metadata URL
    */
@@ -25,7 +29,7 @@ Protocols.IIP = new Class({
     if( t.rotation )                    modifiers.push( 'ROT=' + t.rotation );
     if( t.gamma )                       modifiers.push( 'GAM=' + t.gamma );
     if( t.shade )                       modifiers.push( 'SHD=' + t.shade + ",30" );
-    modifiers.push( 'JTL=' + t.resolution + ',' + t.tileindex );
+    modifiers.push( this.format + '=' + t.resolution + ',' + t.tileindex );
     return t.server+modifiers.join('&');
   },
 
@@ -101,6 +105,24 @@ Protocols.IIP = new Class({
   getStackInfoURL: function(server,image){
     var url = server+"?FIF=" + image + "&obj=stack";
     return url;
+  },
+
+  /* Set image format for tile requests
+   */
+  setFormat: function(format){
+    switch( format.toUpperCase() ){
+      case 'WEBP':
+        this.format = "WTL";
+        break;
+      case 'PNG':
+        this.format = "PTL";
+        break;
+      case 'AVIF':
+        this.format = "ATL";
+        break;
+      default:
+        this.format = 'JTL';
+    }
   }
 
 });

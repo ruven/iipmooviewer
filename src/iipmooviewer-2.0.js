@@ -49,6 +49,7 @@
 	      showNavButtons: whether to show the navigation buttons. Default true
 	      showCoords: whether to show live screen coordinates. Default false
 	      protocol: iip (default), zoomify, deepzoom or iiif
+	      format: image format to request for tiles when using IIP or IIIF protocol (JPEG, WebP, AVIF, PNG etc)
 	      enableFullscreen: allow full screen mode. Default true
 	      viewport: object containing x, y, resolution, rotation of initial view
 	      winResize: whether view is reflowed on window resize. Default true
@@ -194,9 +195,11 @@ var IIPMooViewer = new Class({
 	break;
       case 'IIIF':
         this.protocol = new Protocols.IIIF();
+	if( typeof(options.format)!='undefined' ) this.protocol.setFormat( options.format );
         break;
       default:
 	this.protocol = new Protocols.IIP();
+	if( typeof(options.format)!='undefined' ) this.protocol.setFormat( options.format );
     }
 
 
