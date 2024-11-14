@@ -97,7 +97,9 @@ option is the <b>image</b> variable)
 <b>navigation</b> : a hash containing options for the navigation box:
    (a) id: the id of the element where the navigation box will be embedded. Defaults to the main container.
    (b) draggable: a boolean, indicating whether the navigation box is draggable. Defaults to true, however, if a navigation id is specified, defaults to false.
-   (c) buttons: an array of the available buttons: reset, zoomIn, zoomOut, rotateLeft, rotateRight. The default is the following:
+   (c) buttons: an array of the available buttons: reset, zoomIn, zoomOut, rotateLeft, rotateRight.
+   (d) image: an alternative image to be used (with the same IIP server) for the navigation overview.
+   The default is the following:
 <pre>
   navigation: {
     draggable: true,

@@ -192,9 +192,9 @@ IIPMooViewer.implement({
 
 	  // Trigger a change event
 	  document.id('baselayer').fireEvent( "change" );
-	  var src = this.images[0].src;
-	  if( this.images[0].cnt ) src += "&CNT=" + this.images[0].cnt;
-	  if( this.images[0].gam ) src += "&GAM=" + this.images[0].gam;
+	  var src = this.thumbnail;
+	  //if( this.images[0].cnt ) src += "&CNT=" + this.images[0].cnt;
+	  //if( this.images[0].gam ) src += "&GAM=" + this.images[0].gam;
 	  this.navigation.setImage( this.protocol.getThumbnailURL(this.server,src,this.navigation.size.x) );
 	  this.fireEvent('stack');
 

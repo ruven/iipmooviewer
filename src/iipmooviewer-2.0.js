@@ -62,6 +62,7 @@
 	                 to false.
 	         (c) buttons: an array of the available buttons: reset, zoomIn, zoomOut, rotateLeft, rotateRight
 	                      Defaults to: ['reset','zoomIn','zoomOut']
+		 (d) image: alternative thumbnail image path (requested from same IIP server
 
    Note: Requires mootools version 1.6 or later <http://www.mootools.net>
        : The page MUST have a standard-compliant HTML declaration at the beginning
@@ -170,7 +171,7 @@ var IIPMooViewer = new Class({
     this.navigation = null;
     this.navOptions = options.navigation || null;
     if( (typeof(Navigation)==="function") ){
-      this.navigation = new Navigation({ showNavWindow:options.showNavWindow,
+      this.navigation = new Navigation({ showNavWindow: options.showNavWindow,
 					 showNavButtons: options.showNavButtons,
 					 navWinSize: options.navWinSize,
 				         showCoords: options.showCoords,
@@ -179,6 +180,10 @@ var IIPMooViewer = new Class({
 				       });
     }
 
+    // Set thumbnail image - usually the first in our image sequence, but can be overriden
+    this.thumbnail = ( this.navigation && options.navigation.image ) ? options.navigation.image : this.images[0].src;
+
+    // Set whether view is reflowed on window resize
     this.winResize = (typeof(options.winResize)!='undefined' && options.winResize==false)? false : true;
 
 
@@ -1297,7 +1302,7 @@ var IIPMooViewer = new Class({
       }
       else this.navigation.create( this.container );
 
-      this.navigation.setImage(this.protocol.getThumbnailURL(this.server,this.images[0].src,this.navigation.size.x));
+      this.navigation.setImage(this.protocol.getThumbnailURL(this.server,this.thumbnail,this.navigation.size.x));
       this.navigation.addEvents({
        'rotate': function(r){
         var rotation = _this.view.rotation+r;
@@ -1530,7 +1535,7 @@ var IIPMooViewer = new Class({
     if( this.navigation ){
       this.calculateNavSize();
       this.navigation.reflow(this.container);
-      this.navigation.setImage( this.protocol.getThumbnailURL(this.server,this.images[0].src,this.navigation.size.x) );
+      this.navigation.setImage( this.protocol.getThumbnailURL(this.server,this.thumbnail,this.navigation.size.x) );
     }
 
     // Reset and reposition our scale
